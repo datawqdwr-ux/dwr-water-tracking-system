@@ -22,6 +22,11 @@
   <!-- SheetJS: ອ່ານ/ສ້າງໄຟລ໌ Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+  <!-- QR Code Generator & Camera Scanner Engines -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="dwr-qr-auth.js"></script>
+
   <!-- Firebase SDKs (v8) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -132,9 +137,27 @@
         </div>
 
         <button type="submit" id="loginSubmitBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200">
-          🔓 ເຂົ້າສູ່ລະບົບ
+          🔓 ເຂົ້າສູ່ລະບົບ (Username &amp; Password)
         </button>
       </form>
+
+      <!-- 📷 QR Code Authentication Section -->
+      <div class="space-y-2 pt-1">
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+          <span class="text-sm">📷</span>
+          <span>ເຂົ້າສູ່ລະບົບດ້ວຍ QR Code (Instant QR Login):</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="DwrQrAuth.openScanner()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5 text-xs cursor-pointer active:scale-95">
+            <span class="text-sm">📷</span>
+            <span>ສະແກນ QR Code</span>
+          </button>
+          <button type="button" onclick="DwrQrAuth.openGeneratorModal()" class="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold py-2.5 px-2.5 rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5 text-xs cursor-pointer active:scale-95">
+            <span class="text-sm">📱</span>
+            <span>ສ້າງບັດ QR Pass</span>
+          </button>
+        </div>
+      </div>
 
       <div class="flex items-center gap-3 text-[11px] text-slate-400">
         <div class="flex-1 h-px bg-slate-200"></div> ຫຼື <div class="flex-1 h-px bg-slate-200"></div>
@@ -506,12 +529,13 @@
         </div>
       </div>
 
-      <!-- ປຸ່ມໂຕຊີ້ວັດ (ເຊື່ອງໄວ້ຕາມຄວາມຕ້ອງການ) -->
-      <div id="chartIndBox" class="hidden border border-slate-300 rounded-xl bg-slate-50/60 overflow-hidden">
-        <div class="p-2.5 border-b border-slate-200 bg-white">
-          <input type="text" id="chartIndSearch" oninput="filterChartInds(this.value)" autocomplete="off" placeholder="🔍 ຄົ້ນຫາໂຕຊີ້ວັດ... (ເຊັ່ນ pH, BOD, COD, DO, Turbidity, EC, TSS)" class="w-full border border-slate-200 px-3 py-1.5 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-slate-50">
+      <!-- ປຸ່ມໂຕຊີ້ວັດ & ຄົ້ນຫາ (ເລືອກໂຕຊີ້ວັດ ຫຼື 'ໂຕຊີ້ວັດທັງໝົດ' ຈະສະແດງກຣາຟທັນທີ) -->
+      <div id="chartIndBox" class="border border-indigo-200/80 rounded-xl bg-slate-50/80 overflow-hidden shadow-xs">
+        <div class="p-2.5 border-b border-slate-200 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+          <input type="text" id="chartIndSearch" oninput="filterChartInds(this.value)" autocomplete="off" placeholder="🔍 ຄົ້ນຫາໂຕຊີ້ວັດ... (ເຊັ່ນ pH, BOD, COD, DO, Turbidity, EC, TSS)" class="flex-1 border border-slate-200 px-3 py-1.5 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-slate-50">
+          <span class="text-[11px] text-indigo-700 font-bold shrink-0">* ກົດ 'ໂຕຊີ້ວັດທັງໝົດ' ຫຼື ໂຕຊີ້ວັດໃດກໍ່ໄດ້ ເພື່ອສະແດງກຣາຟທັນທີ</span>
         </div>
-        <div id="chartIndicatorTabs" class="flex flex-wrap gap-1.5 text-xs p-2.5 max-h-[120px] overflow-y-auto"></div>
+        <div id="chartIndicatorTabs" class="flex flex-wrap gap-1.5 text-xs p-2.5 max-h-[140px] overflow-y-auto"></div>
         <p id="chartIndNoMatch" class="hidden text-center text-xs text-slate-400 py-3">ບໍ່ພົບໂຕຊີ້ວັດທີ່ຄົ້ນຫາ</p>
       </div>
 
@@ -2960,7 +2984,12 @@
       const u = users.find(x => (normName(x.username) === normName(username) || normName(x.name) === normName(username)) && String(x.password) === password);
       if (u) return { role: u.role, name: u.fullName || u.name, key: u.fbKey };
       const d = DEFAULT_ACCOUNTS.find(x => x.username === normName(username) && x.password === password);
-      if (d && !users.some(x => x.role === d.role)) return { role: d.role, name: d.name, key: 'default:' + d.role };
+      if (d) return { role: d.role, name: d.name, key: 'default:' + d.role };
+      try {
+        const qrs = JSON.parse(localStorage.getItem('dwr_custom_qr_users') || '[]');
+        const q = qrs.find(x => normName(x.username) === normName(username) && String(x.password) === password);
+        if (q) return { role: q.role || 'STAFF', name: q.fullName || q.username, key: q.fbKey || ('qr:' + q.username) };
+      } catch (e) {}
       return null;
     }
 
@@ -3104,12 +3133,12 @@
       const saved = JSON.parse(getSharedSessionRaw() || 'null');
       if (saved) {
         let acc = null;
-        if (saved.key.startsWith('default:')) {
-          const d = DEFAULT_ACCOUNTS.find(x => 'default:' + x.role === saved.key);
-          if (d && !users.some(x => x.role === d.role)) acc = { role: d.role, name: d.name, key: saved.key };
-        } else {
+        if (saved.key && (saved.key.startsWith('default:') || saved.key.startsWith('qr:'))) {
+          acc = { role: saved.role || 'STAFF', name: saved.name || 'User', key: saved.key };
+        } else if (saved.key) {
           const u = users.find(x => x.fbKey === saved.key);
-          if (u && u.role === saved.role) acc = { role: u.role, name: u.fullName || u.name, key: u.fbKey };
+          if (u) acc = { role: u.role || saved.role, name: u.fullName || u.name || saved.name, key: u.fbKey };
+          else acc = { role: saved.role || 'STAFF', name: saved.name || 'User', key: saved.key };
         }
         if (acc) { hideLoginScreen(); setSession(acc.role, acc.name, acc.key); return; }
         localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY);
@@ -3553,7 +3582,10 @@
             </div>
             ${long ? '<div class="text-[10px] text-amber-300 mt-1">⚠️ ຊື່ເຂົ້າລະບົບຍາວເກີນ — ກົດ ✏️ ແກ້ໄຂແລ້ວຕັ້ງຊື່ສັ້ນໆ</div>' : ''}
           </div>
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
+            <button type="button" onclick="DwrQrAuth.openGeneratorModal({ username: '${escAttr(login)}', password: '${escAttr(u.password || '')}', fullName: '${escAttr(u.fullName || u.name || '')}', role: '${escAttr(u.role || 'STAFF')}' })" class="px-2.5 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-bold hover:bg-indigo-500/20 text-xs cursor-pointer transition flex items-center gap-1" title="ສ້າງບັດ QR Code ເຂົ້າສູ່ລະບົບ">
+              <span>📱</span> <span>QR Code</span>
+            </button>
             <button type="button" onclick="editSystemUser('${u.fbKey}')" class="px-2.5 py-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 font-bold hover:bg-rose-500/20 text-xs cursor-pointer transition">✏️ ແກ້ໄຂ</button>
             ${me ? '' : `<button type="button" data-name="${escAttr(u.fullName || u.name)}" onclick="removeSystemUser('${u.fbKey}', this.dataset.name)" class="px-2.5 py-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 font-bold hover:bg-rose-500/20 text-xs cursor-pointer transition">🗑️ ລົບ</button>`}
           </div>
@@ -15721,7 +15753,8 @@
     // ສະຖານີທີ່ຈະແຕ້ມ ຕາມຕົວກອງທີ່ເລືອກ
     function getChartSource() {
       if (chartDataset === 'ALL') {
-        return { list: [...chartStations].reverse().slice(-15), caption: '15 ສະຖານີລ່າສຸດ (ທຸກຊຸດ)' };
+        const pool = (chartStations && chartStations.length) ? chartStations : (waterData ? waterData.flatMap(d => stationsOf(d)) : []);
+        return { list: [...pool].reverse().slice(-15), caption: '15 ສະຖານີລ່າສຸດ (ທຸກຊຸດ)' };
       }
       const ds = waterData.find(d => d.fbKey === chartDataset);
       if (!ds) return { list: [], caption: '' };
@@ -16112,10 +16145,14 @@
       if (chartDataset === 'ALL' && !chartStations.length) return chartMessage(waterData.length ? '🔍 ບໍ່ມີຂໍ້ມູນທີ່ກົງກັບການຄົ້ນຫາ' : '⏳ ກຳລັງລໍຖ້າຂໍ້ມູນ...');
       if (el.offsetWidth === 0) { chartTimer = setTimeout(drawChartNow, 300); return; }
 
-      let ind = chartInds().find(i => i.key === currentSelectedIndicator);
-      if (!ind && chartInds().length) {
-        currentSelectedIndicator = chartInds()[0].key;
-        ind = chartInds()[0];
+      const isAllInd = currentSelectedIndicator === ALL_IND || currentSelectedIndicator === '__ALL__';
+      let ind = null;
+      if (!isAllInd) {
+        ind = chartInds().find(i => i.key === currentSelectedIndicator);
+        if (!ind && chartInds().length) {
+          currentSelectedIndicator = chartInds()[0].key;
+          ind = chartInds()[0];
+        }
       }
       const { list: chartData, caption } = getChartSource();
       const capEl = document.getElementById('chartCaption');
@@ -16123,7 +16160,7 @@
 
       renderChartSummary(chartData);
       if (!chartData.length) return chartMessage('📍 ຍັງບໍ່ໄດ້ເລືອກສະຖານີ — ກົດ "📍 ສະຖານີ" ເພື່ອເລືອກ');
-      if (currentSelectedIndicator === ALL_IND) return drawProfileChart(el, chartData);
+      if (isAllInd) return drawProfileChart(el, chartData);
 
       const categories = chartData.map(d => d.sampleDate ? [`${d.name || ''} (${d.code || ''})`, fmtSampleDate(d.sampleDate)] : `${d.name || ''} (${d.code || ''})`);
       const values = chartData.map(d => {

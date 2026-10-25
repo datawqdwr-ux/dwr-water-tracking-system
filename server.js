@@ -96,6 +96,13 @@ const server = http.createServer((req, res) => {
   res.end('404 Not Found');
 });
 
+server.on('error', (err) => {
+  console.error('DWR Server error:', err);
+});
+
 server.listen(PORT, HOST, () => {
   console.log(`DWR Portal Web Server successfully running at http://${HOST}:${PORT}`);
+  try {
+    fs.writeFileSync(path.join(__dirname, '.dev.pid'), String(process.pid));
+  } catch (e) {}
 });
