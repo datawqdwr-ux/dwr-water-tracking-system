@@ -19,12 +19,67 @@
   <!-- Tailwind CSS v4 (ແປງ class ໃນ browser) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  /* 🔒 Export Guard: ສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນທີ່ດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກໄດ້ */
+  (function () {
+    var USER_KEYS = ["lao_wastewater_current_user_v2", "lao_water_current_user_v2"];
+    function okRole(r) {
+      r = String(r || "").toLowerCase();
+      return r === "admin" || r === "officer" || r === "super_admin" || r === "staff";
+    }
+    function canExport() {
+      try {
+        if (typeof currentUserRole !== "undefined") return okRole(currentUserRole);
+      } catch (e) {}
+      try {
+        for (var i = 0; i < USER_KEYS.length; i++) {
+          var raw = localStorage.getItem(USER_KEYS[i]);
+          if (raw) { var u = JSON.parse(raw); if (u && u.id !== "guest" && okRole(u.role)) return true; }
+        }
+        var s = JSON.parse(sessionStorage.getItem("waterSession") || "null");
+        if (s && s.id !== "guest" && okRole(s.role)) return true;
+      } catch (e) {}
+      return false;
+    }
+    var lastWarn = 0;
+    function deny() {
+      var now = Date.now(); if (now - lastWarn < 1500) return; lastWarn = now;
+      var msg = "ການດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກ ອະນຸຍາດສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນ.";
+      if (window.Swal) Swal.fire({ icon: "warning", title: "🔒 ບໍ່ມີສິດດາວໂຫຼດຂໍ້ມູນ", text: msg, confirmButtonText: "ຕົກລົງ", confirmButtonColor: "#0284c7" });
+      else alert("🔒 " + msg);
+    }
+    window.__dwrCanExport = canExport;
+    var aClick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () {
+      if (this.hasAttribute("download") && !canExport()) { deny(); return; }
+      return aClick.apply(this, arguments);
+    };
+    var aDispatch = HTMLAnchorElement.prototype.dispatchEvent;
+    HTMLAnchorElement.prototype.dispatchEvent = function (ev) {
+      if (this.hasAttribute("download") && ev && ev.type === "click" && !canExport()) { deny(); return false; }
+      return aDispatch.apply(this, arguments);
+    };
+    var origPrint = window.print;
+    window.print = function () {
+      if (!canExport()) { deny(); return; }
+      return origPrint.apply(window, arguments);
+    };
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
+        if (window.XLSX && XLSX.writeFile) {
+          var wf = XLSX.writeFile;
+          XLSX.writeFile = function () { if (!canExport()) { deny(); return; } return wf.apply(XLSX, arguments); };
+        }
+        if (window.jspdf && jspdf.jsPDF && jspdf.jsPDF.prototype.save) {
+          var sv = jspdf.jsPDF.prototype.save;
+          jspdf.jsPDF.prototype.save = function () { if (!canExport()) { deny(); return this; } return sv.apply(this, arguments); };
+        }
+      } catch (e) {}
+    });
+  })();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <!-- QR Code Generator & Camera Scanner Engines -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="dwr-qr-auth.js"></script>
   <style type="text/tailwindcss">
 @layer base {
   @font-face {
@@ -115,19 +170,6 @@
         </div>
         <button type="submit" id="sl_submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200">🔓 ເຂົ້າສູ່ລະບົບ</button>
       </form>
-      <!-- QR Authentication Section -->
-      <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
-        <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer">
-          <span class="text-base">📷</span>
-          <span>ສະແກນ QR Code ເຂົ້າສູ່ລະບົບ</span>
-        </button>
-        <div class="flex items-center justify-between text-[11px] px-1 text-slate-500">
-          <span>ບໍ່ມີລະຫັດຜ່ານ? ໃຊ້ QR Pass</span>
-          <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
-            <span>📱 ສ້າງບັດ QR Pass</span>
-          </button>
-        </div>
-      </div>
       <div class="flex items-center gap-3 text-[11px] text-slate-400">
         <div class="flex-1 h-px bg-slate-200"></div> ຫຼື <div class="flex-1 h-px bg-slate-200"></div>
       </div>
@@ -914,84 +956,19 @@ function isElevatedExportUser() {
   return role === "admin" || role === "officer" || role === "super_admin" || role === "staff";
 }
 
-async function requireWaterExportPermission(onSuccess, label = "ດາວໂຫຼດຂໍ້ມູນ") {
-  // 1. Super Admin ຫຼື Staff (Officer) ທີ່ເຂົ້າສູ່ລະບົບ → ອະນຸຍາດໂດຍກົງ
+async function requireWaterExportPermission(onSuccess, label = 'ດາວໂຫຼດຂໍ້ມູນ') {
+  // ສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນທີ່ດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກໄດ້
   if (isElevatedExportUser()) {
-    if (typeof onSuccess === "function") onSuccess();
+    if (typeof onSuccess === 'function') onSuccess();
     return true;
   }
-
-  // 2. ຫາກເຄີຍຢືນຢັນລະຫັດຜ່ານຖືກຕ້ອງໃນ Session ນີ້ແລ້ວ → ອະນຸຍາດເລີຍ
-  if (sessionStorage.getItem("water_export_authorized") === "true") {
-    if (typeof onSuccess === "function") onSuccess();
-    return true;
-  }
-
-  // 3. ຜູ້ໃຊ້ທົ່ວໄປ (Viewer) ຫຼື Guest ບໍ່ໄດ້ເຂົ້າສູ່ລະບົບ → ຕ້ອງໃສ່ລະຫັດທີ່ Super Admin ກຳນົດ
-  const correctCode = getExportPasscode();
-
-  if (typeof Swal !== "undefined") {
-    const { value: enteredCode, isConfirmed } = await Swal.fire({
-      title: "🔒 ໃສ່ລະຫັດເພື່ອດາວໂຫຼດຂໍ້ມູນ",
-      html: `
-        <div class="text-left text-xs text-slate-600 space-y-2 mb-3">
-          <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 leading-relaxed">
-            <b>⚠️ ແຈ້ງເຕືອນຄວາມປອດໄພ:</b> ຜູ້ນໍາໃຊ້ທົ່ວໄປ ຫຼື ການເຂົ້າລະບົບທີ່ບໍ່ໄດ້ຜ່ານການລອກອິນ ບໍ່ສາມາດດາວໂຫຼດ ຫຼື ເອົາຂໍ້ມູນອອກຈາກລະບົບໄດ້.
-          </div>
-          <p class="text-slate-700">ກະລຸນາໃສ່ <b>ລະຫັດອະນຸຍາດດາວໂຫຼດ</b> ທີ່ Super Admin ໄດ້ກຳນົດໄວ້ ເພື່ອດາວໂຫຼດ/ເອົາຂໍ້ມູນອອກ (${String(label).replace(/[<>&]/g, "")}):</p>
-        </div>
-      `,
-      input: "password",
-      inputPlaceholder: "ປ້ອນລະຫັດອະນຸຍາດດາວໂຫຼດ (Export Passcode)...",
-      inputAttributes: {
-        autocapitalize: "off",
-        autocorrect: "off"
-      },
-      showCancelButton: true,
-      confirmButtonText: "🔓 ຢືນຢັນດາວໂຫຼດ",
-      cancelButtonText: "ຍົກເລີກ",
-      confirmButtonColor: "#0284c7",
-      cancelButtonColor: "#64748b",
-      footer: '<span class="text-[11px] text-slate-400">💡 ຕິດຕໍ່ Super Admin ຫາກທ່ານຕ້ອງການລະຫັດອະນຸຍາດດາວໂຫຼດ</span>',
-      preConfirm: (val) => {
-        if (!val) {
-          Swal.showValidationMessage("ກະລຸນາປ້ອນລະຫັດກ່ອນ!");
-          return false;
-        }
-        if (String(val).trim() !== String(correctCode).trim()) {
-          Swal.showValidationMessage("❌ ລະຫັດບໍ່ຖືກຕ້ອງ! ກະລຸນາຕິດຕໍ່ Super Admin");
-          return false;
-        }
-        return val;
-      }
-    });
-
-    if (isConfirmed && enteredCode) {
-      sessionStorage.setItem("water_export_authorized", "true");
-      Swal.fire({
-        icon: "success",
-        title: "ຢືນຢັນລະຫັດຜ່ານສຳເລັດ!",
-        text: `ກຳລັງດຳເນີນການ ${label}...`,
-        timer: 1200,
-        showConfirmButton: false
-      });
-      if (typeof onSuccess === "function") {
-        setTimeout(onSuccess, 200);
-      }
-      return true;
-    }
-    return false;
+  const msg = 'ການດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກ ອະນຸຍາດສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນ. ກະລຸນາເຂົ້າສູ່ລະບົບດ້ວຍບັນຊີທີ່ມີສິດ.';
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({ icon: 'warning', title: '🔒 ບໍ່ມີສິດດາວໂຫຼດຂໍ້ມູນ', text: msg, confirmButtonText: 'ຕົກລົງ', confirmButtonColor: '#0284c7' });
   } else {
-    const entered = window.prompt(`🔒 ໃສ່ລະຫັດອະນຸຍາດດາວໂຫຼດ (ກຳນົດໂດຍ Super Admin) ເພື່ອດາວໂຫຼດ ${label}:`);
-    if (entered && String(entered).trim() === String(correctCode).trim()) {
-      sessionStorage.setItem("water_export_authorized", "true");
-      if (typeof onSuccess === "function") onSuccess();
-      return true;
-    } else if (entered !== null) {
-      alert("❌ ລະຫັດບໍ່ຖືກຕ້ອງ! ກະລຸນາຕິດຕໍ່ Super Admin");
-    }
-    return false;
+    alert('🔒 ' + msg);
   }
+  return false;
 }
 
 function exportSystemBackup() {
@@ -12324,16 +12301,11 @@ function findSharedAccount(users, username, password) {
   if (u) return { key: u.fbKey, role: u.role, user: normalizeUser({ ...u, id: u.fbKey }, u.fbKey) };
   const d = SHARED_DEFAULTS.find((x) => x.username === normLogin(username) && x.password === password);
   if (d) return { key: "default:" + d.role, role: d.role, user: defaultAccountUser(d) };
-  try {
-    const qrs = JSON.parse(localStorage.getItem('dwr_custom_qr_users') || '[]');
-    const q = qrs.find(x => normLogin(x.username) === normLogin(username) && String(x.password) === password);
-    if (q) return { key: q.fbKey || ('qr:' + q.username), role: q.role || 'STAFF', user: normalizeUser({ id: q.fbKey || ('qr-' + q.username), username: q.username, fullName: q.fullName || q.username, role: q.role || 'STAFF' }, q.fbKey || ('qr-' + q.username)) };
-  } catch (e) {}
   return null;
 }
 function findBySession(users, sess) {
   if (!sess || !sess.key) return null;
-  if (String(sess.key).startsWith("default:") || String(sess.key).startsWith("qr:")) {
+  if (String(sess.key).startsWith("default:")) {
     const d = SHARED_DEFAULTS.find((x) => "default:" + x.role === sess.key);
     if (d) return { key: sess.key, role: d.role, user: defaultAccountUser(d) };
     return { key: sess.key, role: sess.role || 'STAFF', user: normalizeUser({ id: sess.key, username: sess.name || 'user', fullName: sess.name || 'User', role: sess.role || 'STAFF' }, sess.key) };
