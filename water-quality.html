@@ -3144,10 +3144,27 @@
       }
       sessionChecked = true;
 
-      const saved = JSON.parse(getSharedSessionRaw() || 'null');
+      let saved = null;
+      try {
+        const raw = getSharedSessionRaw();
+        if (raw) saved = JSON.parse(raw);
+      } catch (e) {}
+
+      if (!saved) {
+        try {
+          const rawV2 = localStorage.getItem('lao_water_current_user_v2') || localStorage.getItem('lao_wastewater_current_user_v2');
+          if (rawV2) {
+            const v2 = JSON.parse(rawV2);
+            if (v2 && v2.role && v2.role !== 'guest' && v2.role !== 'VIEWER') {
+              saved = { key: v2.fbKey || v2.id || ('v2:' + (v2.username || 'user')), role: v2.role, name: v2.fullName || v2.name || v2.username };
+            }
+          }
+        } catch (e) {}
+      }
+
       if (saved) {
         let acc = null;
-        if (saved.key && (saved.key.startsWith('default:') || saved.key.startsWith('qr:'))) {
+        if (saved.key && (saved.key.startsWith('default:') || saved.key.startsWith('qr:') || saved.key.startsWith('v2:'))) {
           acc = { role: saved.role || 'STAFF', name: saved.name || 'User', key: saved.key };
         } else if (saved.key) {
           const u = users.find(x => x.fbKey === saved.key);
@@ -3161,35 +3178,41 @@
       else showLoginScreen();
     }
 
-    const normalIcon = L.divIcon({
-      className: 'custom-pin-normal',
-      html: `<div style="background-color: #10b981; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ປົກກະຕິ (ຜ່ານມາດຕະຖານແຫ່ງຊາດ & QWI)">✅</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
+    let normalIcon = null, alertStdIcon = null, alertQwiIcon = null, alertDualIcon = null, alertIcon = null;
 
-    const alertStdIcon = L.divIcon({
-      className: 'custom-pin-alert-std',
-      html: `<div class="marker-alert-pulse" style="background-color: #e11d48; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(225,29,72,0.45); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ເຕືອນໄພ: ເກີນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ 81/ລບ">⚠️</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
+    function ensureMapIcons() {
+      if (normalIcon || typeof L === 'undefined' || !window.L) return;
+      normalIcon = L.divIcon({
+        className: 'custom-pin-normal',
+        html: `<div style="background-color: #10b981; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ປົກກະຕິ (ຜ່ານມາດຕະຖານແຫ່ງຊາດ & QWI)">✅</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
 
-    const alertQwiIcon = L.divIcon({
-      className: 'custom-pin-alert-qwi',
-      html: `<div class="marker-alert-pulse" style="background-color: #ea580c; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(234,88,12,0.45); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ເຕືອນໄພ: ຄຸນນະພາບນໍ້າເສື່ອມໂຊມຕາມດັດຊະນີ QWI">🌊</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
-    });
+      alertStdIcon = L.divIcon({
+        className: 'custom-pin-alert-std',
+        html: `<div class="marker-alert-pulse" style="background-color: #e11d48; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(225,29,72,0.45); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ເຕືອນໄພ: ເກີນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ 81/ລບ">⚠️</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
 
-    const alertDualIcon = L.divIcon({
-      className: 'custom-pin-alert-dual',
-      html: `<div class="marker-alert-pulse" style="background-color: #be123c; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 4px 8px rgba(190,18,60,0.6); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;" title="ເຕືອນໄພຄູ່: ເກີນທັງມາດຕະຖານ 81/ລບ & QWI ເສື່ອມໂຊມ">🚨</div>`,
-      iconSize: [30, 30],
-      iconAnchor: [15, 15]
-    });
+      alertQwiIcon = L.divIcon({
+        className: 'custom-pin-alert-qwi',
+        html: `<div class="marker-alert-pulse" style="background-color: #ea580c; width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 3px 6px rgba(234,88,12,0.45); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;" title="ເຕືອນໄພ: ຄຸນນະພາບນໍ້າເສື່ອມໂຊມຕາມດັດຊະນີ QWI">🌊</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
 
-    const alertIcon = alertStdIcon;
+      alertDualIcon = L.divIcon({
+        className: 'custom-pin-alert-dual',
+        html: `<div class="marker-alert-pulse" style="background-color: #be123c; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 4px 8px rgba(190,18,60,0.6); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;" title="ເຕືອນໄພຄູ່: ເກີນທັງມາດຕະຖານ 81/ລບ & QWI ເສື່ອມໂຊມ">🚨</div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      alertIcon = alertStdIcon;
+    }
+
 
     function cleanOrphanedThresholds() {
       const activeKeys = customIndicators.map(i => i.key);
@@ -3987,6 +4010,18 @@
     }
 
     function initMap() {
+      if (typeof L === 'undefined' || !window.L) {
+        setTimeout(initMap, 200);
+        return;
+      }
+      const mapEl = document.getElementById('map');
+      if (!mapEl) return;
+      if (map) {
+        try { map.invalidateSize(); } catch (e) {}
+        return;
+      }
+      ensureMapIcons();
+
       const streetMap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 18, minZoom: 5, noWrap: true, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: '&copy; Google Maps'
       });
@@ -4000,6 +4035,7 @@
       });
 
       map = L.map('map', { minZoom: 5, maxZoom: 18, layers: [streetMap] }).setView([18.5, 103.5], 6);
+
 
       const baseMaps = {
         "🗺️ ແຜນທີ່ຖະໜົນ (Street)": streetMap,
@@ -13501,6 +13537,7 @@
       if (!dataLoaded) {
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">⏳ ກຳລັງໂຫລດຂໍ້ມູນ...</td></tr>';
       }
+      ensureMapIcons();
 
       // 1. ປະມວນຜົນ Markers ໃນແຜນທີ່ສຳລັບທຸກລາຍການ
       filteredData.forEach((item) => {
@@ -15613,6 +15650,7 @@
       apexLoadPromise = new Promise(resolve => {
         const sc = document.createElement('script');
         sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.54.1/apexcharts.min.js';
+        sc.crossOrigin = 'anonymous';
         sc.onload = () => resolve(!!window.ApexCharts);
         sc.onerror = () => { apexLoadPromise = null; resolve(false); };
         document.head.appendChild(sc);
@@ -18943,7 +18981,7 @@
     window.onload = () => {
       initMap();
       updateRBACUI();
-      if (customIndicators.length > 0) currentSelectedIndicator = customIndicators[0].key;
+      if (!currentSelectedIndicator && customIndicators.length > 0) currentSelectedIndicator = customIndicators[0].key;
       cleanOrphanedThresholds();
       renderFormCustomInputs();
       renderThresholdFields();
