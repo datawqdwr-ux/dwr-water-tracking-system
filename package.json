@@ -3,12 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "PORT=3000 node server.js",
-    "start": "PORT=3000 node server.js",
+    "dev": "node server.js",
+    "start": "node server.js",
     "build": "node -e \"console.log('Static site ready')\"",
     "lint": "node -e \"console.log('No lint errors')\""
-  },
-  "dependencies": {
-    "express": "^5.2.1"
   }
 }

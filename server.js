@@ -30,6 +30,22 @@ const MIME_TYPES = {
   '.otf': 'font/otf'
 };
 
+function safeIsFile(p) {
+  try {
+    return fs.existsSync(p) && fs.statSync(p).isFile();
+  } catch (e) {
+    return false;
+  }
+}
+
+function safeIsDir(p) {
+  try {
+    return fs.existsSync(p) && fs.statSync(p).isDirectory();
+  } catch (e) {
+    return false;
+  }
+}
+
 const server = http.createServer((req, res) => {
   // CORS & Security headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -61,16 +77,16 @@ const server = http.createServer((req, res) => {
   }
 
   // Check if file exists without extension (e.g. /wastewater -> /wastewater.html)
-  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-    if (fs.existsSync(filePath + '.html') && fs.statSync(filePath + '.html').isFile()) {
+  if (!safeIsFile(filePath)) {
+    if (safeIsFile(filePath + '.html')) {
       filePath = filePath + '.html';
-    } else if (fs.existsSync(path.join(filePath, 'index.html'))) {
+    } else if (safeIsDir(filePath) && safeIsFile(path.join(filePath, 'index.html'))) {
       filePath = path.join(filePath, 'index.html');
     }
   }
 
   // Serve file if found
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+  if (safeIsFile(filePath)) {
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     res.writeHead(200, {
@@ -83,7 +99,7 @@ const server = http.createServer((req, res) => {
 
   // Fallback to index.html for SPA routing
   const fallback = path.join(__dirname, 'index.html');
-  if (fs.existsSync(fallback)) {
+  if (safeIsFile(fallback)) {
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-cache'
@@ -100,9 +116,18 @@ server.on('error', (err) => {
   console.error('DWR Server error:', err);
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught server exception:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled server rejection:', reason);
+});
+
 server.listen(PORT, HOST, () => {
   console.log(`DWR Portal Web Server successfully running at http://${HOST}:${PORT}`);
   try {
     fs.writeFileSync(path.join(__dirname, '.dev.pid'), String(process.pid));
   } catch (e) {}
 });
+
