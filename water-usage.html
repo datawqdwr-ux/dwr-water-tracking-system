@@ -16,28 +16,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/phetsarath@5.3.0/700.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 
-  <!-- Global Safety Error Trap -->
-  <script>
-    window.addEventListener('error', function (e) {
-      if (e && (e.message === 'Script error.' || (e.message && e.message.includes('Script error')))) {
-        try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
-      }
-    }, true);
-    window.addEventListener('unhandledrejection', function (e) {
-      if (e && e.reason && String(e.reason).includes('Script error')) {
-        try { e.preventDefault(); } catch (err) {}
-      }
-    });
-  </script>
-
   <!-- Tailwind CSS v4 (ແປງ class ໃນ browser) -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
-
-  <!-- DWR QR Code Authentication Module -->
-  <script src="dwr-qr-auth.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style type="text/tailwindcss">
 @layer base {
   @font-face {
@@ -128,19 +110,6 @@
         </div>
         <button type="submit" id="sl_submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200">🔓 ເຂົ້າສູ່ລະບົບ</button>
       </form>
-      <!-- QR Authentication Section -->
-      <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
-        <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer">
-          <span class="text-base">📷</span>
-          <span>ສະແກນ QR Code ເຂົ້າສູ່ລະບົບ</span>
-        </button>
-        <div class="flex items-center justify-between text-[11px] px-1 text-slate-500">
-          <span>ບໍ່ມີລະຫັດຜ່ານ? ໃຊ້ QR Pass</span>
-          <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline flex items-center gap-1 cursor-pointer">
-            <span>📱 ສ້າງບັດ QR Pass</span>
-          </button>
-        </div>
-      </div>
       <div class="flex items-center gap-3 text-[11px] text-slate-400">
         <div class="flex-1 h-px bg-slate-200"></div> ຫຼື <div class="flex-1 h-px bg-slate-200"></div>
       </div>
@@ -12331,29 +12300,22 @@ async function fetchSharedUsers() {
 function defaultAccountUser(d) {
   return normalizeUser({ id: d.uid, username: d.username, password: d.password, fullName: d.name, role: d.role, notes: "ບັນຊີເລີ່ມຕົ້ນ" }, d.uid);
 }
-// ກົດດຽວກັບ ລະບົບຄຸນນະພາບນ້ຳ: ບັນຊີເລີ່ມຕົ້ນ ແລະ QR Pass ໃຊ້ງານໄດ້ຕະຫຼອດ
+// ກົດດຽວກັບ ລະບົບຄຸນນະພາບນ້ຳ: ບັນຊີເລີ່ມຕົ້ນໃຊ້ໄດ້ສະເພາະຕອນທີ່ຍັງບໍ່ມີຜູ້ໃຊ້ສິດນັ້ນ
 function findSharedAccount(users, username, password) {
   const u = users.find((x) => normLogin(x.name || x.username) === normLogin(username) && String(x.password) === password);
   if (u) return { key: u.fbKey, role: u.role, user: normalizeUser({ ...u, id: u.fbKey }, u.fbKey) };
   const d = SHARED_DEFAULTS.find((x) => x.username === normLogin(username) && x.password === password);
-  if (d) return { key: "default:" + d.role, role: d.role, user: defaultAccountUser(d) };
-  try {
-    const qrs = JSON.parse(localStorage.getItem('dwr_custom_qr_users') || '[]');
-    const q = qrs.find(x => normLogin(x.username) === normLogin(username) && String(x.password) === password);
-    if (q) return { key: q.fbKey || ('qr:' + q.username), role: q.role || 'STAFF', user: normalizeUser({ id: q.fbKey || ('qr-' + q.username), username: q.username, fullName: q.fullName || q.username, role: q.role || 'STAFF' }, q.fbKey || ('qr-' + q.username)) };
-  } catch (e) {}
+  if (d && !users.some((x) => x.role === d.role)) return { key: "default:" + d.role, role: d.role, user: defaultAccountUser(d) };
   return null;
 }
 function findBySession(users, sess) {
   if (!sess || !sess.key) return null;
-  if (String(sess.key).startsWith("default:") || String(sess.key).startsWith("qr:")) {
+  if (String(sess.key).startsWith("default:")) {
     const d = SHARED_DEFAULTS.find((x) => "default:" + x.role === sess.key);
-    if (d) return { key: sess.key, role: d.role, user: defaultAccountUser(d) };
-    return { key: sess.key, role: sess.role || 'STAFF', user: normalizeUser({ id: sess.key, username: sess.name || 'user', fullName: sess.name || 'User', role: sess.role || 'STAFF' }, sess.key) };
+    return d && !users.some((x) => x.role === d.role) ? { key: sess.key, role: d.role, user: defaultAccountUser(d) } : null;
   }
   const u = users.find((x) => x.fbKey === sess.key);
-  if (u) return { key: u.fbKey, role: u.role || sess.role, user: normalizeUser({ ...u, id: u.fbKey }, u.fbKey) };
-  return { key: sess.key, role: sess.role || 'STAFF', user: normalizeUser({ id: sess.key, username: sess.name || 'user', fullName: sess.name || 'User', role: sess.role || 'STAFF' }, sess.key) };
+  return u && u.role === sess.role ? { key: u.fbKey, role: u.role, user: normalizeUser({ ...u, id: u.fbKey }, u.fbKey) } : null;
 }
 
 var appMounted = false;

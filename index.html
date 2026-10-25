@@ -16,26 +16,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/phetsarath@5.3.0/400.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/phetsarath@5.3.0/700.css">
 
-  <!-- Global Safety Error Trap -->
-  <script>
-    window.addEventListener('error', function (e) {
-      if (e && (e.message === 'Script error.' || (e.message && e.message.includes('Script error')))) {
-        try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
-      }
-    }, true);
-    window.addEventListener('unhandledrejection', function (e) {
-      if (e && e.reason && String(e.reason).includes('Script error')) {
-        try { e.preventDefault(); } catch (err) {}
-      }
-    });
-  </script>
-
-  <!-- Tailwind CSS v4 & SweetAlert2 with CORS support -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
-
-  <!-- DWR QR Authentication Module (Lazy-loads camera scanner on-demand) -->
-  <script src="dwr-qr-auth.js"></script>
+  <!-- Tailwind CSS v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     @font-face {
@@ -112,10 +95,10 @@
           <img src="assets/laos_ministry_logo.png" alt="ໂລໂກ ກະຊວງກະສິກໍາ ແລະ ສິ່ງແວດລ້ອມ" class="w-full h-full object-contain filter drop-shadow-2xl select-none transition-transform hover:scale-105 duration-300" />
         </div>
         <div class="min-w-0 flex flex-col justify-center">
-          <span data-i18n="ministry" class="text-base sm:text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight whitespace-nowrap">
+          <span data-i18n="ministry" class="text-base sm:text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight">
             ກະຊວງກະສິກໍາ ແລະ ສິ່ງແວດລ້ອມ
           </span>
-          <h1 data-i18n="department" class="text-sm sm:text-xl lg:text-2xl xl:text-3xl font-extrabold text-sky-400 sm:text-sky-300 tracking-wide mt-1 sm:mt-2 whitespace-nowrap">
+          <h1 data-i18n="department" class="text-sm sm:text-xl lg:text-2xl xl:text-3xl font-extrabold text-sky-400 sm:text-sky-300 tracking-wide mt-1 sm:mt-2">
             ກົມຊັບພະຍາກອນນໍ້າ
           </h1>
         </div>
@@ -214,18 +197,6 @@
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
-
-          <!-- ຫ້ອງ ສະແກນ QR ແລະ ສ້າງ QR Pass ປະຈຳລະບົບ -->
-          <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 hover:text-emerald-300 border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສະແກນ QR Code ເຂົ້າສູ່ລະບົບຄຸນນະພາບນໍ້າ">
-              <span class="text-sm">📷</span>
-              <span>ສະແກນ QR</span>
-            </button>
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-indigo-300 hover:text-white border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສ້າງບັດ QR Pass">
-              <span class="text-sm">📱</span>
-              <span>ສ້າງ QR Pass</span>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -270,18 +241,6 @@
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
-
-          <!-- ຫ້ອງ ສະແກນ QR ແລະ ສ້າງ QR Pass ປະຈຳລະບົບ -->
-          <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 hover:text-emerald-300 border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສະແກນ QR Code ເຂົ້າສູ່ລະບົບການນໍາໃຊ້ນໍ້າ">
-              <span class="text-sm">📷</span>
-              <span>ສະແກນ QR</span>
-            </button>
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-indigo-300 hover:text-white border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສ້າງບັດ QR Pass">
-              <span class="text-sm">📱</span>
-              <span>ສ້າງ QR Pass</span>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -326,59 +285,9 @@
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
-
-          <!-- ຫ້ອງ ສະແກນ QR ແລະ ສ້າງ QR Pass ປະຈຳລະບົບ -->
-          <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 hover:text-emerald-300 border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສະແກນ QR Code ເຂົ້າສູ່ລະບົບການປ່ອຍນໍ້າເປື້ອນ">
-              <span class="text-sm">📷</span>
-              <span>ສະແກນ QR</span>
-            </button>
-            <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="flex items-center justify-center gap-1.5 py-2.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-indigo-300 hover:text-white border border-slate-700/80 font-bold transition cursor-pointer active:scale-95 shadow-sm" title="ສ້າງບັດ QR Pass">
-              <span class="text-sm">📱</span>
-              <span>ສ້າງ QR Pass</span>
-            </button>
-          </div>
         </div>
       </div>
 
-    </div>
-
-    <!-- ຫ້ອງ ສະແກນ QR ແລະ ຫ້ອງ ສ້າງ QR Pass (ຕັ້ງຢູ່ລຸ່ມກ້ອງຫ້ອງເຂົ້າສູ່ລະບົບ) -->
-    <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-      <!-- Glow Accent -->
-      <div class="absolute -right-20 -top-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
-        <!-- Text Info -->
-        <div class="space-y-2 text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
-            <span>⚡</span>
-            <span>ລະບົບພິສູດຕົວຕົນດິຈິຕອນ (Instant QR Authentication)</span>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">
-            ຫ້ອງ ສະແກນ QR ແລະ ສ້າງ QR Pass ເຂົ້າສູ່ລະບົບ
-          </h3>
-          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            ຈໍ່ກ້ອງໂທລະສັບ ຫຼື ຄອມພິວເຕີ ສະແກນບັດ QR Code ເພື່ອເຂົ້າສູ່ລະບົບໄດ້ທັນທີ ໂດຍບໍ່ຕ້ອງປ້ອນລະຫັດຜ່ານ, ຫຼື ສ້າງບັດ QR Pass ດິຈິຕອນພ້ອມພິມ ແລະ ດາວໂຫຼດ.
-          </p>
-        </div>
-
-        <!-- Buttons Area (ຫ້ອງ ສະແກນ QR & ຫ້ອງ ສ້າງ QR Pass) -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 shrink-0 w-full lg:w-auto">
-          <!-- ຫ້ອງ ສະແກນ QR -->
-          <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openScanner();" class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm sm:text-base shadow-lg shadow-emerald-600/25 transition cursor-pointer active:scale-95 border border-emerald-400/30">
-            <span class="text-xl">📷</span>
-            <span data-i18n="qrScanBtn">ສະແກນ QR Code</span>
-          </button>
-
-          <!-- ຫ້ອງ ສ້າງ QR Pass -->
-          <button type="button" onclick="if(window.DwrQrAuth) window.DwrQrAuth.openGeneratorModal();" class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-slate-800 hover:bg-slate-750 text-indigo-300 hover:text-white font-black text-sm sm:text-base border border-slate-700 shadow-md transition cursor-pointer active:scale-95">
-            <span class="text-xl">📱</span>
-            <span data-i18n="qrPassBtn">ສ້າງບັດ QR Pass</span>
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- Unified Features & Security Strip (Larger Text) -->
@@ -492,8 +401,6 @@
           footerLink1: "ຄຸນນະພາບນໍ້າ",
           footerLink2: "ການນໍາໃຊ້ນໍ້າ",
           footerLink3: "ການປ່ອຍນໍ້າເປື້ອນ",
-          qrScanBtn: "ສະແກນ QR",
-          qrPassBtn: "ສ້າງ QR Pass",
           logoutSuccess: "ອອກຈາກລະບົບສຳເລັດ"
         },
         en: {
@@ -529,8 +436,6 @@
           footerLink1: "Water Quality",
           footerLink2: "Water Usage",
           footerLink3: "Wastewater",
-          qrScanBtn: "Scan QR",
-          qrPassBtn: "QR Pass",
           logoutSuccess: "Signed out successfully"
         }
       };
@@ -658,20 +563,16 @@
               localStorage.removeItem('lao_water_current_user_v2');
               localStorage.removeItem('lao_wastewater_current_user_v2');
               sessionStorage.removeItem('guestMode');
-              if (window.Swal) {
-                window.Swal.fire({
-                  icon: 'success',
-                  title: dict.logoutSuccess,
-                  timer: 1200,
-                  showConfirmButton: false,
-                  background: '#0f172a',
-                  color: '#f8fafc'
-                }).then(() => {
-                  refreshSessionUI();
-                });
-              } else {
+              Swal.fire({
+                icon: 'success',
+                title: dict.logoutSuccess,
+                timer: 1200,
+                showConfirmButton: false,
+                background: '#0f172a',
+                color: '#f8fafc'
+              }).then(() => {
                 refreshSessionUI();
-              }
+              });
             };
           }
         } else {
@@ -694,7 +595,6 @@
       }
 
       // Initial boot
-      window.refreshSessionUI = refreshSessionUI;
       const initialLang = getCurrentLanguage();
       setLanguage(initialLang);
 
