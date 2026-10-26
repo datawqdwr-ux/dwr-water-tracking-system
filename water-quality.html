@@ -1547,12 +1547,15 @@
 
           <!-- Parameter Values Grid (Live Editable & Reactive) -->
           <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                <span>📊</span> ຂໍ້ມູນຄຸນນະພາບນ້ຳຕົວຈິງທີ່ວັດແທກໄດ້ (ປັບປ່ຽນຄ່າເພື່ອທົດສອບໄດ້):
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+              <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 flex-wrap">
+                <span>📊</span>
+                <span>ຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ໄດ້ປ້ອນເຂົ້າ (ຄ່າວັດແທກຕົວຈິງຈາກສະຖານີ ຫຼື ປັບປ່ຽນເພື່ອທົດສອບທຽບ 5 ປະເພດ):</span>
+                <span id="auditEnteredCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">ກຳລັງໂຫລດ...</span>
               </span>
-              <span class="text-[10px] text-slate-500">
-                ທຽບກັບ: <span id="auditTargetClassBadge" class="font-bold text-indigo-700">ປະເພດ 2: ອຸປະໂພກ-ບໍລິໂພກ</span>
+              <span class="text-[10px] text-slate-500 flex items-center gap-1.5">
+                <span>ທຽບກັບ 5 ປະເພດ (ເກນຫຼັກທີ່ເລືອກ:</span>
+                <span id="auditTargetClassBadge" class="font-bold text-indigo-700">ປະເພດ 2: ອຸປະໂພກ-ບໍລິໂພກ</span><span>)</span>
               </span>
             </div>
 
@@ -1638,9 +1641,9 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2">
           <div class="flex items-center gap-2">
             <h4 class="text-xs font-bold text-slate-800">
-              📋 ຕາຕະລາງລາຍລະອຽດສະຖານີ ແລະ ຈຸດພິກັດທັງໝົດ
+              📋 ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າຂອງທຸກສະຖານີ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ)
             </h4>
-            <span class="text-[10px] text-slate-400">ຄລິກ "🔍 ທຽບຂໍ້ມູນນີ້" ເພື່ອດຶງຂໍ້ມູນຂຶ້ນເຄື່ອງມືທຽບ</span>
+            <span class="text-[10px] text-slate-400">ຄລິກ "🔍 ທຽບ 5 ປະເພດ" ເພື່ອເບິ່ງລາຍລະອຽດ</span>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
@@ -1665,12 +1668,13 @@
           <table class="w-full text-left text-xs border-collapse">
             <thead class="sticky top-0 bg-slate-100 z-10 text-slate-700 font-bold">
               <tr class="border-b border-slate-200">
-                <th class="p-2.5 text-center w-12">ລຳດັບ</th>
-                <th class="p-2.5 min-w-[160px]">ສະຖານີ / ຈຸດເກັບຕົວຢ່າງ</th>
-                <th class="p-2.5 min-w-[130px]">📍 ຈຸດພິກັດ GPS (Lat, Lng)</th>
-                <th class="p-2.5 min-w-[110px]">ອ່າງແມ່ນ້ຳ / ແຂວງ</th>
-                <th class="p-2.5 text-center min-w-[90px]">ສະຖານະກວດສອບ</th>
-                <th class="p-2.5 min-w-[180px]">ຕົວຊີ້ວັດທີ່ເກີນ ຫຼື ຜິດປົກກະຕິ</th>
+                <th class="p-2.5 text-center w-10">ລ/ດ</th>
+                <th class="p-2.5 min-w-[155px]">ສະຖານີ / ຈຸດເກັບຕົວຢ່າງ</th>
+                <th class="p-2.5 min-w-[115px]">📍 ພິກັດ & ແຂວງ</th>
+                <th class="p-2.5 min-w-[210px]">📊 ຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ (ຄ່າວັດແທກຕົວຈິງ)</th>
+                <th class="p-2.5 text-center min-w-[135px]">🎯 ຈັດປະເພດ 5 ປະເພດ (81/ລບ)</th>
+                <th class="p-2.5 text-center min-w-[90px]">ສະຖານະທຽບເກນ</th>
+                <th class="p-2.5 min-w-[160px]">ຕົວຊີ້ວັດທີ່ເກີນ ຫຼື ຜິດປົກກະຕິ</th>
                 <th class="p-2.5 text-center min-w-[100px]">ຈັດການ</th>
               </tr>
             </thead>
@@ -4968,19 +4972,247 @@
     let currentAuditStationList = [];
     let currentAuditFilterStatus = 'ALL';
     let currentAuditSearchResults = [];
+    let auditShowOnlyEnteredParams = false;
 
     const KEY_AUDIT_PARAMS = [
-      { id: 'ph', name: 'pH', unit: 'pH', defaultVal: 7.2, step: '0.1' },
-      { id: 'do', name: 'DO (ລະລາຍອົກຊີ)', unit: 'mg/L', defaultVal: 6.5, step: '0.1' },
-      { id: 'bod5', name: 'BOD₅', unit: 'mg/L', defaultVal: 1.8, step: '0.1' },
-      { id: 'cod', name: 'COD', unit: 'mg/L', defaultVal: 4.5, step: '0.1' },
+      { id: 'ph', name: 'pH (ຄວາມເປັນກົດ-ດ່າງ)', unit: 'pH', defaultVal: 7.2, step: '0.1' },
+      { id: 'do', name: 'DO (ອົກຊີແຊນລະລາຍ)', unit: 'mg/L', defaultVal: 6.5, step: '0.1' },
+      { id: 'bod', name: 'BOD₅ (ຄວາມຕ້ອງການອົກຊີຊີວະເຄມີ)', unit: 'mg/L', defaultVal: 1.8, step: '0.1' },
+      { id: 'cod', name: 'COD (ຄວາມຕ້ອງການອົກຊີເຄມີ)', unit: 'mg/L', defaultVal: 4.5, step: '0.1' },
       { id: 'tss', name: 'TSS (ທາດແຂວນລອຍ)', unit: 'mg/L', defaultVal: 25, step: '1' },
-      { id: 'temp', name: 'ອຸນຫະພູມ (Temp)', unit: '°C', defaultVal: 26.5, step: '0.5' },
-      { id: 'tds', name: 'TDS', unit: 'mg/L', defaultVal: 150, step: '1' },
-      { id: 'no3_n', name: 'Nitrate-N (NO₃)', unit: 'mg/L', defaultVal: 1.2, step: '0.1' },
-      { id: 'nh3_n', name: 'Ammonia-N (NH₃)', unit: 'mg/L', defaultVal: 0.15, step: '0.01' },
-      { id: 'coliform_fecal', name: 'E. coli / Fecal', unit: 'MPN/100mL', defaultVal: 80, step: '5' }
+      { id: 'turbidity', name: 'ຄວາມຂຸ່ນ (Turbidity)', unit: 'NTU', defaultVal: 15, step: '1' },
+      { id: 'ec', name: 'EC (ຄ່າຊັກນຳໄຟຟ້າ)', unit: 'µS/cm', defaultVal: 280, step: '10' },
+      { id: 'tds', name: 'TDS (ທາດລະລາຍທັງໝົດ)', unit: 'mg/L', defaultVal: 150, step: '1' },
+      { id: 'temp', name: 'ອຸນຫະພູມ (Temperature)', unit: '°C', defaultVal: 26.5, step: '0.5' },
+      { id: 'coliform_total', name: 'Total Coliform', unit: 'MPN/100mL', defaultVal: 400, step: '10' },
+      { id: 'coliform_fecal', name: 'Fecal Coliform / E.coli', unit: 'MPN/100mL', defaultVal: 80, step: '5' },
+      { id: 'nh3_n', name: 'Ammonia-N (NH₃-N)', unit: 'mg/L', defaultVal: 0.15, step: '0.01' },
+      { id: 'no3_n', name: 'Nitrate-N (NO₃-N)', unit: 'mg/L', defaultVal: 1.2, step: '0.1' },
+      { id: 'tp', name: 'Total Phosphorus (TP)', unit: 'mg/L', defaultVal: 0.08, step: '0.01' },
+      { id: 'pb', name: 'ຊືນ (Lead - Pb)', unit: 'mg/L', defaultVal: 0.005, step: '0.001' },
+      { id: 'cd', name: 'ແຄັດມຽມ (Cadmium - Cd)', unit: 'mg/L', defaultVal: 0.001, step: '0.001' },
+      { id: 'as', name: 'ສານໜູ (Arsenic - As)', unit: 'mg/L', defaultVal: 0.004, step: '0.001' }
     ];
+
+    function normalizeIndicatorString(str) {
+      if (!str) return '';
+      return String(str)
+        .toLowerCase()
+        .replace(/₅/g, '5')
+        .replace(/₃/g, '3')
+        .replace(/₂/g, '2')
+        .replace(/₄/g, '4')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function doesCandidateMatchStandardParam(candStr, paramDef) {
+      if (!candStr || !paramDef) return false;
+      const norm = normalizeIndicatorString(candStr);
+      if (!norm) return false;
+
+      const pId = normalizeIndicatorString(paramDef.id);
+      const pName = normalizeIndicatorString(paramDef.name);
+      const pEn = normalizeIndicatorString(paramDef.en);
+      if (norm === pId || norm === pName || norm === pEn) return true;
+      if (pId === 'bod' && (norm === 'bod5' || norm === 'bod_5' || norm.includes('bod5') || norm.includes('bod'))) return true;
+
+      const aliases = Array.isArray(paramDef.aliases) ? paramDef.aliases : [];
+      for (const rawAlias of aliases) {
+        const alias = normalizeIndicatorString(rawAlias);
+        if (!alias) continue;
+        if (norm === alias) return true;
+        // For short 2-letter chemical symbols like 'ph', 'do', 'ec', 'tp', 'pb', 'cd', 'as', require word boundary or parentheses match to avoid false positives
+        if (alias.length <= 2) {
+          const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const rx = new RegExp(`(^|[^a-z0-9])${escaped}($|[^a-z0-9])`, 'i');
+          if (rx.test(norm)) return true;
+        } else {
+          if (norm.includes(alias)) return true;
+        }
+      }
+      return false;
+    }
+
+    function resolveEnteredStationParamValue(st, paramDef) {
+      if (!st || !paramDef) return null;
+      const customs = st.customs && typeof st.customs === 'object' ? st.customs : {};
+
+      // 1. Direct ID lookup in st.customs
+      const directKeys = [paramDef.id];
+      if (paramDef.id === 'bod') directKeys.push('bod5', 'BOD5', 'BOD');
+      if (paramDef.id === 'bod5') directKeys.push('bod', 'BOD5', 'BOD');
+
+      for (const dk of directKeys) {
+        if (customs[dk] !== undefined && customs[dk] !== null && customs[dk] !== '' && customs[dk] !== '-') {
+          const n = parseFloat(customs[dk]);
+          if (!isNaN(n)) return n;
+        }
+      }
+
+      // 2. Resolve dynamic custom indicator keys (e.g. custom_174..., master_...) via customIndicators & masterIndicators
+      const allIndDefs = [
+        ...(Array.isArray(customIndicators) ? customIndicators : []),
+        ...(typeof masterIndicators !== 'undefined' && Array.isArray(masterIndicators) ? masterIndicators : [])
+      ];
+
+      for (const k of Object.keys(customs)) {
+        const rawVal = customs[k];
+        if (rawVal === undefined || rawVal === null || rawVal === '' || rawVal === '-') continue;
+        const numVal = parseFloat(rawVal);
+        if (isNaN(numVal)) continue;
+
+        // Check key directly
+        if (doesCandidateMatchStandardParam(k, paramDef)) {
+          return numVal;
+        }
+
+        // Check resolved indicator definition name
+        const indDef = allIndDefs.find(i => i && String(i.key) === String(k));
+        if (indDef && doesCandidateMatchStandardParam(indDef.name, paramDef)) {
+          return numVal;
+        }
+      }
+
+      // 3. Fallback: check direct station property if exists
+      for (const dk of directKeys) {
+        if (st[dk] !== undefined && st[dk] !== null && st[dk] !== '' && st[dk] !== '-') {
+          const n = parseFloat(st[dk]);
+          if (!isNaN(n)) return n;
+        }
+      }
+
+      return null;
+    }
+
+    function extractExtraEnteredStationParams(st) {
+      if (!st || !st.customs || typeof st.customs !== 'object') return [];
+      const allIndDefs = [
+        ...(Array.isArray(customIndicators) ? customIndicators : []),
+        ...(typeof masterIndicators !== 'undefined' && Array.isArray(masterIndicators) ? masterIndicators : [])
+      ];
+      const extras = [];
+      for (const k of Object.keys(st.customs)) {
+        const rawVal = st.customs[k];
+        if (rawVal === undefined || rawVal === null || rawVal === '' || rawVal === '-') continue;
+        const indDef = allIndDefs.find(i => i && String(i.key) === String(k));
+        const displayName = indDef ? indDef.name : k;
+        const displayUnit = indDef ? (indDef.unit || '') : '';
+
+        // Check if this key/indicator already matched any LAO_STANDARD_81 parameter
+        const matchedStd = (LAO_STANDARD_81.parameters || []).some(p =>
+          String(k) === String(p.id) ||
+          (p.id === 'bod' && String(k).toLowerCase() === 'bod5') ||
+          doesCandidateMatchStandardParam(k, p) ||
+          (indDef && doesCandidateMatchStandardParam(indDef.name, p))
+        );
+
+        if (!matchedStd) {
+          extras.push({
+            key: k,
+            name: displayName,
+            unit: displayUnit,
+            val: rawVal
+          });
+        }
+      }
+      return extras;
+    }
+
+    function evaluateSingleValueAgainstLimit(val, lim, unit) {
+      if (val === null || val === undefined || val === '' || isNaN(val)) {
+        return {
+          hasValue: false,
+          status: 'NA',
+          diffLabel: 'ບໍ່ມີຂໍ້ມູນປ້ອນເຂົ້າ',
+          shortLabel: 'ບໍ່ມີຂໍ້ມູນ',
+          badgeColor: 'bg-slate-100 text-slate-400 border-slate-200',
+          cellColor: 'bg-slate-50/50 text-slate-400',
+          badgeIcon: '➖'
+        };
+      }
+      const num = Number(val);
+      if (!lim || (lim.min === null && lim.max === null)) {
+        return {
+          hasValue: true,
+          status: 'PASS',
+          diffLabel: 'ຢູ່ໃນເກນທຳມະຊາດ',
+          shortLabel: 'ຜ່ານ',
+          badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+          cellColor: 'bg-emerald-50/50 text-emerald-800',
+          badgeIcon: '✅'
+        };
+      }
+      if (lim.min !== null && lim.min !== undefined && num < lim.min) {
+        return {
+          hasValue: true,
+          status: 'EXCEED',
+          diffLabel: `ຕ່ຳກວ່າເກນ (-${(lim.min - num).toFixed(2)} ${unit || ''})`,
+          shortLabel: 'ບໍ່ຜ່ານ (ຕ່ຳກວ່າ)',
+          badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+          cellColor: 'bg-rose-50/70 text-rose-800',
+          badgeIcon: '❌'
+        };
+      }
+      if (lim.max !== null && lim.max !== undefined && num > lim.max) {
+        const diff = (num - lim.max).toFixed(2);
+        const pct = lim.max > 0 ? Math.round(((num - lim.max) / lim.max) * 100) : 100;
+        return {
+          hasValue: true,
+          status: 'EXCEED',
+          diffLabel: `ເກີນເກນ (+${diff} ${unit || ''}, +${pct}%)`,
+          shortLabel: 'ເກີນເກນ',
+          badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+          cellColor: 'bg-rose-50/70 text-rose-800',
+          badgeIcon: '❌'
+        };
+      }
+      if (lim.max !== null && lim.max !== undefined && lim.max > 0 && num >= lim.max * 0.9) {
+        const rem = (lim.max - num).toFixed(2);
+        return {
+          hasValue: true,
+          status: 'WARN',
+          diffLabel: `ໃກ້ເກີນເກນ (ເຫຼືອ ${rem} ${unit || ''})`,
+          shortLabel: 'ເຝົ້າລະວັງ',
+          badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+          cellColor: 'bg-amber-50/60 text-amber-800',
+          badgeIcon: '⚠️'
+        };
+      }
+      return {
+        hasValue: true,
+        status: 'PASS',
+        diffLabel: 'ຢູ່ໃນເກນມາດຕະຖານ',
+        shortLabel: 'ຜ່ານ',
+        badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        cellColor: 'bg-emerald-50/50 text-emerald-800',
+        badgeIcon: '✅'
+      };
+    }
+
+    function determineParamBestFitClass81(val, paramDef) {
+      if (val === null || val === undefined || val === '' || isNaN(val) || !paramDef) return null;
+      const num = Number(val);
+      for (let c = 1; c <= 5; c++) {
+        const lim = paramDef.classLimits ? paramDef.classLimits[c] : null;
+        if (!lim) continue;
+        if (lim.min !== null && lim.min !== undefined && num < lim.min) continue;
+        if (lim.max !== null && lim.max !== undefined && num > lim.max) continue;
+        return LAO_STANDARD_81.classes.find(cls => cls.id === c) || null;
+      }
+      return {
+        id: 6,
+        code: 'ເກີນປະເພດ 5',
+        name: 'ເກີນເກນປະເພດ 5 (ນ້ຳເສຍຮຸນແຮງ)',
+        shortUse: 'ຕ້ອງບຳບັດດ່ວນ',
+        icon: '🚨'
+      };
+    }
+
+    function toggleAuditShowOnlyEntered(onlyEntered) {
+      auditShowOnlyEnteredParams = !!onlyEntered;
+      evaluateCurrentAuditComparison();
+    }
 
     function getAllAvailableAuditStations() {
       const dbStations = [];
@@ -5031,12 +5263,23 @@
         }
         if (boxSt) boxSt.classList.add('hidden');
         if (boxCust) boxCust.classList.remove('hidden');
+        // In custom test mode, if inputs are empty, populate default test values
+        KEY_AUDIT_PARAMS.forEach(p => {
+          const input = document.getElementById(`auditParamVal_${p.id}`);
+          if (input && (input.value === '' || input.value === null || input.value === undefined)) {
+            input.value = p.defaultVal;
+          }
+        });
         recalcCustomAuditComparison();
       }
     }
 
     function onAuditCompareClassChange(classVal) {
       currentAuditCompareClass = Number(classVal) || 2;
+      const sel = document.getElementById('auditCompareClassSelect');
+      if (sel && Number(sel.value) !== currentAuditCompareClass) {
+        sel.value = String(currentAuditCompareClass);
+      }
       const b = document.getElementById('auditTargetClassBadge');
       const clsObj = LAO_STANDARD_81.classes.find(c => c.id === currentAuditCompareClass);
       if (b && clsObj) {
@@ -5064,58 +5307,62 @@
           ? 'ທຸກຊຸດຂໍ້ມູນ'
           : (allAvailableRawDatasets.find(d => String(d.key) === String(selectedAuditDatasetKey))?.title || 'ຊຸດຂໍ້ມູນທີ່ເລືອກ');
 
-        if (bar) {
-          bar.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
-              <div>
-                <span class="font-bold text-slate-800">🌐 ທຸກຈຸດພິກັດ (${total} ຈຸດ)</span>
-                <span class="text-slate-400 ml-1.5 font-normal">| ໂໝດສະເລ່ຍ &amp; ທຽບຄຸນນະພາບລວມທຸກຈຸດ</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-2.5 flex-wrap text-[11px] font-mono text-slate-600">
-              <span class="bg-violet-50 text-violet-700 px-2 py-0.5 rounded border border-violet-200 font-sans font-semibold">📁 ${escapeHtml(dsTitle)}</span>
-              <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 font-sans font-semibold">📍 ຈຳນວນ: ${total} ຈຸດ (ມີ GPS ${withGps.length} ຈຸດ)</span>
-              ${withGps.length ? `<span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">📍 ພິກັດໃຈກາງ: ${avgLat}, ${avgLng}</span>` : ''}
-              <span class="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 font-sans font-semibold">⚖️ ທຽບຄ່າສະເລ່ຍທຸກຈຸດ</span>
-            </div>
-          `;
-        }
+        let enteredParamCount = 0;
+        const enteredSummaryChips = [];
 
-        // Calculate average parameter values from all stations
+        // Calculate average parameter values from all stations using actual entered values
         KEY_AUDIT_PARAMS.forEach(p => {
+          const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id);
           let sum = 0;
           let count = 0;
           currentAuditStationList.forEach(st => {
-            if (st.customs) {
-              let v = st.customs[p.id];
-              if (v === undefined || v === null || v === '' || isNaN(v)) {
-                const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id);
-                if (paramObj) {
-                  for (const k of Object.keys(st.customs)) {
-                    const norm = k.toLowerCase().trim();
-                    if (paramObj.aliases.some(a => norm === a || norm.includes(a))) {
-                      const cand = parseFloat(st.customs[k]);
-                      if (!isNaN(cand)) { v = cand; break; }
-                    }
-                  }
-                }
-              }
-              const numVal = parseFloat(v);
-              if (!isNaN(numVal)) {
-                sum += numVal;
-                count++;
-              }
+            const resolved = paramObj ? resolveEnteredStationParamValue(st, paramObj) : null;
+            if (resolved !== null && !isNaN(resolved)) {
+              sum += resolved;
+              count++;
             }
           });
 
           const precision = p.step && p.step.includes('.') ? p.step.split('.')[1].length : 1;
-          const finalVal = count > 0 ? (+(sum / count).toFixed(precision)) : p.defaultVal;
+          const finalVal = count > 0 ? (+(sum / count).toFixed(precision)) : '';
           const input = document.getElementById(`auditParamVal_${p.id}`);
           if (input) {
             input.value = finalVal;
+            input.dataset.isEntered = count > 0 ? '1' : '0';
+          }
+          if (count > 0) {
+            enteredParamCount++;
+            enteredSummaryChips.push(`<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10.5px]"><b>${escapeHtml(p.name.split(' ')[0])}:</b> ${finalVal} ${escapeHtml(p.unit)} <span class="text-[9px] text-emerald-600">(${count} ຈຸດ)</span></span>`);
           }
         });
+
+        if (bar) {
+          bar.innerHTML = `
+            <div class="w-full space-y-2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                  <div>
+                    <span class="font-bold text-slate-800">🌐 ທຸກຈຸດພິກັດ (${total} ຈຸດ)</span>
+                    <span class="text-slate-400 ml-1.5 font-normal">| ຄ່າສະເລ່ຍຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ທຽບກັບ 5 ປະເພດ 81/ລບ</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap text-[11px] font-mono text-slate-600">
+                  <span class="bg-violet-50 text-violet-700 px-2 py-0.5 rounded border border-violet-200 font-sans font-semibold">📁 ${escapeHtml(dsTitle)}</span>
+                  <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 font-sans font-semibold">📍 ຈຳນວນ: ${total} ຈຸດ (GPS ${withGps.length} ຈຸດ)</span>
+                  ${withGps.length ? `<span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">📍 ໃຈກາງ: ${avgLat}, ${avgLng}</span>` : ''}
+                  <span class="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 font-sans font-semibold">📊 ມີຂໍ້ມູນປ້ອນເຂົ້າ ${enteredParamCount} ຕົວຊີ້ວັດ</span>
+                </div>
+              </div>
+              ${enteredSummaryChips.length > 0 ? `
+                <div class="pt-1.5 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
+                  <span class="text-[10.5px] font-bold text-slate-500">📥 ຄ່າສະເລ່ຍຂໍ້ມູນທີ່ປ້ອນເຂົ້າຕົວຈິງ:</span>
+                  ${enteredSummaryChips.join('')}
+                </div>
+              ` : `<div class="pt-1 border-t border-slate-100 text-[11px] text-amber-600">⚠️ ຍັງບໍ່ມີຄ່າວັດແທກທີ່ປ້ອນເຂົ້າໃນຊຸດຂໍ້ມູນນີ້ (ສາມາດປ້ອນຄ່າທົດສອບລຸ່ມນີ້ໄດ້)</div>`}
+            </div>
+          `;
+        }
 
         evaluateCurrentAuditComparison();
         return;
@@ -5131,6 +5378,33 @@
         return;
       }
 
+      let enteredParamCount = 0;
+      const enteredSummaryChips = [];
+
+      // Populate parameter inputs from station customs using accurate indicator lookup
+      KEY_AUDIT_PARAMS.forEach(p => {
+        const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id);
+        const resolved = paramObj ? resolveEnteredStationParamValue(st, paramObj) : null;
+
+        const input = document.getElementById(`auditParamVal_${p.id}`);
+        if (input) {
+          if (resolved !== null && !isNaN(resolved)) {
+            input.value = resolved;
+            input.dataset.isEntered = '1';
+            enteredParamCount++;
+            enteredSummaryChips.push(`<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-[10.5px]"><b>${escapeHtml(p.name.split(' ')[0])}:</b> ${resolved} ${escapeHtml(p.unit)}</span>`);
+          } else {
+            input.value = '';
+            input.dataset.isEntered = '0';
+          }
+        }
+      });
+
+      const extraParams = extractExtraEnteredStationParams(st);
+      extraParams.forEach(ep => {
+        enteredSummaryChips.push(`<span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 font-mono text-[10.5px]"><b>${escapeHtml(ep.name)}:</b> ${escapeHtml(String(ep.val))} ${escapeHtml(ep.unit)}</span>`);
+      });
+
       // Update info bar
       if (barSingle) {
         const hasValidGps = st.lat !== undefined && st.lat !== null && st.lat !== '' && !isNaN(st.lat) && st.lng !== undefined && st.lng !== null && st.lng !== '' && !isNaN(st.lng);
@@ -5139,52 +5413,36 @@
         const dms = hasValidGps ? toDMS(Number(st.lat), Number(st.lng)) : '-';
 
         barSingle.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full ${hasValidGps ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}"></span>
-            <div>
-              <span class="font-bold text-slate-800">${escapeHtml(st.name || 'ສະຖານີ')}</span>
-              <span class="text-slate-400 ml-1.5 font-normal">| ${escapeHtml(st.companyName || '-')}</span>
+          <div class="w-full space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full ${hasValidGps ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}"></span>
+                <div>
+                  <span class="font-bold text-slate-800">${escapeHtml(st.code ? `[${st.code}] ` : '')}${escapeHtml(st.name || 'ສະຖານີ')}</span>
+                  <span class="text-slate-400 ml-1.5 font-normal">| ${escapeHtml(st.companyName || '-')}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap text-[11px] font-mono text-slate-600">
+                <span class="bg-violet-50 text-violet-700 px-2 py-0.5 rounded border border-violet-200 font-sans font-semibold">📁 ${escapeHtml(st.datasetTitle || st.companyName || 'ຊຸດຂໍ້ມູນ')}</span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">📍 WGS84: ${lat}, ${lng}</span>
+                <span class="hidden md:inline bg-slate-100 px-2 py-0.5 rounded border border-slate-200">🧭 ${escapeHtml(dms)}</span>
+                <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 font-sans font-semibold">🌊 ${escapeHtml(st.basin || st.section || 'ແຫຼ່ງນ້ຳ')}</span>
+                <span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded border border-sky-200 font-sans font-semibold">📅 ${escapeHtml(st.sampleDate || '-')}</span>
+              </div>
             </div>
-          </div>
-          <div class="flex items-center gap-2.5 flex-wrap text-[11px] font-mono text-slate-600">
-            <span class="bg-violet-50 text-violet-700 px-2 py-0.5 rounded border border-violet-200 font-sans font-semibold">📁 ${escapeHtml(st.datasetTitle || st.companyName || 'ຊຸດຂໍ້ມູນ')}</span>
-            <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">📍 WGS84: ${lat}, ${lng}</span>
-            <span class="hidden md:inline bg-slate-100 px-2 py-0.5 rounded border border-slate-200">🧭 ${escapeHtml(dms)}</span>
-            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 font-sans font-semibold">🌊 ${escapeHtml(st.basin || st.section || 'ແຫຼ່ງນ້ຳ')}</span>
-            <span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded border border-sky-200 font-sans font-semibold">📅 ${escapeHtml(st.sampleDate || '-')}</span>
+            ${enteredSummaryChips.length > 0 ? `
+              <div class="pt-1.5 border-t border-slate-100 flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10.5px] font-bold text-emerald-700">📥 ຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າຕົວຈິງ (${enteredParamCount + extraParams.length} ຕົວຊີ້ວັດ):</span>
+                ${enteredSummaryChips.join('')}
+              </div>
+            ` : `
+              <div class="pt-1.5 border-t border-slate-100 text-[11px] text-amber-600 font-medium">
+                ⚠️ ສະຖານີນີ້ຍັງບໍ່ມີຄ່າວັດແທກທີ່ປ້ອນເຂົ້າ ຫຼື ທ່ານສາມາດປ້ອນຄ່າໃສ່ຫ້ອງລຸ່ມນີ້ເພື່ອທຽບກັບ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ
+              </div>
+            `}
           </div>
         `;
       }
-
-      // Populate parameter inputs from station customs
-      KEY_AUDIT_PARAMS.forEach(p => {
-        let val = undefined;
-        if (st.customs) {
-          if (st.customs[p.id] !== undefined) {
-            val = st.customs[p.id];
-          } else {
-            // Find by alias
-            const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id);
-            if (paramObj) {
-              for (const k of Object.keys(st.customs)) {
-                const norm = k.toLowerCase().trim();
-                if (paramObj.aliases.some(a => norm === a || norm.includes(a))) {
-                  val = st.customs[k];
-                  break;
-                }
-              }
-            }
-          }
-        }
-        if (val === undefined || val === null || val === '') {
-          val = p.defaultVal;
-        }
-
-        const input = document.getElementById(`auditParamVal_${p.id}`);
-        if (input) {
-          input.value = val;
-        }
-      });
 
       evaluateCurrentAuditComparison();
     }
@@ -5196,28 +5454,28 @@
           basin: 'ອ່າງນ້ຳຕົກຕາດ - ຕົ້ນນ້ຳບໍລິສຸດ',
           lat: 19.8512,
           lng: 102.1384,
-          values: { ph: 7.2, do: 7.5, bod5: 0.8, cod: 2.1, tss: 10, temp: 23.5, tds: 95, no3_n: 0.5, nh3_n: 0.05, coliform_fecal: 20 }
+          values: { ph: 7.2, do: 7.5, bod: 0.8, cod: 2.1, tss: 10, turbidity: 4, ec: 140, temp: 23.5, tds: 95, no3_n: 0.5, nh3_n: 0.05, coliform_total: 120, coliform_fecal: 20, tp: 0.02, pb: 0.001, cd: 0.0005, as: 0.001 }
         },
         potable: {
           name: 'ຈຸດເກັບຕົວຢ່າງ ແຫຼ່ງນ້ຳອຸປະໂພກ-ບໍລິໂພກ (Class 2)',
           basin: 'ອ່າງແມ່ນ້ຳຂອງ (Mekong River Basin)',
           lat: 17.9621,
           lng: 102.6105,
-          values: { ph: 7.4, do: 6.8, bod5: 1.8, cod: 4.2, tss: 28, temp: 27.5, tds: 185, no3_n: 1.2, nh3_n: 0.12, coliform_fecal: 85 }
+          values: { ph: 7.4, do: 6.8, bod: 1.8, cod: 4.2, tss: 22, turbidity: 15, ec: 290, temp: 27.5, tds: 185, no3_n: 1.2, nh3_n: 0.12, coliform_total: 1500, coliform_fecal: 85, tp: 0.06, pb: 0.004, cd: 0.001, as: 0.003 }
         },
         agri: {
           name: 'ຈຸດເກັບຕົວຢ່າງ ແຫຼ່ງນ້ຳຊົນລະປະທານກະສິກຳ (Class 3)',
           basin: 'ອ່າງນ້ຳງື່ມ - ເຂດຊົນລະປະທານ',
           lat: 18.2340,
           lng: 102.6210,
-          values: { ph: 7.8, do: 5.2, bod5: 3.5, cod: 8.8, tss: 48, temp: 28.5, tds: 320, no3_n: 3.8, nh3_n: 0.35, coliform_fecal: 650 }
+          values: { ph: 7.8, do: 5.2, bod: 2.8, cod: 6.5, tss: 35, turbidity: 32, ec: 620, temp: 28.5, tds: 320, no3_n: 2.8, nh3_n: 0.35, coliform_total: 8500, coliform_fecal: 650, tp: 0.18, pb: 0.012, cd: 0.003, as: 0.006 }
         },
         polluted: {
           name: 'ຈຸດເຝົ້າລະວັງ ໃກ້ເຂດລະບາຍນ້ຳເສຍຊຸມຊົນ/ໂຮງງານ (Class 4-5/Alert)',
           basin: 'ຮ່ອງລະບາຍນ້ຳຫຼັກ ເຂດອຸດສາຫະກຳ',
           lat: 17.9150,
           lng: 102.6820,
-          values: { ph: 6.1, do: 3.4, bod5: 6.2, cod: 22.0, tss: 75, temp: 31.0, tds: 820, no3_n: 7.5, nh3_n: 0.85, coliform_fecal: 2500 }
+          values: { ph: 6.1, do: 3.4, bod: 6.2, cod: 18.0, tss: 58, turbidity: 85, ec: 1450, temp: 31.0, tds: 820, no3_n: 4.8, nh3_n: 0.85, coliform_total: 28000, coliform_fecal: 2500, tp: 0.42, pb: 0.03, cd: 0.004, as: 0.009 }
         }
       };
 
@@ -5236,6 +5494,7 @@
         const input = document.getElementById(`auditParamVal_${p.id}`);
         if (input && sel.values[p.id] !== undefined) {
           input.value = sel.values[p.id];
+          input.dataset.isEntered = '1';
         }
       });
 
@@ -5250,26 +5509,44 @@
       const targetClass = currentAuditCompareClass || 2;
       const classInfo = LAO_STANDARD_81.classes.find(c => c.id === targetClass) || LAO_STANDARD_81.classes[1];
 
-      // Read current values from inputs
+      // Read current values from inputs (preserve null when not entered)
       const currentValues = {};
+      let activeEnteredCount = 0;
       KEY_AUDIT_PARAMS.forEach(p => {
         const inp = document.getElementById(`auditParamVal_${p.id}`);
-        const v = inp ? parseFloat(inp.value) : p.defaultVal;
-        currentValues[p.id] = isNaN(v) ? p.defaultVal : v;
+        const rawStr = inp ? String(inp.value).trim() : '';
+        if (rawStr !== '' && !isNaN(parseFloat(rawStr))) {
+          currentValues[p.id] = parseFloat(rawStr);
+          activeEnteredCount++;
+        } else {
+          currentValues[p.id] = null;
+        }
       });
 
-      // Coordinates info
+      const countBadge = document.getElementById('auditEnteredCountBadge');
+      if (countBadge) {
+        if (activeEnteredCount > 0) {
+          countBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+          countBadge.innerText = `ປ້ອນເຂົ້າຕົວຈິງ ${activeEnteredCount} / ${KEY_AUDIT_PARAMS.length} ຕົວຊີ້ວັດ`;
+        } else {
+          countBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+          countBadge.innerText = `ຍັງບໍ່ມີຄ່າວັດແທກທີ່ປ້ອນເຂົ້າ`;
+        }
+      }
+
+      // Coordinates & station metadata
       let coordTitle = '';
       let coordLat = 17.9621;
       let coordLng = 102.6105;
       let coordBasin = 'ອ່າງແມ່ນ້ຳຂອງ';
       let coordProvince = 'ນະຄອນຫຼວງວຽງຈັນ';
+      let activeStationObj = null;
 
       if (currentAuditInspectMode === 'station') {
         if (currentAuditStationIndex === 'ALL') {
           const total = currentAuditStationList.length;
           const withGps = currentAuditStationList.filter(s => s.lat !== undefined && s.lat !== null && s.lat !== '' && !isNaN(s.lat) && s.lng !== undefined && s.lng !== null && s.lng !== '' && !isNaN(s.lng));
-          coordTitle = `ທຸກຈຸດພິກັດ (${total} ຈຸດ) - ຄ່າສະເລ່ຍລວມ`;
+          coordTitle = `ທຸກຈຸດພິກັດ (${total} ຈຸດ) - ຄ່າສະເລ່ຍຂໍ້ມູນທີ່ປ້ອນເຂົ້າ`;
           coordLat = withGps.length ? (withGps.reduce((acc, s) => acc + Number(s.lat), 0) / withGps.length) : 17.9621;
           coordLng = withGps.length ? (withGps.reduce((acc, s) => acc + Number(s.lng), 0) / withGps.length) : 102.6105;
           coordBasin = 'ລວມທຸກຈຸດພິກັດ';
@@ -5277,7 +5554,8 @@
         } else {
           const st = currentAuditStationList[currentAuditStationIndex] || currentAuditStationList[0];
           if (st) {
-            coordTitle = st.name || 'ສະຖານີ';
+            activeStationObj = st;
+            coordTitle = (st.code ? `[${st.code}] ` : '') + (st.name || 'ສະຖານີ');
             coordLat = Number(st.lat) || 17.9621;
             coordLng = Number(st.lng) || 102.6105;
             coordBasin = st.basin || 'ອ່າງແມ່ນ້ຳ';
@@ -5291,120 +5569,188 @@
         coordLng = parseFloat(document.getElementById('customAuditLng')?.value) || 102.6105;
       }
 
-      // Parameter evaluation against targetClass
+      // Evaluate every parameter across ALL 5 CLASSES (ປະເພດ 1 - 5)
       let totalChecked = 0;
       let passCount = 0;
       let warnCount = 0;
       let exceedCount = 0;
       const paramBreakdown = [];
 
+      const classStats = {
+        1: { pass: 0, warn: 0, exceed: 0, checked: 0 },
+        2: { pass: 0, warn: 0, exceed: 0, checked: 0 },
+        3: { pass: 0, warn: 0, exceed: 0, checked: 0 },
+        4: { pass: 0, warn: 0, exceed: 0, checked: 0 },
+        5: { pass: 0, warn: 0, exceed: 0, checked: 0 }
+      };
+
       KEY_AUDIT_PARAMS.forEach(kp => {
         const val = currentValues[kp.id];
+        const hasVal = val !== null && val !== undefined && !isNaN(val);
         const paramDef = LAO_STANDARD_81.parameters.find(x => x.id === kp.id);
         if (!paramDef) return;
 
-        const limit = paramDef.classLimits[targetClass];
-        if (!limit) return;
-
-        totalChecked++;
-        let status = 'PASS';
-        let diffLabel = 'ຢູ່ໃນເກນມາດຕະຖານ';
-        let badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-        let badgeIcon = '✅';
-
-        if (limit.min !== null && limit.min !== undefined && val < limit.min) {
-          status = 'EXCEED';
-          diffLabel = `ຕ່ຳກວ່າເກນ (-${(limit.min - val).toFixed(2)} ${kp.unit})`;
-          badgeColor = 'bg-rose-100 text-rose-800 border-rose-300';
-          badgeIcon = '❌';
-          exceedCount++;
-        } else if (limit.max !== null && limit.max !== undefined && val > limit.max) {
-          status = 'EXCEED';
-          const diff = (val - limit.max).toFixed(2);
-          const pct = Math.round(((val - limit.max) / limit.max) * 100);
-          diffLabel = `ເກີນເກນ (+${diff} ${kp.unit}, +${pct}%)`;
-          badgeColor = 'bg-rose-100 text-rose-800 border-rose-300';
-          badgeIcon = '❌';
-          exceedCount++;
-        } else if (limit.max !== null && limit.max !== undefined && val >= limit.max * 0.9) {
-          status = 'WARN';
-          const remaining = (limit.max - val).toFixed(2);
-          diffLabel = `ໃກ້ເກີນເກນ (ເຫຼືອພຽງ ${remaining} ${kp.unit})`;
-          badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
-          badgeIcon = '⚠️';
-          warnCount++;
-        } else {
-          passCount++;
+        const evalsByClass = {};
+        for (let c = 1; c <= 5; c++) {
+          const limC = paramDef.classLimits[c];
+          const evC = evaluateSingleValueAgainstLimit(val, limC, kp.unit);
+          evalsByClass[c] = { lim: limC, ...evC };
+          if (hasVal) {
+            classStats[c].checked++;
+            if (evC.status === 'PASS') classStats[c].pass++;
+            else if (evC.status === 'WARN') classStats[c].warn++;
+            else if (evC.status === 'EXCEED') classStats[c].exceed++;
+          }
         }
 
-        // Live badge below each input
+        const targetEval = evalsByClass[targetClass];
+        const limit = paramDef.classLimits[targetClass];
+        const paramBestFit = determineParamBestFitClass81(val, paramDef);
+
+        if (hasVal) {
+          totalChecked++;
+          if (targetEval.status === 'PASS') passCount++;
+          else if (targetEval.status === 'WARN') warnCount++;
+          else if (targetEval.status === 'EXCEED') exceedCount++;
+        }
+
+        // Update card styling & live badge below each input
+        const cardWrap = document.getElementById(`auditParamCard_${kp.id}`);
+        if (cardWrap) {
+          cardWrap.className = hasVal
+            ? 'p-2.5 bg-white rounded-xl border-2 border-indigo-200/90 shadow-2xs space-y-1.5 ring-1 ring-indigo-50'
+            : 'p-2.5 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-1.5 opacity-80';
+        }
+
         const miniBadge = document.getElementById(`auditMiniBadge_${kp.id}`);
         if (miniBadge) {
-          miniBadge.className = `text-[9.5px] font-bold px-1.5 py-0.5 rounded text-center border ${badgeColor}`;
-          miniBadge.innerHTML = `${badgeIcon} ${status === 'PASS' ? 'ຜ່ານ' : status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'}`;
+          if (!hasVal) {
+            miniBadge.className = 'text-[9.5px] font-semibold px-1.5 py-0.5 rounded text-center border bg-slate-100 text-slate-400 border-slate-200';
+            miniBadge.innerHTML = '➖ ບໍ່ມີຂໍ້ມູນປ້ອນເຂົ້າ';
+          } else {
+            const bfLabel = paramBestFit ? (paramBestFit.id <= 5 ? `ປະເພດ ${paramBestFit.id}` : 'ເກີນ P5') : '';
+            miniBadge.className = `text-[9.5px] font-bold px-1.5 py-0.5 rounded text-center border ${targetEval.badgeColor}`;
+            miniBadge.innerHTML = `${targetEval.badgeIcon} ${targetEval.status === 'PASS' ? 'ຜ່ານ' : targetEval.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'} ${bfLabel ? `(${bfLabel})` : ''}`;
+          }
         }
 
         paramBreakdown.push({
           param: paramDef,
           kp,
           val,
+          hasVal,
           limit,
-          status,
-          diffLabel,
-          badgeColor,
-          badgeIcon
+          status: targetEval.status,
+          diffLabel: targetEval.diffLabel,
+          badgeColor: targetEval.badgeColor,
+          badgeIcon: targetEval.badgeIcon,
+          evalsByClass,
+          paramBestFit
         });
       });
 
-      // Best-Fit Class Algorithm: determine what class this sample ACTUALLY qualifies for
-      let bestFitClass = 5;
-      for (let c = 1; c <= 5; c++) {
-        let classPass = true;
-        for (const kp of KEY_AUDIT_PARAMS) {
-          const val = currentValues[kp.id];
-          const paramDef = LAO_STANDARD_81.parameters.find(x => x.id === kp.id);
-          if (!paramDef) continue;
-          const lim = paramDef.classLimits[c];
-          if (!lim) continue;
-          if (lim.min !== null && lim.min !== undefined && val < lim.min) {
-            classPass = false;
-            break;
-          }
-          if (lim.max !== null && lim.max !== undefined && val > lim.max) {
-            classPass = false;
+      // Sort paramBreakdown so parameters with entered values appear first!
+      const sortedBreakdown = [...paramBreakdown].sort((a, b) => {
+        if (a.hasVal && !b.hasVal) return -1;
+        if (!a.hasVal && b.hasVal) return 1;
+        return 0;
+      });
+
+      const displayedBreakdown = auditShowOnlyEnteredParams
+        ? sortedBreakdown.filter(pb => pb.hasVal)
+        : sortedBreakdown;
+
+      // Extra custom indicators entered on the station (outside the 17 standard parameters)
+      const extraStationParams = activeStationObj ? extractExtraEnteredStationParams(activeStationObj) : [];
+
+      // Best-Fit Class Algorithm across all entered parameters (1 to 5)
+      let bestFitClass = null;
+      if (totalChecked > 0) {
+        for (let c = 1; c <= 5; c++) {
+          if (classStats[c].exceed === 0) {
+            bestFitClass = c;
             break;
           }
         }
-        if (classPass) {
-          bestFitClass = c;
-          break;
-        }
+        if (bestFitClass === null) bestFitClass = 5;
+      } else {
+        bestFitClass = targetClass;
       }
 
       const bestFitObj = LAO_STANDARD_81.classes.find(c => c.id === bestFitClass) || LAO_STANDARD_81.classes[4];
-      const isOverallPass = exceedCount === 0;
-      const isOverallWarn = exceedCount === 0 && warnCount > 0;
+      const isOverallPass = totalChecked > 0 && exceedCount === 0;
+      const isOverallWarn = totalChecked > 0 && exceedCount === 0 && warnCount > 0;
 
-      // Render Evaluation Result Card
+      // Render Evaluation Result Card with Full 5-Class Comparison
       const resCard = document.getElementById('auditEvaluationResultCard');
       if (resCard) {
         let statusBadge = '';
         let statusTitle = '';
         let statusDesc = '';
 
-        if (isOverallPass && !isOverallWarn) {
-          statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white shadow-xs flex items-center gap-1.5"><span>✅</span> ຜ່ານມາດຕະຖານ 81/ລບ 100%</span>`;
-          statusTitle = `ຄຸນນະພາບນ້ຳຕົວຈິງ ສອດຄ່ອງຕາມເກນ ${escapeHtml(classInfo.name)} (${escapeHtml(classInfo.shortUse)})`;
-          statusDesc = `ທຸກຕົວຊີ້ວັດທີ່ກວດສອບ (${totalChecked} ຕົວຊີ້ວັດ) ຢູ່ໃນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ.`;
+        if (totalChecked === 0) {
+          statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-slate-500 text-white shadow-xs flex items-center gap-1.5"><span>ℹ️</span> ຍັງບໍ່ມີຄ່າວັດແທກທີ່ປ້ອນເຂົ້າ</span>`;
+          statusTitle = `ກະລຸນາເລືອກສະຖານີທີ່ມີຂໍ້ມູນປ້ອນເຂົ້າ ຫຼື ປ້ອນຄ່າວັດແທກເພື່ອທຽບກັບ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ`;
+          statusDesc = `ຕາຕະລາງລຸ່ມນີ້ສະແດງເກນມາດຕະຖານຄຸນນະພາບນ້ຳໜ້າດິນທັງ 5 ປະເພດ (ປະເພດ 1 ຫາ ປະເພດ 5) ຕາມຂໍ້ຕົກລົງ 81/ລບ.`;
+        } else if (isOverallPass && !isOverallWarn) {
+          statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white shadow-xs flex items-center gap-1.5"><span>✅</span> ຜ່ານມາດຕະຖານ ${escapeHtml(classInfo.name)} (100%)</span>`;
+          statusTitle = `ຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ (${totalChecked} ຕົວຊີ້ວັດ) ຜ່ານເກນ ${escapeHtml(classInfo.name)} (${escapeHtml(classInfo.shortUse)})`;
+          statusDesc = `ທຸກຕົວຊີ້ວັດທີ່ໄດ້ປ້ອນເຂົ້າ ແມ່ນຢູ່ໃນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ ແລະ ຈັດຢູ່ໃນຄຸນນະພາບນໍ້າ ${escapeHtml(bestFitObj.name)}.`;
         } else if (isOverallWarn) {
           statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs flex items-center gap-1.5"><span>⚠️</span> ຢູ່ໃນເກນເຝົ້າລະວັງ (${warnCount} ຕົວຊີ້ວັດໃກ້ເກີນ)</span>`;
-          statusTitle = `ຄຸນນະພາບນ້ຳຢູ່ໃນເກນ ${escapeHtml(classInfo.name)} ແຕ່ມີຕົວຊີ້ວັດເຂົ້າໃກ້ຂອບເຂດສູງສຸດ`;
+          statusTitle = `ຂໍ້ມູນທີ່ປ້ອນເຂົ້າຢູ່ໃນເກນ ${escapeHtml(classInfo.name)} ແຕ່ມີຕົວຊີ້ວັດເຂົ້າໃກ້ຂອບເຂດສູງສຸດ`;
           statusDesc = `ຄວນເພີ່ມຄວາມຖີ່ໃນການຕິດຕາມກວດກາ ແລະ ລະມັດລະວັງການປ່ອຍສິ່ງເສດເຫຼືອເພີ່ມເຕີມ.`;
         } else {
-          statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-rose-600 text-white shadow-xs flex items-center gap-1.5"><span>❌</span> ບໍ່ຜ່ານເກນ (${exceedCount} ຕົວຊີ້ວັດເກີນມາດຕະຖານ)</span>`;
-          statusTitle = `ຄຸນນະພາບນ້ຳຕົວຈິງ ເກີນເກນມາດຕະຖານ ${escapeHtml(classInfo.name)}`;
-          statusDesc = `ມີຕົວຊີ້ວັດເກີນຄ່າຈຳກັດສູງສຸດທີ່ອະນຸຍາດ ຕ້ອງມີມາດຕະການຄວບຄຸມ ຫຼື ປັບປຸງຄຸນນະພາບນ້ຳຢ່າງຮີບດ່ວນ.`;
+          statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-rose-600 text-white shadow-xs flex items-center gap-1.5"><span>❌</span> ເກີນເກນ ${escapeHtml(classInfo.name)} (${exceedCount} ຕົວຊີ້ວັດ)</span>`;
+          statusTitle = `ຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ເກີນເກນມາດຕະຖານ ${escapeHtml(classInfo.name)} (${exceedCount}/${totalChecked} ຕົວຊີ້ວັດ)`;
+          statusDesc = `ເມື່ອທຽບກັບການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ ພົບວ່າຈັດຢູ່ໃນລະດັບ ${escapeHtml(bestFitObj.name)} (${escapeHtml(bestFitObj.shortUse)}).`;
         }
+
+        // Build 5-Class Classification Cards HTML
+        const fiveClassesCardsHtml = LAO_STANDARD_81.classes.map(cls => {
+          const stC = classStats[cls.id];
+          const isSelectedTarget = cls.id === targetClass;
+          const isBestFit = totalChecked > 0 && cls.id === bestFitClass;
+          const isPassC = stC.checked > 0 && stC.exceed === 0;
+          const isWarnC = isPassC && stC.warn > 0;
+
+          let cardBadge = '';
+          let borderCls = 'border-slate-200 bg-white';
+          if (stC.checked === 0) {
+            cardBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">ລໍຖ້າຂໍ້ມູນ</span>`;
+          } else if (isPassC && !isWarnC) {
+            cardBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">✅ ຜ່ານເກນ (${stC.pass}/${stC.checked})</span>`;
+            borderCls = 'border-emerald-300 bg-emerald-50/30';
+          } else if (isWarnC) {
+            cardBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">⚠️ ເຝົ້າລະວັງ (${stC.pass}/${stC.checked})</span>`;
+            borderCls = 'border-amber-300 bg-amber-50/30';
+          } else {
+            cardBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">❌ ເກີນເກນ ${stC.exceed} ຕົວຊີ້ວັດ</span>`;
+            borderCls = 'border-rose-200 bg-rose-50/20';
+          }
+
+          if (isSelectedTarget) {
+            borderCls += ' ring-2 ring-indigo-500 shadow-sm';
+          }
+
+          return `
+            <div onclick="onAuditCompareClassChange(${cls.id})" class="p-3 rounded-xl border ${borderCls} transition cursor-pointer hover:shadow-md flex flex-col justify-between gap-1.5 relative">
+              ${isBestFit ? `<span class="absolute -top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-indigo-600 text-white shadow-2xs">🎯 ຈັດຢູ່ປະເພດນີ້</span>` : ''}
+              <div class="flex items-center justify-between gap-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-base">${cls.icon}</span>
+                  <span class="text-xs font-black text-slate-900">${escapeHtml(cls.name)}</span>
+                </div>
+                ${isSelectedTarget ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800">ເກນທີ່ເລືອກ</span>` : ''}
+              </div>
+              <p class="text-[10.5px] text-slate-600 font-medium leading-snug">${escapeHtml(cls.shortUse)}</p>
+              <div class="pt-1 border-t border-slate-100 flex items-center justify-between gap-1">
+                ${cardBadge}
+                <span class="text-[10px] font-mono text-slate-400">${stC.checked > 0 ? `ຜ່ານ ${stC.pass}/${stC.checked}` : '-'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
 
         resCard.innerHTML = `
           <!-- Header Banner -->
@@ -5414,6 +5760,7 @@
                 ${statusBadge}
                 <span class="text-xs font-bold text-slate-700">📍 ${escapeHtml(coordTitle)}</span>
                 <span class="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">(${coordLat.toFixed(4)}, ${coordLng.toFixed(4)})</span>
+                <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">📊 ຂໍ້ມູນປ້ອນເຂົ້າ: ${totalChecked} ຕົວຊີ້ວັດ</span>
               </div>
               <h4 class="text-sm font-bold text-slate-900 mt-1.5">${statusTitle}</h4>
               <p class="text-xs text-slate-500 mt-0.5">${statusDesc}</p>
@@ -5421,73 +5768,169 @@
 
             <!-- Best-fit classification badge -->
             <div class="p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-teal-50 border border-indigo-200/80 text-left shrink-0">
-              <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">🎯 ການຈັດປະເພດຄຸນນະພາບນ້ຳຕົວຈິງ</span>
+              <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">🎯 ການຈັດປະເພດຄຸນນະພາບນໍ້າຕົວຈິງ (5 ປະເພດ 81/ລບ)</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-base">${bestFitObj.icon}</span>
                 <span class="text-xs font-black text-slate-900">${escapeHtml(bestFitObj.name)}</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-white text-indigo-700 font-bold border border-indigo-200">${escapeHtml(bestFitObj.code)}</span>
               </div>
-              <p class="text-[10.5px] text-slate-600 font-medium mt-0.5 max-w-[200px] leading-tight">${escapeHtml(bestFitObj.shortUse)}</p>
+              <p class="text-[10.5px] text-slate-600 font-medium mt-0.5 max-w-[230px] leading-tight">${escapeHtml(bestFitObj.shortUse)}</p>
             </div>
           </div>
 
-          <!-- Parameter Comparison Table -->
-          <div class="overflow-x-auto rounded-xl border border-slate-200 max-h-72">
+          <!-- 5-Class Classification Overview Grid -->
+          <div class="space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <span>🏛️</span>
+                <span>ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ:</span>
+              </span>
+              <span class="text-[10.5px] text-slate-500">ຄລິກໃສ່ບັດປະເພດ 1–5 ເພື່ອປ່ຽນເກນປຽບທຽບຫຼັກ</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+              ${fiveClassesCardsHtml}
+            </div>
+          </div>
+
+          <!-- Table Filter / Header Controls -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-slate-800">📋 ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5):</span>
+              <span class="text-[10.5px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                ມີຂໍ້ມູນປ້ອນເຂົ້າ ${totalChecked} ຕົວຊີ້ວັດ
+              </span>
+            </div>
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg text-[11px] font-bold self-start sm:self-auto">
+              <button type="button" onclick="toggleAuditShowOnlyEntered(false)" class="px-2.5 py-1 rounded transition cursor-pointer ${!auditShowOnlyEnteredParams ? 'bg-white text-indigo-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}">
+                ສະແດງທັງໝົດ (${paramBreakdown.length})
+              </button>
+              <button type="button" onclick="toggleAuditShowOnlyEntered(true)" class="px-2.5 py-1 rounded transition cursor-pointer ${auditShowOnlyEnteredParams ? 'bg-white text-emerald-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}">
+                ສະເພາະຂໍ້ມູນທີ່ປ້ອນເຂົ້າ (${totalChecked})
+              </button>
+            </div>
+          </div>
+
+          <!-- 5-Class Side-by-Side Parameter Comparison Table -->
+          <div class="overflow-x-auto rounded-xl border border-slate-200 max-h-[460px]">
             <table class="w-full text-left text-xs border-collapse">
               <thead class="sticky top-0 bg-slate-100 z-10 text-slate-700 font-bold border-b border-slate-200">
                 <tr>
-                  <th class="p-2.5">ຕົວຊີ້ວັດ (Parameter)</th>
-                  <th class="p-2.5 text-center">ຄ່າວັດແທກຕົວຈິງ</th>
-                  <th class="p-2.5 text-center">ເກນ 81/ລບ (${escapeHtml(classInfo.name)})</th>
-                  <th class="p-2.5 text-center">ສະຖານະ</th>
-                  <th class="p-2.5">ຜົນຕ່າງ / Deviation</th>
-                  <th class="p-2.5 min-w-[140px]">ການນຳໃຊ້ທີ່ອະນຸຍາດ</th>
+                  <th class="p-2.5 text-center w-9">ລ/ດ</th>
+                  <th class="p-2.5 min-w-[150px]">ຕົວຊີ້ວັດ (Parameter)</th>
+                  <th class="p-2.5 text-center min-w-[115px] bg-indigo-50/80 text-indigo-950 border-x border-indigo-200">📥 ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</th>
+                  <th class="p-2 text-center min-w-[92px] ${targetClass === 1 ? 'bg-emerald-100/90 text-emerald-950 border-x border-emerald-300' : ''}">🌿 ປະເພດ 1<br><span class="text-[9.5px] font-normal text-slate-500">ທຳມະຊາດ</span></th>
+                  <th class="p-2 text-center min-w-[92px] ${targetClass === 2 ? 'bg-emerald-100/90 text-emerald-950 border-x border-emerald-300' : ''}">💧 ປະເພດ 2<br><span class="text-[9.5px] font-normal text-slate-500">ອຸປະໂພກ</span></th>
+                  <th class="p-2 text-center min-w-[92px] ${targetClass === 3 ? 'bg-emerald-100/90 text-emerald-950 border-x border-emerald-300' : ''}">🌾 ປະເພດ 3<br><span class="text-[9.5px] font-normal text-slate-500">ກະສິກຳ</span></th>
+                  <th class="p-2 text-center min-w-[92px] ${targetClass === 4 ? 'bg-emerald-100/90 text-emerald-950 border-x border-emerald-300' : ''}">🏭 ປະເພດ 4<br><span class="text-[9.5px] font-normal text-slate-500">ອຸດສາຫະກຳ</span></th>
+                  <th class="p-2 text-center min-w-[92px] ${targetClass === 5 ? 'bg-emerald-100/90 text-emerald-950 border-x border-emerald-300' : ''}">🚢 ປະເພດ 5<br><span class="text-[9.5px] font-normal text-slate-500">ລະບາຍນ້ຳ</span></th>
+                  <th class="p-2.5 text-center min-w-[115px] bg-teal-50/70 text-teal-900 border-x border-teal-200">🎯 ຈັດຢູ່ປະເພດ</th>
+                  <th class="p-2.5 min-w-[150px]">ສະຖານະທຽບເກນ (${escapeHtml(classInfo.name)})</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 bg-white">
-                ${paramBreakdown.map(pb => `
-                  <tr class="hover:bg-slate-50/70 transition">
-                    <td class="p-2.5">
-                      <span class="font-bold text-slate-800">${escapeHtml(pb.param.name)}</span>
-                      <span class="block text-[10px] text-slate-400 font-normal font-mono">${escapeHtml(pb.param.en)} (${escapeHtml(pb.param.unit)})</span>
-                    </td>
-                    <td class="p-2.5 text-center font-bold text-sm font-mono text-slate-900">
-                      ${pb.val} <span class="text-[10px] text-slate-400 font-normal">${escapeHtml(pb.param.unit)}</span>
-                    </td>
-                    <td class="p-2.5 text-center font-mono font-bold text-indigo-700 bg-indigo-50/40">
-                      ${escapeHtml(pb.limit.label)}
-                    </td>
-                    <td class="p-2.5 text-center">
-                      <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${pb.badgeColor}">
-                        ${pb.badgeIcon} ${pb.status === 'PASS' ? 'ຜ່ານ' : pb.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'}
-                      </span>
-                    </td>
-                    <td class="p-2.5 text-[11px] font-medium text-slate-600">
-                      ${escapeHtml(pb.diffLabel)}
-                    </td>
-                    <td class="p-2.5 text-[11px] text-slate-500">
-                      ${escapeHtml(pb.param.note || '-')}
+                ${displayedBreakdown.length > 0 ? displayedBreakdown.map((pb, rIdx) => {
+                  const renderClassCell = (cId) => {
+                    const ev = pb.evalsByClass[cId];
+                    const limLabel = ev && ev.lim ? ev.lim.label : '-';
+                    const isTargetCol = cId === targetClass;
+                    if (!pb.hasVal) {
+                      return `<td class="p-2 text-center font-mono text-[11px] text-slate-500 ${isTargetCol ? 'bg-emerald-50/40 font-bold border-x border-emerald-200' : ''}">${escapeHtml(limLabel)}</td>`;
+                    }
+                    const statusBadgeMini = ev.status === 'PASS'
+                      ? `<span class="inline-block text-[9.5px] font-bold text-emerald-700">✅ ຜ່ານ</span>`
+                      : ev.status === 'WARN'
+                        ? `<span class="inline-block text-[9.5px] font-bold text-amber-700">⚠️ ເຝົ້າລະວັງ</span>`
+                        : `<span class="inline-block text-[9.5px] font-bold text-rose-700">❌ ເກີນ</span>`;
+                    return `
+                      <td class="p-2 text-center font-mono text-[11px] ${ev.cellColor} ${isTargetCol ? 'ring-1 ring-inset ring-emerald-400 font-bold' : ''}">
+                        <div class="font-bold text-slate-800">${escapeHtml(limLabel)}</div>
+                        <div class="mt-0.5">${statusBadgeMini}</div>
+                      </td>
+                    `;
+                  };
+
+                  const bf = pb.paramBestFit;
+                  const bestFitCellHtml = !pb.hasVal
+                    ? `<span class="text-[10.5px] text-slate-400 italic">ບໍ່ມີຂໍ້ມູນ</span>`
+                    : (bf && bf.id <= 5)
+                      ? `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-teal-100 text-teal-900 border border-teal-300 inline-flex items-center gap-1">${bf.icon} ${escapeHtml(bf.name)}</span>`
+                      : `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1">🚨 ເກີນປະເພດ 5</span>`;
+
+                  return `
+                    <tr class="hover:bg-slate-50/80 transition ${pb.hasVal ? 'bg-white' : 'bg-slate-50/40 opacity-75'}">
+                      <td class="p-2.5 text-center font-mono text-slate-400">${rIdx + 1}</td>
+                      <td class="p-2.5">
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-bold text-slate-800">${escapeHtml(pb.param.name)}</span>
+                          ${pb.hasVal ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">ປ້ອນແລ້ວ</span>` : ''}
+                        </div>
+                        <span class="block text-[10px] text-slate-400 font-normal font-mono">${escapeHtml(pb.param.en)} (${escapeHtml(pb.param.unit)})</span>
+                      </td>
+                      <td class="p-2.5 text-center font-bold text-sm font-mono bg-indigo-50/40 border-x border-indigo-100 ${pb.hasVal ? 'text-indigo-950' : 'text-slate-400'}">
+                        ${pb.hasVal ? `${pb.val} <span class="text-[10px] text-slate-500 font-normal">${escapeHtml(pb.param.unit)}</span>` : `<span class="text-[11px] font-sans font-normal italic text-slate-400">ບໍ່ໄດ້ປ້ອນ</span>`}
+                      </td>
+                      ${renderClassCell(1)}
+                      ${renderClassCell(2)}
+                      ${renderClassCell(3)}
+                      ${renderClassCell(4)}
+                      ${renderClassCell(5)}
+                      <td class="p-2.5 text-center bg-teal-50/30 border-x border-teal-100">
+                        ${bestFitCellHtml}
+                      </td>
+                      <td class="p-2.5">
+                        ${pb.hasVal ? `
+                          <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${pb.badgeColor}">
+                              ${pb.badgeIcon} ${pb.status === 'PASS' ? 'ຜ່ານ' : pb.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'}
+                            </span>
+                            <span class="text-[10.5px] font-medium text-slate-600">${escapeHtml(pb.diffLabel)}</span>
+                          </div>
+                        ` : `<span class="text-[10.5px] text-slate-400 italic">- ບໍ່ມີຂໍ້ມູນປ້ອນເຂົ້າ -</span>`}
+                      </td>
+                    </tr>
+                  `;
+                }).join('') : `
+                  <tr>
+                    <td colspan="10" class="p-6 text-center text-slate-400">
+                      ຍັງບໍ່ມີຂໍ້ມູນທີ່ປ້ອນເຂົ້າສຳລັບສະຖານີນີ້ — ຄລິກປຸ່ມ "ສະແດງທັງໝົດ" ຫຼື ປ້ອນຄ່າໃສ່ຫ້ອງຂ້າງເທິງເພື່ອທຽບກັບ 5 ປະເພດ
                     </td>
                   </tr>
-                `).join('')}
+                `}
               </tbody>
             </table>
           </div>
+
+          ${extraStationParams.length > 0 ? `
+            <div class="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 space-y-1.5">
+              <div class="text-[11px] font-bold text-indigo-900 flex items-center gap-1.5">
+                <span>📌</span>
+                <span>ຂໍ້ມູນຕົວຊີ້ວັດເພີ່ມເຕີມທີ່ໄດ້ປ້ອນເຂົ້າໃນສະຖານີນີ້ (ນອກເໜືອຈາກ 17 ຕົວຊີ້ວັດມາດຕະຖານ 81/ລບ):</span>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                ${extraStationParams.map(ep => `
+                  <span class="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-mono text-slate-800 shadow-2xs">
+                    <b class="text-indigo-700">${escapeHtml(ep.name)}:</b> ${escapeHtml(String(ep.val))} <span class="text-[10px] text-slate-500">${escapeHtml(ep.unit)}</span>
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
           <!-- Bottom Action Buttons -->
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
             <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
               <span>🏛️</span>
-              <span>ອ້າງອີງ: ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມ ແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ, ລົງວັນທີ 21 ກຸມພາ 2017</span>
+              <span>ອ້າງອີງ: ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມ ແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ (ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ)</span>
             </div>
 
             <div class="flex items-center gap-2">
               <button type="button" onclick="printAuditPointReport()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                 <span>🖨️</span>
-                <span>ພິມໃບກວດສອບຈຸດພິກັດນີ້</span>
+                <span>ພິມໃບປຽບທຽບ 5 ປະເພດ (81/ລບ)</span>
               </button>
               <button type="button" onclick="exportAuditPointToExcel()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                 <span>📊</span>
-                <span>ສົ່ງອອກ Excel ຈຸດພິກັດ</span>
+                <span>ສົ່ງອອກ Excel (ທຽບ 5 ປະເພດ)</span>
               </button>
             </div>
           </div>
@@ -5500,14 +5943,14 @@
       if (!container) return;
 
       container.innerHTML = KEY_AUDIT_PARAMS.map(p => `
-        <div class="p-2.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs space-y-1.5">
-          <div class="flex items-center justify-between">
+        <div id="auditParamCard_${p.id}" class="p-2.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs space-y-1.5">
+          <div class="flex items-center justify-between gap-1">
             <span class="text-[10.5px] font-bold text-slate-700 truncate" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
-            <span class="text-[9.5px] text-slate-400 font-mono">${escapeHtml(p.unit)}</span>
+            <span class="text-[9.5px] text-slate-400 font-mono shrink-0">${escapeHtml(p.unit)}</span>
           </div>
-          <input type="number" step="${p.step}" id="auditParamVal_${p.id}" value="${p.defaultVal}" oninput="recalcCustomAuditComparison()" class="w-full border border-slate-200 p-1.5 rounded-lg text-xs font-mono font-bold text-slate-800 outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-50/60 text-center">
-          <div id="auditMiniBadge_${p.id}" class="text-[9.5px] font-bold px-1.5 py-0.5 rounded text-center border bg-emerald-100 text-emerald-800 border-emerald-300">
-            ✅ ຜ່ານ
+          <input type="number" step="${p.step}" id="auditParamVal_${p.id}" value="" placeholder="ບໍ່ໄດ້ປ້ອນ" oninput="recalcCustomAuditComparison()" class="w-full border border-slate-200 p-1.5 rounded-lg text-xs font-mono font-bold text-slate-800 placeholder:text-slate-300 placeholder:font-normal outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-50/60 text-center">
+          <div id="auditMiniBadge_${p.id}" class="text-[9.5px] font-bold px-1.5 py-0.5 rounded text-center border bg-slate-100 text-slate-400 border-slate-200">
+            ➖ ລໍຖ້າຂໍ້ມູນ
           </div>
         </div>
       `).join('');
@@ -6050,7 +6493,7 @@
 
       if (currentAuditInspectMode === 'station') {
         if (currentAuditStationIndex === 'ALL') {
-          title = `ທຸກຈຸດພິກັດ (${currentAuditStationList.length} ຈຸດ) - ຄ່າສະເລ່ຍລວມ`;
+          title = `ທຸກຈຸດພິກັດ (${currentAuditStationList.length} ຈຸດ) - ຄ່າສະເລ່ຍຂໍ້ມູນທີ່ປ້ອນເຂົ້າ`;
           basin = 'ລວມທຸກຈຸດພິກັດ';
           province = 'ທຸກພື້ນທີ່';
           const withGps = currentAuditStationList.filter(s => s.lat && s.lng && !isNaN(s.lat) && !isNaN(s.lng));
@@ -6059,7 +6502,7 @@
         } else {
           const st = currentAuditStationList[currentAuditStationIndex] || currentAuditStationList[0];
           if (st) {
-            title = st.name || 'ສະຖານີ';
+            title = (st.code ? `[${st.code}] ` : '') + (st.name || 'ສະຖານີ');
             basin = st.basin || 'ອ່າງແມ່ນ້ຳຂອງ';
             province = st.province || 'ນະຄອນຫຼວງວຽງຈັນ';
             lat = Number(st.lat) || 17.9621;
@@ -6080,32 +6523,48 @@
 
       const rows = KEY_AUDIT_PARAMS.map((kp, idx) => {
         const inp = document.getElementById(`auditParamVal_${kp.id}`);
-        const val = inp ? parseFloat(inp.value) : kp.defaultVal;
+        const rawStr = inp ? String(inp.value).trim() : '';
+        const hasVal = rawStr !== '' && !isNaN(parseFloat(rawStr));
+        const val = hasVal ? parseFloat(rawStr) : null;
         const pDef = LAO_STANDARD_81.parameters.find(x => x.id === kp.id);
         const lim = pDef ? pDef.classLimits[targetClass] : null;
+        const bf = hasVal && pDef ? determineParamBestFitClass81(val, pDef) : null;
 
-        let status = 'ຜ່ານມາດຕະຖານ';
-        let statusColor = '#059669';
-        if (lim) {
+        let status = 'ບໍ່ມີຂໍ້ມູນ';
+        let statusColor = '#64748b';
+        if (hasVal && lim) {
+          status = 'ຜ່ານມາດຕະຖານ';
+          statusColor = '#059669';
           if (lim.min !== null && val < lim.min) {
             status = 'ເກີນເກນ (ຕ່ຳກວ່າ)';
             statusColor = '#dc2626';
           } else if (lim.max !== null && val > lim.max) {
             status = 'ເກີນເກນ (ສູງກວ່າ)';
             statusColor = '#dc2626';
-          } else if (lim.max !== null && val >= lim.max * 0.9) {
+          } else if (lim.max !== null && lim.max > 0 && val >= lim.max * 0.9) {
             status = 'ເຝົ້າລະວັງ';
             statusColor = '#d97706';
           }
         }
+
+        const c1 = pDef && pDef.classLimits[1] ? pDef.classLimits[1].label : '-';
+        const c2 = pDef && pDef.classLimits[2] ? pDef.classLimits[2].label : '-';
+        const c3 = pDef && pDef.classLimits[3] ? pDef.classLimits[3].label : '-';
+        const c4 = pDef && pDef.classLimits[4] ? pDef.classLimits[4].label : '-';
+        const c5 = pDef && pDef.classLimits[5] ? pDef.classLimits[5].label : '-';
 
         return `
           <tr>
             <td style="text-align:center;">${idx + 1}</td>
             <td><b>${escapeHtml(kp.name)}</b></td>
             <td style="text-align:center;">${escapeHtml(kp.unit)}</td>
-            <td style="text-align:center; font-weight:bold;">${val}</td>
-            <td style="text-align:center;">${lim ? escapeHtml(lim.label) : '-'}</td>
+            <td style="text-align:center; font-weight:bold; background:#eef2ff;">${hasVal ? val : 'ບໍ່ໄດ້ປ້ອນ'}</td>
+            <td style="text-align:center;">${escapeHtml(c1)}</td>
+            <td style="text-align:center;">${escapeHtml(c2)}</td>
+            <td style="text-align:center;">${escapeHtml(c3)}</td>
+            <td style="text-align:center;">${escapeHtml(c4)}</td>
+            <td style="text-align:center;">${escapeHtml(c5)}</td>
+            <td style="text-align:center; font-weight:bold;">${bf ? escapeHtml(bf.name) : '-'}</td>
             <td style="text-align:center; font-weight:bold; color:${statusColor};">${status}</td>
           </tr>
         `;
@@ -6119,19 +6578,19 @@
         <html>
         <head>
           <meta charset="utf-8">
-          <title>ໃບລາຍງານຜົນການກວດສອບສະຖານະຄຸນນະພາບນ້ຳ 81/ລບ - ${escapeHtml(title)}</title>
+          <title>ໃບລາຍງານການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າ ກັບ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ - ${escapeHtml(title)}</title>
           <style>
-            body { font-family: 'Noto Sans Lao', Arial, sans-serif; padding: 25px; color: #1e293b; line-height: 1.5; }
-            .header { text-align: center; border-bottom: 2px solid #0284c7; padding-bottom: 12px; margin-bottom: 16px; }
+            body { font-family: 'Noto Sans Lao', Arial, sans-serif; padding: 20px; color: #1e293b; line-height: 1.45; }
+            .header { text-align: center; border-bottom: 2px solid #0284c7; padding-bottom: 10px; margin-bottom: 14px; }
             .national-motto { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
             .ministry { font-size: 14px; font-weight: bold; }
-            .doc-title { font-size: 16px; font-weight: bold; color: #0369a1; margin-top: 10px; }
-            .meta-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; }
-            .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-            table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 20px; }
-            th { background: #e2e8f0; border: 1px solid #94a3b8; padding: 7px; text-align: left; }
-            td { border: 1px solid #cbd5e1; padding: 6px 8px; }
-            .footer { margin-top: 30px; display: flex; justify-content: space-between; font-size: 12px; }
+            .doc-title { font-size: 15px; font-weight: bold; color: #0369a1; margin-top: 8px; }
+            .meta-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 14px; font-size: 11.5px; }
+            .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+            table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 18px; }
+            th { background: #e2e8f0; border: 1px solid #94a3b8; padding: 6px; text-align: center; }
+            td { border: 1px solid #cbd5e1; padding: 5px 6px; }
+            .footer { margin-top: 25px; display: flex; justify-content: space-between; font-size: 11.5px; }
             @media print { body { padding: 0; } }
           </style>
         </head>
@@ -6139,7 +6598,7 @@
           <div class="header">
             <div class="national-motto">ສາທາລະນະລັດ ປະຊາທິປະໄຕ ປະຊາຊົນລາວ<br>ສັນຕິພາບ ເອກະລາດ ປະຊາທິປະໄຕ ເອກະພາບ ວັດທະນະຖາວອນ</div>
             <div class="ministry">ກະຊວງຊັບພະຍາກອນທຳມະຊາດ ແລະ ສິ່ງແວດລ້ອມ<br>ກົມຊັບພະຍາກອນນ້ຳ</div>
-            <div class="doc-title">ໃບຢັ້ງຢືນຜົນການກວດສອບສະຖານະຄຸນນະພາບນ້ຳຕົວຈິງ ທຽບກັບມາດຕະຖານ 81/ລບ</div>
+            <div class="doc-title">ໃບຢັ້ງຢືນຜົນການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ</div>
             <div style="font-size: 11px; color:#64748b; margin-top:4px;">ອີງຕາມ ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມ ແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ, ລົງວັນທີ 21 ກຸມພາ 2017</div>
           </div>
 
@@ -6150,19 +6609,24 @@
               <div><b>🌊 ອ່າງແມ່ນ້ຳ / ແຫຼ່ງນ້ຳ:</b> ${escapeHtml(basin)}</div>
               <div><b>🏛️ ແຂວງ / ສະຖານທີ່:</b> ${escapeHtml(province)}</div>
               <div><b>📅 ວັນທີເກັບຕົວຢ່າງ / ວິເຄາະ:</b> ${escapeHtml(sampleDate)}</div>
-              <div><b>⚖️ ມາດຕະຖານທີ່ໃຊ້ທຽບ:</b> ${escapeHtml(classInfo.name)} (${escapeHtml(classInfo.shortUse)})</div>
+              <div><b>⚖️ ມາດຕະຖານຫຼັກທີ່ໃຊ້ທຽບ:</b> ${escapeHtml(classInfo.name)} (${escapeHtml(classInfo.shortUse)})</div>
             </div>
           </div>
 
           <table>
             <thead>
               <tr>
-                <th style="width:40px; text-align:center;">ລຳດັບ</th>
-                <th>ຕົວກຳນົດຄຸນນະພາບນ້ຳ</th>
-                <th style="width:90px; text-align:center;">ຫົວໜ່ວຍ</th>
-                <th style="width:110px; text-align:center;">ຄ່າວັດແທກຕົວຈິງ</th>
-                <th style="width:110px; text-align:center;">ເກນ 81/ລບ (${escapeHtml(classInfo.name)})</th>
-                <th style="width:130px; text-align:center;">ຜົນການປະເມີນ</th>
+                <th style="width:32px;">ລ/ດ</th>
+                <th style="text-align:left;">ຕົວກຳນົດຄຸນນະພາບນ້ຳ</th>
+                <th style="width:65px;">ຫົວໜ່ວຍ</th>
+                <th style="width:85px;">ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</th>
+                <th>ປະເພດ 1</th>
+                <th>ປະເພດ 2</th>
+                <th>ປະເພດ 3</th>
+                <th>ປະເພດ 4</th>
+                <th>ປະເພດ 5</th>
+                <th>ຈັດຢູ່ປະເພດ</th>
+                <th>ສະຖານະ (${escapeHtml(classInfo.name)})</th>
               </tr>
             </thead>
             <tbody>
@@ -6200,7 +6664,7 @@
 
       if (currentAuditInspectMode === 'station') {
         if (currentAuditStationIndex === 'ALL') {
-          title = `ທຸກຈຸດພິກັດ (${currentAuditStationList.length} ຈຸດ) - ຄ່າສະເລ່ຍລວມ`;
+          title = `ທຸກຈຸດພິກັດ (${currentAuditStationList.length} ຈຸດ) - ຄ່າສະເລ່ຍຂໍ້ມູນທີ່ປ້ອນເຂົ້າ`;
           basin = 'ລວມທຸກຈຸດພິກັດ';
           const withGps = currentAuditStationList.filter(s => s.lat && s.lng && !isNaN(s.lat) && !isNaN(s.lng));
           lat = withGps.length ? Number((withGps.reduce((acc, s) => acc + Number(s.lat), 0) / withGps.length).toFixed(4)) : 17.9621;
@@ -6208,7 +6672,7 @@
         } else {
           const st = currentAuditStationList[currentAuditStationIndex] || currentAuditStationList[0];
           if (st) {
-            title = st.name || 'ສະຖານີ';
+            title = (st.code ? `[${st.code}] ` : '') + (st.name || 'ສະຖານີ');
             basin = st.basin || 'ອ່າງແມ່ນ້ຳ';
             lat = Number(st.lat) || 17.9621;
             lng = Number(st.lng) || 102.6105;
@@ -6225,46 +6689,55 @@
       const classInfo = LAO_STANDARD_81.classes.find(c => c.id === targetClass) || LAO_STANDARD_81.classes[1];
 
       const data = [
-        ['ໃບຢັ້ງຢືນຜົນການກວດສອບສະຖານະຄຸນນະພາບນ້ຳຕົວຈິງ ທຽບກັບມາດຕະຖານ 81/ລບ'],
+        ['ໃບຢັ້ງຢືນຜົນການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ'],
         ['ອີງຕາມ: ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມ ແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ, ລົງວັນທີ 21 ກຸມພາ 2017'],
         [],
         ['ຈຸດເກັບຕົວຢ່າງ / ສະຖານີ:', title],
         ['ພິກັດ Latitude (WGS84):', lat],
         ['ພິກັດ Longitude (WGS84):', lng],
         ['ອ່າງແມ່ນ້ຳ:', basin],
-        ['ມາດຕະຖານທີ່ໃຊ້ທຽບ:', `${classInfo.name} (${classInfo.shortUse})`],
+        ['ມາດຕະຖານຫຼັກທີ່ໃຊ້ທຽບ:', `${classInfo.name} (${classInfo.shortUse})`],
         ['ວັນທີກວດສອບ:', new Date().toLocaleDateString('lo-LA')],
         [],
-        ['ລຳດັບ', 'ຕົວຊີ້ວັດ (Parameter)', 'ຫົວໜ່ວຍ', 'ຄ່າວັດແທກຕົວຈິງ', `ເກນ 81/ລບ (${classInfo.name})`, 'ສະຖານະກວດສອບ']
+        ['ລຳດັບ', 'ຕົວຊີ້ວັດ (Parameter)', 'ຫົວໜ່ວຍ', 'ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ (ຄ່າວັດແທກ)', 'ປະເພດ 1 (ທຳມະຊາດ)', 'ປະເພດ 2 (ອຸປະໂພກ)', 'ປະເພດ 3 (ກະສິກຳ)', 'ປະເພດ 4 (ອຸດສາຫະກຳ)', 'ປະເພດ 5 (ລະບາຍນ້ຳ)', 'ຈັດຢູ່ປະເພດ (81/ລບ)', `ສະຖານະທຽບເກນ (${classInfo.name})`]
       ];
 
       KEY_AUDIT_PARAMS.forEach((kp, idx) => {
         const inp = document.getElementById(`auditParamVal_${kp.id}`);
-        const val = inp ? parseFloat(inp.value) : kp.defaultVal;
+        const rawStr = inp ? String(inp.value).trim() : '';
+        const hasVal = rawStr !== '' && !isNaN(parseFloat(rawStr));
+        const val = hasVal ? parseFloat(rawStr) : null;
         const pDef = LAO_STANDARD_81.parameters.find(x => x.id === kp.id);
         const lim = pDef ? pDef.classLimits[targetClass] : null;
+        const bf = hasVal && pDef ? determineParamBestFitClass81(val, pDef) : null;
 
-        let status = 'ຜ່ານມາດຕະຖານ';
-        if (lim) {
+        let status = 'ບໍ່ມີຂໍ້ມູນປ້ອນເຂົ້າ';
+        if (hasVal && lim) {
+          status = 'ຜ່ານມາດຕະຖານ';
           if (lim.min !== null && val < lim.min) status = 'ເກີນເກນ (ຕ່ຳກວ່າ)';
           else if (lim.max !== null && val > lim.max) status = 'ເກີນເກນ (ສູງກວ່າ)';
-          else if (lim.max !== null && val >= lim.max * 0.9) status = 'ເຝົ້າລະວັງ';
+          else if (lim.max !== null && lim.max > 0 && val >= lim.max * 0.9) status = 'ເຝົ້າລະວັງ';
         }
 
         data.push([
           idx + 1,
           kp.name,
           kp.unit,
-          val,
-          lim ? lim.label : '-',
+          hasVal ? val : 'ບໍ່ໄດ້ປ້ອນ',
+          pDef && pDef.classLimits[1] ? pDef.classLimits[1].label : '-',
+          pDef && pDef.classLimits[2] ? pDef.classLimits[2].label : '-',
+          pDef && pDef.classLimits[3] ? pDef.classLimits[3].label : '-',
+          pDef && pDef.classLimits[4] ? pDef.classLimits[4].label : '-',
+          pDef && pDef.classLimits[5] ? pDef.classLimits[5].label : '-',
+          bf ? bf.name : '-',
           status
         ]);
       });
 
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Audit_Point_81');
-      XLSX.writeFile(wb, `Water_Audit_Point_Decree_81_${Date.now()}.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'Audit_5Classes_81');
+      XLSX.writeFile(wb, `Water_Audit_5Classes_Decree_81_${Date.now()}.xlsx`);
     }
 
     function setAuditStatusFilter(status) {
@@ -6302,7 +6775,7 @@
       if (!tb) return;
 
       if (filtered.length === 0) {
-        tb.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">ບໍ່ພົບສະຖານີທີ່ກົງກັບເງື່ອນໄຂການຄົ້ນຫາ</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">ບໍ່ພົບສະຖານີທີ່ກົງກັບເງື່ອນໄຂການຄົ້ນຫາ</td></tr>`;
         return;
       }
 
@@ -6316,11 +6789,23 @@
           badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-100 text-rose-800 border border-rose-300">❌ ເກີນເກນ</span>`;
         }
 
+        const enteredChipsHtml = (r.enteredParamsList && r.enteredParamsList.length > 0)
+          ? r.enteredParamsList.map(ep => `<span class="inline-block px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-800 text-[10px] font-mono border border-indigo-200 mr-1 mb-1"><b>${escapeHtml(ep.shortName)}:</b> ${ep.val} ${escapeHtml(ep.unit)}</span>`).join('')
+          : '<span class="text-slate-400 text-[11px] italic">- ຍັງບໍ່ມີຄ່າວັດແທກປ້ອນເຂົ້າ -</span>';
+
+        const bfCls = r.bestFitClassObj;
+        const bestFitHtml = bfCls
+          ? `<div class="inline-flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg bg-teal-50 border border-teal-200 text-teal-900">
+               <span class="font-black text-[11px]">${bfCls.icon} ${escapeHtml(bfCls.name)}</span>
+               <span class="text-[9.5px] text-teal-700">${escapeHtml(bfCls.shortUse)}</span>
+             </div>`
+          : '<span class="text-slate-400 text-[10.5px]">-</span>';
+
         const failedHtml = r.failedParams.length > 0
           ? r.failedParams.map(f => `<span class="inline-block px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 text-[10px] font-mono border border-rose-200 mr-1 mb-1">${escapeHtml(f)}</span>`).join('')
-          : '<span class="text-slate-400 text-[11px]">- ຄ່າທຸກຕົວຊີ້ວັດປົກກະຕິ -</span>';
+          : '<span class="text-emerald-700 text-[11px] font-medium">✅ ຢູ່ໃນເກນມາດຕະຖານ</span>';
 
-        const latLngStr = (r.lat !== undefined && r.lat !== null && r.lng !== undefined && r.lng !== null)
+        const latLngStr = (r.lat !== undefined && r.lat !== null && r.lng !== undefined && r.lng !== null && r.lat !== '' && r.lng !== '')
           ? `${Number(r.lat).toFixed(4)}, ${Number(r.lng).toFixed(4)}`
           : '-';
 
@@ -6328,24 +6813,23 @@
           <tr class="hover:bg-slate-50/70 transition">
             <td class="p-2.5 text-center text-slate-400 font-mono">${r.idx}</td>
             <td class="p-2.5 font-bold text-slate-800">
-              ${escapeHtml(r.name)}
+              ${escapeHtml(r.code ? `[${r.code}] ` : '')}${escapeHtml(r.name)}
               <div class="text-[10px] font-normal text-slate-400">📁 ${escapeHtml(r.datasetTitle || r.company)}</div>
             </td>
-            <td class="p-2.5 font-mono text-[11px] text-slate-600">
-              <span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+            <td class="p-2.5 text-[11px] text-slate-600">
+              <div class="font-mono inline-flex items-center gap-1 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">
                 <span>📍</span> ${latLngStr}
-              </span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${escapeHtml(r.basin)} · ${escapeHtml(r.province)}</div>
             </td>
-            <td class="p-2.5 text-slate-600 text-[11px]">
-              <div>${escapeHtml(r.basin)}</div>
-              <div class="text-[10px] text-slate-400">${escapeHtml(r.province)}</div>
-            </td>
+            <td class="p-2.5">${enteredChipsHtml}</td>
+            <td class="p-2.5 text-center">${bestFitHtml}</td>
             <td class="p-2.5 text-center">${badgeHtml}</td>
             <td class="p-2.5">${failedHtml}</td>
             <td class="p-2.5 text-center">
-              <button type="button" onclick="selectStationForAudit(${r.stListIndex})" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] border border-indigo-200 transition cursor-pointer flex items-center justify-center gap-1 mx-auto" title="ດຶງຂໍ້ມູນສະຖານີນີ້ຂຶ້ນເຄື່ອງມືທຽບ">
+              <button type="button" onclick="selectStationForAudit(${r.stListIndex})" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] shadow-2xs transition cursor-pointer flex items-center justify-center gap-1 mx-auto" title="ດຶງຂໍ້ມູນສະຖານີນີ້ຂຶ້ນປຽບທຽບກັບ 5 ປະເພດ 81/ລບ">
                 <span>🔍</span>
-                <span>ທຽບຂໍ້ມູນນີ້</span>
+                <span>ທຽບ 5 ປະເພດ</span>
               </button>
             </td>
           </tr>
@@ -6420,46 +6904,76 @@
       let exceedCount = 0;
 
       const targetClass = selectedStandardClass || 2;
+      currentAuditCompareClass = targetClass;
+      const selCompare = document.getElementById('auditCompareClassSelect');
+      if (selCompare) selCompare.value = String(targetClass);
 
       currentAuditSearchResults = stations.map((st, idx) => {
         let isExceed = false;
         let isWarn = false;
         const failedParams = [];
+        const enteredParamsList = [];
+        const classExceedCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
         LAO_STANDARD_81.parameters.forEach(param => {
-          const lim = param.classLimits[targetClass];
-          if (!lim) return;
+          const val = resolveEnteredStationParamValue(st, param);
+          if (val !== null && !isNaN(val)) {
+            enteredParamsList.push({
+              id: param.id,
+              name: param.name,
+              shortName: param.name.split(' ')[0],
+              val,
+              unit: param.unit || ''
+            });
 
-          let raw = undefined;
-          if (st.customs) {
-            if (st.customs[param.id] !== undefined) {
-              raw = st.customs[param.id];
-            } else {
-              // Alias lookup
-              for (const k of Object.keys(st.customs)) {
-                const norm = k.toLowerCase().trim();
-                if (param.aliases.some(alias => norm === alias || norm.includes(alias))) {
-                  raw = st.customs[k];
-                  break;
-                }
+            // Check across all 5 classes for best-fit classification
+            for (let c = 1; c <= 5; c++) {
+              const limC = param.classLimits[c];
+              if (!limC) continue;
+              if (limC.min !== null && limC.min !== undefined && val < limC.min) classExceedCounts[c]++;
+              else if (limC.max !== null && limC.max !== undefined && val > limC.max) classExceedCounts[c]++;
+            }
+
+            // Check against selected targetClass
+            const lim = param.classLimits[targetClass];
+            if (lim) {
+              if (lim.min !== null && lim.min !== undefined && val < lim.min) {
+                isExceed = true;
+                failedParams.push(`${param.name.split(' ')[0]}: ${val} < ${lim.min} ${param.unit || ''}`);
+              } else if (lim.max !== null && lim.max !== undefined && val > lim.max) {
+                isExceed = true;
+                failedParams.push(`${param.name.split(' ')[0]}: ${val} > ${lim.max} ${param.unit || ''}`);
+              } else if (lim.max !== null && lim.max !== undefined && lim.max > 0 && val >= lim.max * 0.9) {
+                isWarn = true;
               }
             }
           }
+        });
 
-          if (raw !== undefined && raw !== null && raw !== '' && raw !== '-' && !isNaN(raw)) {
-            const val = Number(raw);
-            if (lim.min !== null && lim.min !== undefined && val < lim.min) {
-              isExceed = true;
-              failedParams.push(`${param.name}: ${val} < ${lim.min} ${param.unit || ''}`);
-            }
-            if (lim.max !== null && lim.max !== undefined && val > lim.max) {
-              isExceed = true;
-              failedParams.push(`${param.name}: ${val} > ${lim.max} ${param.unit || ''}`);
-            } else if (lim.max !== null && lim.max !== undefined && val >= lim.max * 0.9) {
-              isWarn = true;
+        // Also include any extra custom indicators entered for this station
+        const extraEntered = extractExtraEnteredStationParams(st);
+        extraEntered.forEach(ep => {
+          enteredParamsList.push({
+            id: ep.key,
+            name: ep.name,
+            shortName: ep.name,
+            val: ep.val,
+            unit: ep.unit || ''
+          });
+        });
+
+        let bestFitClassId = 5;
+        if (enteredParamsList.length > 0) {
+          for (let c = 1; c <= 5; c++) {
+            if (classExceedCounts[c] === 0) {
+              bestFitClassId = c;
+              break;
             }
           }
-        });
+        }
+        const bestFitClassObj = enteredParamsList.length > 0
+          ? (LAO_STANDARD_81.classes.find(cls => cls.id === bestFitClassId) || LAO_STANDARD_81.classes[4])
+          : null;
 
         if (isExceed) exceedCount++;
         else if (isWarn) warnCount++;
@@ -6470,6 +6984,7 @@
           stListIndex: idx,
           datasetKey: st.datasetKey,
           datasetTitle: st.datasetTitle || st.companyName || '-',
+          code: st.code || '',
           name: st.name || `ສະຖານີ ${idx + 1}`,
           company: st.companyName || '-',
           basin: st.basin || st.waterSource || 'ອ່າງແມ່ນ້ຳຂອງ',
@@ -6477,7 +6992,9 @@
           lat: st.lat,
           lng: st.lng,
           status: isExceed ? 'EXCEED' : isWarn ? 'WARN' : 'PASS',
-          failedParams
+          failedParams,
+          enteredParamsList,
+          bestFitClassObj
         };
       });
 
@@ -9388,6 +9905,9 @@
     };
 
     function getStationParamValueForStandard(st, paramDef) {
+      if (typeof resolveEnteredStationParamValue === 'function') {
+        return resolveEnteredStationParamValue(st, paramDef);
+      }
       if (!st || !st.customs) return null;
       if (st.customs[paramDef.id] !== undefined) {
         const v = st.customs[paramDef.id];
@@ -9439,7 +9959,7 @@
           badgeColor = 'bg-rose-100 text-rose-800 border-rose-300';
           badgeIcon = '🚨';
           exceedCount++;
-        } else if (lim.max !== null && lim.max !== undefined && val >= lim.max * 0.9) {
+        } else if (lim.max !== null && lim.max !== undefined && lim.max > 0 && val >= lim.max * 0.9) {
           status = 'WARN';
           diffLabel = `ໃກ້ເກີນຂອບເຂດ (≥ 90% ຂອງເກນ)`;
           badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
@@ -9449,6 +9969,20 @@
           passCount++;
         }
 
+        const evalsByClass = {};
+        for (let c = 1; c <= 5; c++) {
+          const limC = param.classLimits ? param.classLimits[c] : null;
+          evalsByClass[c] = {
+            lim: limC,
+            ...(typeof evaluateSingleValueAgainstLimit === 'function'
+              ? evaluateSingleValueAgainstLimit(val, limC, param.unit)
+              : { status: 'PASS', cellColor: '', badgeIcon: '✅' })
+          };
+        }
+        const paramBestFit = typeof determineParamBestFitClass81 === 'function'
+          ? determineParamBestFitClass81(val, param)
+          : null;
+
         breakdown.push({
           param,
           val,
@@ -9456,7 +9990,9 @@
           status,
           diffLabel,
           badgeColor,
-          badgeIcon
+          badgeIcon,
+          evalsByClass,
+          paramBestFit
         });
       });
 
@@ -9548,6 +10084,7 @@
       const activeClassInfo = LAO_STANDARD_81.classes.find(c => c.id === targetClass) || LAO_STANDARD_81.classes[1];
       const evalRes = evaluateStationForStandardClass(st, targetClass);
       const bestFitCls = findStationBestFitClass(st) || LAO_STANDARD_81.classes[4];
+      const extraEntered = typeof extractExtraEnteredStationParams === 'function' ? extractExtraEnteredStationParams(st) : [];
 
       const classSummaries = [1, 2, 3, 4, 5].map(cId => {
         const clsObj = LAO_STANDARD_81.classes.find(c => c.id === cId);
@@ -9573,24 +10110,24 @@
         statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white shadow-xs flex items-center gap-1.5"><span>✅</span> ຜ່ານເກນ 81/ລບ 100%</span>`;
         statusCardBorder = 'border-emerald-300 ring-2 ring-emerald-200';
         statusCardBg = 'bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50';
-        statusHeadline = `ຄຸນນະພາບນ້ຳຕົວຈິງ ສອດຄ່ອງຕາມເກນ ${activeClassInfo.name} (${activeClassInfo.shortUse})`;
-        statusExplanation = `ທຸກຕົວຊີ້ວັດທີ່ກວດວັດໄດ້ (${evalRes.totalChecked} ຕົວຊີ້ວັດ) ຢູ່ໃນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ.`;
+        statusHeadline = `ຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ສອດຄ່ອງຕາມເກນ ${activeClassInfo.name} (${activeClassInfo.shortUse})`;
+        statusExplanation = `ທຸກຕົວຊີ້ວັດທີ່ປ້ອນເຂົ້າ (${evalRes.totalChecked} ຕົວຊີ້ວັດ) ຢູ່ໃນເກນມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ.`;
       } else if (evalRes.isWarn) {
         statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs flex items-center gap-1.5"><span>⚠️</span> ຢູ່ໃນເກນເຝົ້າລະວັງ (${evalRes.warnCount} ຕົວຊີ້ວັດໃກ້ເກີນ)</span>`;
         statusCardBorder = 'border-amber-300 ring-2 ring-amber-200';
         statusCardBg = 'bg-gradient-to-br from-amber-50/90 via-white to-orange-50/50';
-        statusHeadline = `ຄຸນນະພາບນ້ຳຢູ່ໃນເກນ ${activeClassInfo.name} ແຕ່ມີຕົວຊີ້ວັດເຂົ້າໃກ້ຂອບເຂດສູງສຸດ`;
+        statusHeadline = `ຂໍ້ມູນຄຸນນະພາບນໍ້າຢູ່ໃນເກນ ${activeClassInfo.name} ແຕ່ມີຕົວຊີ້ວັດເຂົ້າໃກ້ຂອບເຂດສູງສຸດ`;
         statusExplanation = `ມີ ${evalRes.warnCount} ຕົວຊີ້ວັດມີຄ່າເຂົ້າໃກ້ຂອບເຂດສູງສຸດ (≥ 90% ຂອງເກນ) ຄວນເພີ່ມຄວາມຖີ່ໃນການຕິດຕາມກວດກາ.`;
       } else {
         statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-black bg-rose-600 text-white shadow-xs flex items-center gap-1.5"><span>🚨</span> ບໍ່ຜ່ານເກນ (${evalRes.exceedCount} ຕົວຊີ້ວັດເກີນມາດຕະຖານ)</span>`;
         statusCardBorder = 'border-rose-300 ring-2 ring-rose-200';
         statusCardBg = 'bg-gradient-to-br from-rose-50/90 via-white to-amber-50/50';
-        statusHeadline = `ຄຸນນະພາບນ້ຳຕົວຈິງ ເກີນເກນມາດຕະຖານ ${activeClassInfo.name}`;
+        statusHeadline = `ຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ເກີນເກນມາດຕະຖານ ${activeClassInfo.name}`;
         statusExplanation = `ພົບ ${evalRes.exceedCount} ຕົວຊີ້ວັດເກີນຄ່າຈຳກັດສູງສຸດ ຫຼື ຕ່ຳກວ່າຄ່າຕ່ຳສຸດ ທີ່ກຳນົດໃນຂໍ້ຕົກລົງ 81/ລບ.`;
       }
 
       modal.innerHTML = `
-        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-5xl w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-6xl w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
           
           <!-- Header -->
           <div class="px-5 py-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between border-b border-indigo-800/40 shrink-0">
@@ -9601,7 +10138,7 @@
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <h3 class="font-bold text-sm sm:text-base text-white tracking-tight">
-                    ສົມທຽບຄຸນນະພາບນ້ຳກັບມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ
+                    ການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ
                   </h3>
                   <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono">
                     ຂໍ້ຕົກລົງ 81/ລບ
@@ -9626,7 +10163,7 @@
           <div class="bg-slate-100 p-2.5 border-b border-slate-200 shrink-0 overflow-x-auto">
             <div class="flex items-center gap-2 min-w-max">
               <span class="text-[11px] font-bold text-slate-500 px-1 flex items-center gap-1">
-                <span>🎯</span> <span>ເລືອກປະເພດມາດຕະຖານ:</span>
+                <span>🎯</span> <span>ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ):</span>
               </span>
               ${classSummaries.map(cs => {
                 const isSelected = cs.id === targetClass;
@@ -9634,7 +10171,7 @@
                 let badgeText = '';
                 if (cs.isPass && !cs.isWarn) {
                   badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                  badgeText = '✅ ຜ່ານ';
+                  badgeText = `✅ ຜ່ານ (${cs.passCount})`;
                 } else if (cs.isWarn) {
                   badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
                   badgeText = `⚠️ ໃກ້ເກີນ (${cs.warnCount})`;
@@ -9677,7 +10214,7 @@
 
                 <!-- Best Fit Classification -->
                 <div class="p-3 rounded-xl bg-white/90 border border-slate-200 shadow-2xs shrink-0 text-left">
-                  <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">🎯 ການຈັດປະເພດຕົວຈິງຕາມມາດຕະຖານ 81/ລບ:</span>
+                  <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">🎯 ການຈັດປະເພດຕົວຈິງຕາມ 5 ປະເພດ (81/ລບ):</span>
                   <div class="flex items-center gap-1.5 mt-0.5">
                     <span class="text-lg">${bestFitCls.icon}</span>
                     <span class="text-xs sm:text-sm font-black text-slate-900">${escAttr(bestFitCls.name)}</span>
@@ -9692,7 +10229,7 @@
               <!-- Metrics Stats -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
                 <div class="bg-white/80 p-2.5 rounded-xl border border-slate-200">
-                  <span class="text-[10.5px] text-slate-500 font-semibold block">ຕົວຊີ້ວັດທີ່ກວດວັດ</span>
+                  <span class="text-[10.5px] text-slate-500 font-semibold block">ຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ</span>
                   <span class="text-lg font-black text-slate-800 font-mono">${evalRes.totalChecked}</span>
                   <span class="text-[10px] text-slate-400 ml-1">ຕົວຊີ້ວັດ</span>
                 </div>
@@ -9714,68 +10251,105 @@
               </div>
             </div>
 
-            <!-- Detailed Parameter Comparison Table -->
+            <!-- Detailed Parameter Comparison Table Across All 5 Classes -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden space-y-2">
               <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs sm:text-sm">
-                    <span>📋</span> <span>ຕາຕະລາງຜົນການສົມທຽບຕົວຊີ້ວັດລາຍລະອຽດ (Decree 81/PM Matrix)</span>
+                    <span>📋</span> <span>ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ (ຂໍ້ຕົກລົງ 81/ລບ)</span>
                   </span>
                   <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
                     ${evalRes.breakdown.length} ຕົວຊີ້ວັດ
                   </span>
                 </div>
-                <span class="text-[11px] text-slate-500 hidden sm:inline">ມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ 21 ກຸມພາ 2017</span>
+                <span class="text-[11px] text-slate-500 hidden sm:inline">ມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ 81/ລບ (21 ກຸມພາ 2017)</span>
               </div>
 
-              <div class="overflow-x-auto max-h-80">
+              <div class="overflow-x-auto max-h-96">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead class="sticky top-0 bg-slate-100 z-10 text-slate-700 font-bold border-b border-slate-200">
                     <tr>
-                      <th class="p-2.5 text-center w-10">ລຳດັບ</th>
-                      <th class="p-2.5 min-w-[160px]">ຕົວຊີ້ວັດ (Parameter)</th>
-                      <th class="p-2.5 text-center min-w-[100px]">ຄ່າວັດແທກຕົວຈິງ</th>
-                      <th class="p-2.5 text-center min-w-[120px]">ເກນ 81/ລບ (${escAttr(activeClassInfo.name)})</th>
-                      <th class="p-2.5 text-center min-w-[95px]">ສະຖານະ</th>
-                      <th class="p-2.5 min-w-[130px]">ສ່ວນຕ່າງ / ຜົນການປະເມີນ</th>
-                      <th class="p-2.5 min-w-[160px]">ຂໍ້ແນະນຳ & ການນຳໃຊ້ທີ່ອະນຸຍາດ</th>
+                      <th class="p-2.5 text-center w-9">ລ/ດ</th>
+                      <th class="p-2.5 min-w-[150px]">ຕົວຊີ້ວັດ (Parameter)</th>
+                      <th class="p-2.5 text-center min-w-[110px] bg-indigo-50 text-indigo-950 border-x border-indigo-200">📥 ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</th>
+                      <th class="p-2 text-center min-w-[88px] ${targetClass === 1 ? 'bg-emerald-100 text-emerald-950' : ''}">🌿 ປະເພດ 1</th>
+                      <th class="p-2 text-center min-w-[88px] ${targetClass === 2 ? 'bg-emerald-100 text-emerald-950' : ''}">💧 ປະເພດ 2</th>
+                      <th class="p-2 text-center min-w-[88px] ${targetClass === 3 ? 'bg-emerald-100 text-emerald-950' : ''}">🌾 ປະເພດ 3</th>
+                      <th class="p-2 text-center min-w-[88px] ${targetClass === 4 ? 'bg-emerald-100 text-emerald-950' : ''}">🏭 ປະເພດ 4</th>
+                      <th class="p-2 text-center min-w-[88px] ${targetClass === 5 ? 'bg-emerald-100 text-emerald-950' : ''}">🚢 ປະເພດ 5</th>
+                      <th class="p-2.5 text-center min-w-[115px] bg-teal-50 text-teal-900 border-x border-teal-200">🎯 ຈັດຢູ່ປະເພດ</th>
+                      <th class="p-2.5 min-w-[140px]">ສະຖານະທຽບເກນ (${escAttr(activeClassInfo.name)})</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100 bg-white">
-                    ${evalRes.breakdown.length > 0 ? evalRes.breakdown.map((pb, idx) => `
-                      <tr class="hover:bg-slate-50/80 transition">
-                        <td class="p-2.5 text-center font-bold text-slate-400 font-mono">${idx + 1}</td>
-                        <td class="p-2.5">
-                          <span class="font-bold text-slate-800">${escAttr(pb.param.name)}</span>
-                          <span class="block text-[10px] text-slate-400 font-mono">${escAttr(pb.param.en)} (${escAttr(pb.param.unit)})</span>
-                        </td>
-                        <td class="p-2.5 text-center font-mono font-bold text-sm ${pb.status === 'EXCEED' ? 'text-rose-600 bg-rose-50/50' : pb.status === 'WARN' ? 'text-amber-700 bg-amber-50/40' : 'text-slate-900'}">
-                          ${pb.val} <span class="text-[10px] text-slate-400 font-normal">${escAttr(pb.param.unit)}</span>
-                        </td>
-                        <td class="p-2.5 text-center font-mono font-bold text-indigo-700 bg-indigo-50/40">
-                          ${escAttr(pb.lim.label)}
-                        </td>
-                        <td class="p-2.5 text-center whitespace-nowrap">
-                          <span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${pb.badgeColor}">
-                            ${pb.badgeIcon} ${pb.status === 'PASS' ? 'ຜ່ານ' : pb.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'}
-                          </span>
-                        </td>
-                        <td class="p-2.5 text-[11px] font-medium ${pb.status === 'EXCEED' ? 'text-rose-700 font-bold' : pb.status === 'WARN' ? 'text-amber-800' : 'text-slate-600'}">
-                          ${escAttr(pb.diffLabel)}
-                        </td>
-                        <td class="p-2.5 text-[10.5px] text-slate-500 leading-tight">
-                          ${escAttr(pb.param.note || '-')}
-                        </td>
-                      </tr>
-                    `).join('') : `
+                    ${evalRes.breakdown.length > 0 ? evalRes.breakdown.map((pb, idx) => {
+                      const renderModalClassCell = (cId) => {
+                        const ev = pb.evalsByClass ? pb.evalsByClass[cId] : null;
+                        const limLabel = ev && ev.lim ? ev.lim.label : (pb.param.classLimits[cId]?.label || '-');
+                        const isSel = cId === targetClass;
+                        const stIcon = ev ? (ev.status === 'PASS' ? '✅ ຜ່ານ' : ev.status === 'WARN' ? '⚠️ ເຝົ້າລະວັງ' : '❌ ເກີນ') : '';
+                        const cellBg = ev ? ev.cellColor : '';
+                        return `
+                          <td class="p-2 text-center font-mono text-[11px] ${cellBg} ${isSel ? 'ring-1 ring-inset ring-emerald-400 font-bold' : ''}">
+                            <div class="font-bold text-slate-800">${escAttr(limLabel)}</div>
+                            <div class="text-[9.5px] font-bold mt-0.5">${stIcon}</div>
+                          </td>
+                        `;
+                      };
+
+                      const bf = pb.paramBestFit;
+                      const bfHtml = bf && bf.id <= 5
+                        ? `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-teal-100 text-teal-900 border border-teal-300 inline-flex items-center gap-1">${bf.icon} ${escAttr(bf.name)}</span>`
+                        : `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🚨 ເກີນປະເພດ 5</span>`;
+
+                      return `
+                        <tr class="hover:bg-slate-50/80 transition">
+                          <td class="p-2.5 text-center font-bold text-slate-400 font-mono">${idx + 1}</td>
+                          <td class="p-2.5">
+                            <span class="font-bold text-slate-800">${escAttr(pb.param.name)}</span>
+                            <span class="block text-[10px] text-slate-400 font-mono">${escAttr(pb.param.en)} (${escAttr(pb.param.unit)})</span>
+                          </td>
+                          <td class="p-2.5 text-center font-mono font-bold text-sm bg-indigo-50/40 border-x border-indigo-100 ${pb.status === 'EXCEED' ? 'text-rose-600' : pb.status === 'WARN' ? 'text-amber-700' : 'text-indigo-950'}">
+                            ${pb.val} <span class="text-[10px] text-slate-500 font-normal">${escAttr(pb.param.unit)}</span>
+                          </td>
+                          ${renderModalClassCell(1)}
+                          ${renderModalClassCell(2)}
+                          ${renderModalClassCell(3)}
+                          ${renderModalClassCell(4)}
+                          ${renderModalClassCell(5)}
+                          <td class="p-2.5 text-center bg-teal-50/30 border-x border-teal-100">${bfHtml}</td>
+                          <td class="p-2.5">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${pb.badgeColor}">
+                                ${pb.badgeIcon} ${pb.status === 'PASS' ? 'ຜ່ານ' : pb.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ'}
+                              </span>
+                              <span class="text-[10.5px] font-medium text-slate-600">${escAttr(pb.diffLabel)}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('') : `
                       <tr>
-                        <td colspan="7" class="p-8 text-center text-slate-400">ບໍ່ມີຂໍ້ມູນພາຣາມິເຕີທີ່ສາມາດທຽບກັບມາດຕະຖານ 81/ລບ ໄດ້</td>
+                        <td colspan="10" class="p-8 text-center text-slate-400">ບໍ່ມີຂໍ້ມູນພາຣາມິເຕີທີ່ປ້ອນເຂົ້າໃນສະຖານີນີ້</td>
                       </tr>
                     `}
                   </tbody>
                 </table>
               </div>
             </div>
+
+            ${extraEntered.length > 0 ? `
+              <div class="bg-indigo-50/70 p-3 rounded-xl border border-indigo-200 space-y-1.5">
+                <span class="font-bold text-indigo-900 text-[11px] block">📌 ຂໍ້ມູນຕົວຊີ້ວັດເພີ່ມເຕີມທີ່ໄດ້ປ້ອນເຂົ້າໃນສະຖານີນີ້:</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                  ${extraEntered.map(ep => `
+                    <span class="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-xs font-mono text-slate-800">
+                      <b class="text-indigo-700">${escAttr(ep.name)}:</b> ${escAttr(String(ep.val))} ${escAttr(ep.unit)}
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
 
             <!-- Standard Reference Legal Footnote -->
             <div class="bg-indigo-50/60 p-3 rounded-xl border border-indigo-200 text-[11px] text-indigo-900 space-y-1">
@@ -9798,11 +10372,11 @@
               </button>
               <button type="button" onclick="printStationStandardComparison()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                 <span>🖨️</span>
-                <span>ພິມໃບສົມທຽບ 81/ລບ</span>
+                <span>ພິມໃບສົມທຽບ 5 ປະເພດ (81/ລບ)</span>
               </button>
               <button type="button" onclick="exportStationStandardComparisonToExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                 <span>📊</span>
-                <span>ສົ່ງອອກ Excel</span>
+                <span>ສົ່ງອອກ Excel (ທຽບ 5 ປະເພດ)</span>
               </button>
             </div>
             <button type="button" onclick="closeStationStandardComparisonModal()" class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition cursor-pointer">
@@ -9876,17 +10450,20 @@
             <b>${escAttr(pb.param.name)}</b>
             <div style="font-size:10px; color:#64748b;">${escAttr(pb.param.en)}</div>
           </td>
-          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; font-family:monospace; font-size:13px; color:${pb.status === 'EXCEED' ? '#dc2626' : pb.status === 'WARN' ? '#d97706' : '#1e293b'};">
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; font-family:monospace; font-size:12px; background:#eef2ff; color:${pb.status === 'EXCEED' ? '#dc2626' : pb.status === 'WARN' ? '#d97706' : '#1e293b'};">
             ${pb.val} ${escAttr(pb.param.unit)}
           </td>
-          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace; font-weight:bold; background:#eef2ff; color:#3730a3;">
-            ${escAttr(pb.lim.label)}
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace;">${escAttr(pb.param.classLimits[1]?.label || '-')}</td>
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace;">${escAttr(pb.param.classLimits[2]?.label || '-')}</td>
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace;">${escAttr(pb.param.classLimits[3]?.label || '-')}</td>
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace;">${escAttr(pb.param.classLimits[4]?.label || '-')}</td>
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-family:monospace;">${escAttr(pb.param.classLimits[5]?.label || '-')}</td>
+          <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; background:#f0fdfa;">
+            ${pb.paramBestFit ? escAttr(pb.paramBestFit.name) : '-'}
           </td>
           <td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:${pb.status === 'EXCEED' ? '#dc2626' : pb.status === 'WARN' ? '#d97706' : '#15803d'};">
             ${pb.status === 'PASS' ? '✅ ຜ່ານ' : pb.status === 'WARN' ? '⚠️ ເຝົ້າລະວັງ' : '🚨 ເກີນເກນ'}
           </td>
-          <td style="padding:6px; border:1px solid #cbd5e1; font-size:11px;">${escAttr(pb.diffLabel)}</td>
-          <td style="padding:6px; border:1px solid #cbd5e1; font-size:11px; color:#64748b;">${escAttr(pb.param.note || '-')}</td>
         </tr>
       `).join('');
 
@@ -9895,14 +10472,14 @@
         <html>
         <head>
           <meta charset="utf-8">
-          <title>ໃບສົມທຽບຄຸນນະພາບນ້ຳກັບມາດຕະຖານແຫ່ງຊາດ 81/ລບ</title>
+          <title>ໃບສົມທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ</title>
           <style>
-            body { font-family: 'Noto Sans Lao', sans-serif, system-ui; padding: 25px; color: #1e293b; line-height: 1.4; }
+            body { font-family: 'Noto Sans Lao', sans-serif, system-ui; padding: 20px; color: #1e293b; line-height: 1.4; }
             h2, h3, h4, p { margin: 0 0 4px 0; }
-            table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 15px; }
-            th { background: #f1f5f9; padding: 7px; border: 1px solid #cbd5e1; text-align: left; }
+            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 14px; }
+            th { background: #f1f5f9; padding: 6px; border: 1px solid #cbd5e1; text-align: center; }
             .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; }
-            .footer-sign { margin-top: 35px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+            .footer-sign { margin-top: 30px; display: flex; justify-content: space-between; page-break-inside: avoid; }
             @media print {
               button { display: none; }
             }
@@ -9913,7 +10490,7 @@
             <h3>ສາທາລະນະລັດ ປະຊາທິປະໄຕ ປະຊາຊົນລາວ</h3>
             <p>ສັນຕິພາບ ເອກະລາດ ປະຊາທິປະໄຕ ເອກະພາບ ວັດທະນະຖາວອນ</p>
             <div style="margin: 8px 0; font-size:12px; color:#64748b;">---===***===---</div>
-            <h2>ໃບຢັ້ງຢືນຜົນການສົມທຽບຄຸນນະພາບນ້ຳຕົວຈິງ ທຽບກັບມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ</h2>
+            <h2>ໃບຢັ້ງຢືນຜົນການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ</h2>
             <h4 style="color:#0284c7;">ອີງຕາມຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ, ລົງວັນທີ 21 ກຸມພາ 2017</h4>
           </div>
 
@@ -9932,24 +10509,27 @@
             </tr>
             <tr style="background:#eef2ff;">
               <td style="padding:6px; border:none;"><b>ມາດຕະຖານທີ່ໃຊ້ທຽບ:</b> <span class="badge" style="background:#4338ca; color:white;">${escAttr(classInfo.name)}: ${escAttr(classInfo.title)}</span></td>
-              <td style="padding:6px; border:none;"><b>ການຈັດປະເພດຄຸນນະພາບຕົວຈິງ:</b> <span class="badge" style="background:#059669; color:white;">${escAttr(bestFitCls.name)}: ${escAttr(bestFitCls.shortUse)}</span></td>
+              <td style="padding:6px; border:none;"><b>ການຈັດປະເພດຄຸນນະພາບຕົວຈິງ (5 ປະເພດ):</b> <span class="badge" style="background:#059669; color:white;">${escAttr(bestFitCls.name)}: ${escAttr(bestFitCls.shortUse)}</span></td>
             </tr>
           </table>
 
           <div style="background:#f1f5f9; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:bold;">
-            ສະຫຼຸບຜົນ: ກວດວັດທັງໝົດ ${evalRes.totalChecked} ຕົວຊີ້ວັດ | ຜ່ານ ${evalRes.passCount} | ເຝົ້າລະວັງ ${evalRes.warnCount} | ເກີນເກນ ${evalRes.exceedCount}
+            ສະຫຼຸບຜົນ: ຂໍ້ມູນທີ່ປ້ອນເຂົ້າທັງໝົດ ${evalRes.totalChecked} ຕົວຊີ້ວັດ | ຜ່ານ ${evalRes.passCount} | ເຝົ້າລະວັງ ${evalRes.warnCount} | ເກີນເກນ ${evalRes.exceedCount}
           </div>
 
           <table>
             <thead>
               <tr>
-                <th style="width:35px; text-align:center;">ລ/ດ</th>
-                <th>ຕົວຊີ້ວັດ (Parameter)</th>
-                <th style="text-align:center; width:110px;">ຄ່າທີ່ວັດແທກໄດ້</th>
-                <th style="text-align:center; width:100px;">ເກນ 81/ລບ (${escAttr(classInfo.name)})</th>
-                <th style="text-align:center; width:80px;">ສະຖານະ</th>
-                <th style="width:120px;">ສ່ວນຕ່າງ</th>
-                <th>ຂໍ້ແນະນຳການນຳໃຊ້</th>
+                <th style="width:32px;">ລ/ດ</th>
+                <th style="text-align:left;">ຕົວຊີ້ວັດ (Parameter)</th>
+                <th style="width:95px;">ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</th>
+                <th>ປະເພດ 1</th>
+                <th>ປະເພດ 2</th>
+                <th>ປະເພດ 3</th>
+                <th>ປະເພດ 4</th>
+                <th>ປະເພດ 5</th>
+                <th>ຈັດຢູ່ປະເພດ</th>
+                <th>ສະຖານະ (${escAttr(classInfo.name)})</th>
               </tr>
             </thead>
             <tbody>
@@ -9989,7 +10569,7 @@
       const bestFitCls = findStationBestFitClass(st) || LAO_STANDARD_81.classes[4];
 
       const data = [
-        ['ໃບຢັ້ງຢືນຜົນການສົມທຽບຄຸນນະພາບນ້ຳກັບມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ (ຂໍ້ຕົກລົງ 81/ລບ)'],
+        ['ໃບຢັ້ງຢືນຜົນການປຽບທຽບຂໍ້ມູນຄຸນນະພາບນໍ້າທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ (ຂໍ້ຕົກລົງ 81/ລບ)'],
         ['ອີງຕາມ: ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ, ລົງວັນທີ 21 ກຸມພາ 2017'],
         [],
         ['ລະຫັດສະຖານີ:', st.code || '-'],
@@ -9999,11 +10579,11 @@
         ['ພິກັດ GPS Latitude:', st.lat || ''],
         ['ພິກັດ GPS Longitude:', st.lng || ''],
         ['ວັນທີເກັບຕົວຢ່າງ:', st.sampleDate || rec.date || ''],
-        ['ມາດຕະຖານທີ່ໃຊ້ທຽບ:', `${classInfo.name} (${classInfo.title}) - ${classInfo.shortUse}`],
-        ['ການຈັດປະເພດຄຸນນະພາບຕົວຈິງ:', `${bestFitCls.name} (${bestFitCls.shortUse})`],
+        ['ມາດຕະຖານຫຼັກທີ່ໃຊ້ທຽບ:', `${classInfo.name} (${classInfo.title}) - ${classInfo.shortUse}`],
+        ['ການຈັດປະເພດຄຸນນະພາບຕົວຈິງ (5 ປະເພດ):', `${bestFitCls.name} (${bestFitCls.shortUse})`],
         ['ວັນທີອອກລາຍງານ:', new Date().toLocaleDateString('lo-LA')],
         [],
-        ['ລຳດັບ', 'ຕົວຊີ້ວັດ (Parameter)', 'ພາສາອັງກິດ', 'ຫົວໜ່ວຍ', 'ຄ່າທີ່ວັດແທກຕົວຈິງ', `ເກນ 81/ລບ (${classInfo.name})`, 'ສະຖານະ', 'ສ່ວນຕ່າງ / ຜົນການປະເມີນ', 'ຂໍ້ແນະນຳການນຳໃຊ້']
+        ['ລຳດັບ', 'ຕົວຊີ້ວັດ (Parameter)', 'ພາສາອັງກິດ', 'ຫົວໜ່ວຍ', 'ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ', 'ປະເພດ 1 (ທຳມະຊາດ)', 'ປະເພດ 2 (ອຸປະໂພກ)', 'ປະເພດ 3 (ກະສິກຳ)', 'ປະເພດ 4 (ອຸດສາຫະກຳ)', 'ປະເພດ 5 (ລະບາຍນ້ຳ)', 'ຈັດຢູ່ປະເພດ (81/ລບ)', `ສະຖານະ (${classInfo.name})`, 'ສ່ວນຕ່າງ / ຜົນການປະເມີນ', 'ຂໍ້ແນະນຳການນຳໃຊ້']
       ];
 
       evalRes.breakdown.forEach((pb, idx) => {
@@ -10013,7 +10593,12 @@
           pb.param.en,
           pb.param.unit,
           pb.val,
-          pb.lim.label,
+          pb.param.classLimits[1]?.label || '-',
+          pb.param.classLimits[2]?.label || '-',
+          pb.param.classLimits[3]?.label || '-',
+          pb.param.classLimits[4]?.label || '-',
+          pb.param.classLimits[5]?.label || '-',
+          pb.paramBestFit ? pb.paramBestFit.name : '-',
           pb.status === 'PASS' ? 'ຜ່ານມາດຕະຖານ' : pb.status === 'WARN' ? 'ເຝົ້າລະວັງ' : 'ເກີນເກນ',
           pb.diffLabel,
           pb.param.note || ''
@@ -10022,9 +10607,9 @@
 
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Decree81_Comparison');
+      XLSX.utils.book_append_sheet(wb, ws, 'Decree81_5Classes');
       const safeCode = String(st.code || 'Station').replace(/[\\/:*?"<>|]/g, '_');
-      XLSX.writeFile(wb, `Decree81_Comparison_${safeCode}_${Date.now()}.xlsx`);
+      XLSX.writeFile(wb, `Decree81_5Classes_${safeCode}_${Date.now()}.xlsx`);
     }
 
     function jumpAllAlertsToDecree81Workbench() {
@@ -13851,9 +14436,8 @@
       // ລາຍການໂຕຊີ້ວັດ: ອັບເດດສະເພາະຕອນເປີດໜ້າຕັ້ງຄ່າ
       if (!skipSettingsNextRender && !document.getElementById('settingsModal')?.classList.contains('hidden')) renderSettingsList();
       skipSettingsNextRender = false;
-      if (currentAppView === 'standards81' && typeof populateAuditDatasetSelect === 'function') {
-        populateAuditDatasetSelect();
-        populateAuditStationSelect();
+      if (currentAppView === 'standards81' && typeof runLiveAuditAgainstStandard === 'function') {
+        runLiveAuditAgainstStandard();
       }
       updateAppViewUI();
     }
