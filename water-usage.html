@@ -4934,6 +4934,8 @@ var ExportReports = ({
   defaultReportTab = "projects"
 }) => {
   const [activeReportTab, setActiveReportTab] = useState5(defaultReportTab);
+  const [filterDataset, setFilterDataset] = useState5("all");
+  const [selectedDatasetIds, setSelectedDatasetIds] = useState5(() => projects.map((p) => p.id));
   const [filterProvince, setFilterProvince] = useState5("all");
   const [filterCategory, setFilterCategory] = useState5("all");
   const [filterStatus, setFilterStatus] = useState5("all");
@@ -4943,14 +4945,28 @@ var ExportReports = ({
   const [auditSearchQuery, setAuditSearchQuery] = useState5("");
   const [auditReportTitle, setAuditReportTitle] = useState5("ບົດລາຍງານການເພີ່ມ, ແກ້ໄຂ ແລະ ລົບຂໍ້ມູນໃນລະບົບ");
   const [isExporting, setIsExporting] = useState5(null);
+  const uniqueWaterSources = useMemo4(() => {
+    const s = new Set();
+    projects.forEach((p) => {
+      if (p.waterSource && p.waterSource.trim()) s.add(p.waterSource.trim());
+    });
+    return Array.from(s);
+  }, [projects]);
   const exportData = useMemo4(() => {
     return projects.filter((p) => {
+      if (filterDataset === "custom_multi") {
+        if (!selectedDatasetIds.includes(p.id)) return false;
+      } else if (filterDataset.startsWith("project:")) {
+        if (String(p.id) !== filterDataset.slice("project:".length)) return false;
+      } else if (filterDataset.startsWith("source:")) {
+        if ((p.waterSource || "").trim() !== filterDataset.slice("source:".length)) return false;
+      }
       const matchProv = filterProvince === "all" || p.projectLocation.province === filterProvince;
       const matchCat = filterCategory === "all" || p.projectCategory === filterCategory;
       const matchStat = filterStatus === "all" || p.status === filterStatus;
       return matchProv && matchCat && matchStat;
     });
-  }, [projects, filterProvince, filterCategory, filterStatus]);
+  }, [projects, filterDataset, selectedDatasetIds, filterProvince, filterCategory, filterStatus]);
   const filteredAuditLogs = useMemo4(() => {
     return auditLogs.filter((log) => {
       if (auditActionFilter === "crud_only") {
@@ -5099,7 +5115,90 @@ var ExportReports = ({
           ] }),
           /* @__PURE__ */ jsx5("span", { className: "text-[11px] text-amber-800/80 font-medium", children: "ລະຫັດຖືກກໍານົດໂດຍ Super Admin" })
         ] }),
-        /* @__PURE__ */ jsxs5("div", { className: "grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-4 border-t border-slate-100", children: [
+        /* @__PURE__ */ jsxs5("div", { className: "mt-4 pt-4 border-t border-slate-100 p-3.5 rounded-xl bg-rose-50/60 border border-rose-200/80 space-y-2.5", children: [
+          /* @__PURE__ */ jsxs5("div", { className: "flex flex-wrap items-center justify-between gap-2", children: [
+            /* @__PURE__ */ jsxs5("label", { className: "text-xs font-extrabold text-rose-950 flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsx5("span", { children: "🗂️" }),
+              /* @__PURE__ */ jsx5("span", { children: "ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການສົ່ງອອກບົດລາຍງານ (Select Dataset to Export)" })
+            ] }),
+            /* @__PURE__ */ jsxs5("span", { className: "text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-rose-600 text-white", children: [
+              "ເລືອກແລ້ວ ",
+              exportData.length,
+              " / ",
+              projects.length,
+              " ຊຸດຂໍ້ມູນ"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs5(
+            "select",
+            {
+              value: filterDataset,
+              onChange: (e) => {
+                const v = e.target.value;
+                setFilterDataset(v);
+                if (v === "custom_multi" && selectedDatasetIds.length === 0) {
+                  setSelectedDatasetIds(projects.map((p) => p.id));
+                }
+              },
+              className: "w-full text-xs bg-white border-2 border-rose-300 rounded-xl px-3 py-2.5 font-bold text-slate-900 focus:ring-2 focus:ring-rose-500 outline-none cursor-pointer",
+              children: [
+                /* @__PURE__ */ jsxs5("option", { value: "all", children: [
+                  "📚 ທຸກຊຸດຂໍ້ມູນໂຄງການນໍາໃຊ້ນໍ້າທັງໝົດ (",
+                  projects.length,
+                  " ຊຸດຂໍ້ມູນ)"
+                ] }),
+                /* @__PURE__ */ jsxs5("option", { value: "custom_multi", children: [
+                  "☑️ ເລືອກຫຼາຍຊຸດຂໍ້ມູນສະເພາະດ້ວຍຕົນເອງ (",
+                  selectedDatasetIds.length,
+                  " ລາຍການ)..."
+                ] }),
+                uniqueWaterSources.length > 0 && /* @__PURE__ */ jsx5("optgroup", { label: "🌊 ກຸ່ມຊຸດຂໍ້ມູນຕາມແຫຼ່ງນໍ້າ (Water Basin / Source)", children: uniqueWaterSources.map((src) => /* @__PURE__ */ jsxs5("option", { value: `source:${src}`, children: [
+                  "🌊 ແຫຼ່ງນໍ້າ: ",
+                  src,
+                  " (",
+                  projects.filter((p) => (p.waterSource || "").trim() === src).length,
+                  " ໂຄງການ)"
+                ] }, `src_${src}`)) }),
+                /* @__PURE__ */ jsx5("optgroup", { label: "🏢 ຊຸດຂໍ້ມູນລາຍໂຄງການ / ບໍລິສັດ (Individual Dataset)", children: projects.map((p) => /* @__PURE__ */ jsxs5("option", { value: `project:${p.id}`, children: [
+                  "🏢 ",
+                  p.projectName,
+                  " — ",
+                  p.ownerName,
+                  " (",
+                  p.projectLocation.province,
+                  ")"
+                ] }, `proj_${p.id}`)) })
+              ]
+            }
+          ),
+          filterDataset === "custom_multi" && /* @__PURE__ */ jsxs5("div", { className: "pt-2 border-t border-rose-200/80 space-y-2", children: [
+            /* @__PURE__ */ jsxs5("div", { className: "flex items-center justify-between text-[11px]", children: [
+              /* @__PURE__ */ jsx5("span", { className: "font-bold text-rose-900", children: "ຕິກເລືອກຊຸດຂໍ້ມູນໂຄງການທີ່ຕ້ອງການລວມເຂົ້າໃນບົດລາຍງານ:" }),
+              /* @__PURE__ */ jsxs5("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsx5("button", { type: "button", onClick: () => setSelectedDatasetIds(projects.map((p) => p.id)), className: "text-emerald-700 hover:underline font-bold cursor-pointer", children: "ເລືອກທັງໝົດ" }),
+                /* @__PURE__ */ jsx5("span", { className: "text-slate-300", children: "|" }),
+                /* @__PURE__ */ jsx5("button", { type: "button", onClick: () => setSelectedDatasetIds([]), className: "text-rose-600 hover:underline font-bold cursor-pointer", children: "ຍົກເລີກທັງໝົດ" })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx5("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1", children: projects.map((p) => {
+              const checked = selectedDatasetIds.includes(p.id);
+              return /* @__PURE__ */ jsxs5("label", { className: "flex items-center gap-2 p-2 rounded-lg bg-white border border-rose-200/80 hover:border-rose-400 cursor-pointer text-[11px]", children: [
+                /* @__PURE__ */ jsx5("input", {
+                  type: "checkbox",
+                  checked,
+                  onChange: (e) => {
+                    if (e.target.checked) setSelectedDatasetIds((prev) => [...prev, p.id]);
+                    else setSelectedDatasetIds((prev) => prev.filter((id) => id !== p.id));
+                  },
+                  className: "accent-rose-600 rounded cursor-pointer"
+                }),
+                /* @__PURE__ */ jsx5("span", { className: "font-bold text-slate-800 truncate flex-1", children: p.projectName }),
+                /* @__PURE__ */ jsx5("span", { className: "text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 shrink-0", children: p.projectLocation.province })
+              ] }, `chk_${p.id}`);
+            }) })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs5("div", { className: "grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3", children: [
           /* @__PURE__ */ jsxs5("div", { children: [
             /* @__PURE__ */ jsx5("label", { className: "block text-xs font-semibold text-slate-700 mb-1", children: "ກອງຕາມແຂວງ" }),
             /* @__PURE__ */ jsxs5(

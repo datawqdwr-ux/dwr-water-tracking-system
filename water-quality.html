@@ -2019,6 +2019,34 @@
               </button>
             </div>
 
+            <!-- ຊ່ອງເລືອກຊຸດຂໍ້ມູນ ທີ່ຕ້ອງການສົ່ງອອກບົດລາຍງານ -->
+            <div class="p-3.5 rounded-xl bg-teal-50/70 border border-teal-200/90 space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="block text-xs font-extrabold text-teal-950 flex items-center gap-1.5">
+                  <span>🗂️</span>
+                  <span>ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການສົ່ງອອກບົດລາຍງານ (Select Dataset to Export)</span>
+                </label>
+                <span id="expSelectedDatasetChip" class="text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-teal-700 text-white">ທຸກຊຸດຂໍ້ມູນ</span>
+              </div>
+              <select id="expFilterDataset" onchange="onExportDatasetChange()" class="w-full text-xs bg-white border-2 border-teal-300 rounded-xl px-3 py-2.5 font-bold text-slate-900 focus:ring-2 focus:ring-teal-600 outline-none cursor-pointer shadow-2xs">
+                <option value="ALL">📚 ທຸກຊຸດຂໍ້ມູນບໍລິສັດ/ໂຄງການທັງໝົດ</option>
+                <option value="MULTI">☑️ ເລືອກຫຼາຍຊຸດຂໍ້ມູນດ້ວຍຕົນເອງ (Multi-Select Datasets)...</option>
+              </select>
+
+              <!-- ກ່ອງຕິກເລືອກຫຼາຍຊຸດຂໍ້ມູນ (ສະແດງເມື່ອເລືອກ MULTI) -->
+              <div id="expDatasetMultiBox" class="hidden pt-2 border-t border-teal-200/80 space-y-2">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-bold text-teal-900">ຕິກເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການລວມເຂົ້າໃນບົດລາຍງານ:</span>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="toggleAllExportDatasetChecks(true)" class="text-teal-700 hover:underline font-bold cursor-pointer">ເລືອກທັງໝົດ</button>
+                    <span class="text-slate-300">|</span>
+                    <button type="button" onclick="toggleAllExportDatasetChecks(false)" class="text-rose-600 hover:underline font-bold cursor-pointer">ຍົກເລີກທັງໝົດ</button>
+                  </div>
+                </div>
+                <div id="expDatasetMultiList" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1"></div>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">ກອງຕາມແຂວງ (Province)</label>
@@ -19023,6 +19051,12 @@
     let currentExportModalTab = 'water_quality';
     let cachedExportLogs = [];
 
+    let selectedExportMultiDatasetKeys = new Set();
+
+    function getExportDatasetKey(r, idx) {
+      return String(r.fbKey || r.id || `ds_${idx}`);
+    }
+
     function openExportModal(defaultTab) {
       const modal = document.getElementById('exportModal');
       if (!modal) return;
@@ -19030,6 +19064,7 @@
       if (defaultTab) {
         switchExportModalTab(defaultTab);
       }
+      populateExportDatasetOptions();
       populateExportProvinceOptions();
       updateExportPreview();
       fetchActivityLogsForExport();
@@ -19062,6 +19097,94 @@
       }
     }
 
+    function populateExportDatasetOptions() {
+      const select = document.getElementById('expFilterDataset');
+      const multiList = document.getElementById('expDatasetMultiList');
+      if (!select) return;
+      const prevVal = select.value || 'ALL';
+
+      const totalStationsAll = waterData.reduce((acc, r) => acc + ((r.stations || [r]).length), 0);
+      let optionsHtml = `
+        <option value="ALL">📚 ທຸກຊຸດຂໍ້ມູນບໍລິສັດ/ໂຄງການທັງໝົດ (${waterData.length} ຊຸດຂໍ້ມູນ · ${totalStationsAll} ສະຖານີ)</option>
+        <option value="MULTI">☑️ ເລືອກຫຼາຍຊຸດຂໍ້ມູນສະເພາະດ້ວຍຕົນເອງ (Multi-Select Datasets)...</option>
+      `;
+
+      const multiItemsHtml = [];
+      waterData.forEach((r, idx) => {
+        const dsKey = getExportDatasetKey(r, idx);
+        const title = r.companyName || r.name || `ຊຸດຂໍ້ມູນທີ ${idx + 1}`;
+        const stCount = (r.stations || [r]).length;
+        const dateStr = r.date ? ` · 📅 ${r.date}` : '';
+        optionsHtml += `<option value="${escAttr(dsKey)}">🏢 ${escAttr(title)} (${stCount} ສະຖານີ${escAttr(dateStr)})</option>`;
+
+        if (selectedExportMultiDatasetKeys.size === 0) {
+          selectedExportMultiDatasetKeys.add(dsKey);
+        }
+        const isChecked = selectedExportMultiDatasetKeys.has(dsKey);
+        multiItemsHtml.push(`
+          <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-teal-200/80 hover:border-teal-400 cursor-pointer text-[11px]">
+            <input type="checkbox" class="exp-ds-checkbox accent-teal-600 rounded cursor-pointer" value="${escAttr(dsKey)}" ${isChecked ? 'checked' : ''} onchange="onExportMultiDatasetToggle(this)">
+            <span class="font-bold text-slate-800 truncate flex-1" title="${escAttr(title)}">${escAttr(title)}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200 shrink-0">${stCount} ຈຸດ</span>
+          </label>
+        `);
+      });
+
+      select.innerHTML = optionsHtml;
+      if (multiList) {
+        multiList.innerHTML = multiItemsHtml.join('') || '<div class="text-slate-400 text-xs p-2">ຍັງບໍ່ມີຊຸດຂໍ້ມູນ</div>';
+      }
+      if (prevVal === 'ALL' || prevVal === 'MULTI' || waterData.some((r, idx) => getExportDatasetKey(r, idx) === prevVal)) {
+        select.value = prevVal;
+      }
+      onExportDatasetChange(true);
+    }
+
+    function onExportDatasetChange(skipPreview) {
+      const select = document.getElementById('expFilterDataset');
+      const multiBox = document.getElementById('expDatasetMultiBox');
+      const chip = document.getElementById('expSelectedDatasetChip');
+      if (!select) return;
+
+      const val = select.value;
+      if (multiBox) {
+        if (val === 'MULTI') multiBox.classList.remove('hidden');
+        else multiBox.classList.add('hidden');
+      }
+
+      if (chip) {
+        if (val === 'ALL') {
+          chip.innerText = `ທຸກຊຸດຂໍ້ມູນ (${waterData.length})`;
+        } else if (val === 'MULTI') {
+          chip.innerText = `ເລືອກເອງ (${selectedExportMultiDatasetKeys.size} ຊຸດຂໍ້ມູນ)`;
+        } else {
+          const found = waterData.find((r, idx) => getExportDatasetKey(r, idx) === val);
+          chip.innerText = found ? (found.companyName || found.name || '1 ຊຸດຂໍ້ມູນ') : '1 ຊຸດຂໍ້ມູນ';
+        }
+      }
+
+      if (!skipPreview) updateExportPreview();
+    }
+
+    function onExportMultiDatasetToggle(checkboxEl) {
+      if (!checkboxEl) return;
+      const key = String(checkboxEl.value);
+      if (checkboxEl.checked) selectedExportMultiDatasetKeys.add(key);
+      else selectedExportMultiDatasetKeys.delete(key);
+      onExportDatasetChange(false);
+    }
+
+    function toggleAllExportDatasetChecks(checkAll) {
+      selectedExportMultiDatasetKeys.clear();
+      if (checkAll) {
+        waterData.forEach((r, idx) => selectedExportMultiDatasetKeys.add(getExportDatasetKey(r, idx)));
+      }
+      document.querySelectorAll('.exp-ds-checkbox').forEach(cb => {
+        cb.checked = !!checkAll;
+      });
+      onExportDatasetChange(false);
+    }
+
     function populateExportProvinceOptions() {
       const select = document.getElementById('expFilterProvince');
       if (!select) return;
@@ -19080,18 +19203,21 @@
     }
 
     function resetExportFilters() {
+      const ds = document.getElementById('expFilterDataset');
       const p = document.getElementById('expFilterProvince');
       const s = document.getElementById('expFilterStatus');
       const q = document.getElementById('expFilterSearch');
+      if (ds) ds.value = 'ALL';
       if (p) p.value = 'ALL';
       if (s) s.value = 'ALL';
       if (q) q.value = '';
+      toggleAllExportDatasetChecks(true);
+      onExportDatasetChange(true);
       updateExportPreview();
     }
 
-
-
     function getFilteredWaterQualityExportData() {
+      const selDataset = document.getElementById('expFilterDataset')?.value || 'ALL';
       const selProv = document.getElementById('expFilterProvince')?.value || 'ALL';
       const selStatus = document.getElementById('expFilterStatus')?.value || 'ALL';
       const query = (document.getElementById('expFilterSearch')?.value || '').toLowerCase().trim();
@@ -19099,7 +19225,14 @@
       const matchedDatasets = [];
       const flatStations = [];
 
-      waterData.forEach(r => {
+      waterData.forEach((r, idx) => {
+        const dsKey = getExportDatasetKey(r, idx);
+        if (selDataset === 'MULTI') {
+          if (!selectedExportMultiDatasetKeys.has(dsKey)) return;
+        } else if (selDataset !== 'ALL') {
+          if (dsKey !== selDataset) return;
+        }
+
         const company = r.companyName || r.name || 'ບໍ່ລະບຸ';
         const stations = r.stations || [r];
         const filteredStations = [];

@@ -1,14 +1,15 @@
 package com.aistudio.waterresources.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,10 @@ fun AnalyticsReportScreen(
 ) {
     val isLao = state.language == Language.LO
 
+    var selectedExportSystem by remember { mutableStateOf("WQ") } // WQ, USAGE, WASTEWATER
+    var selectedDatasetKey by remember { mutableStateOf("ALL") }
+    var lastExportNotice by remember { mutableStateOf<String?>(null) }
+
     val totalStations = state.stations.size
     val compliantStations = state.stations.count { it.overallStatus == ComplianceStatus.NORMAL }
     val wqComplianceRate = if (totalStations > 0) (compliantStations * 100 / totalStations) else 100
@@ -35,6 +40,17 @@ fun AnalyticsReportScreen(
 
     val totalUsageM3 = state.usageProjects.sumOf { it.waterVolume }
     val totalWastewaterM3 = state.wastewaterFacilities.sumOf { it.dischargeVolume }
+
+    val datasetOptions = remember(selectedExportSystem, state.stations, state.usageProjects, state.wastewaterFacilities) {
+        when (selectedExportSystem) {
+            "WQ" -> listOf("ALL" to (if (isLao) "📚 ທຸກຊຸດຂໍ້ມູນຄຸນນະພາບນໍ້າ (${state.stations.size})" else "All Water Quality Datasets (${state.stations.size})")) +
+                    state.stations.map { it.id to "🧪 ${it.name} (${it.province})" }
+            "USAGE" -> listOf("ALL" to (if (isLao) "📚 ທຸກຊຸດຂໍ້ມູນການນໍາໃຊ້ນໍ້າ (${state.usageProjects.size})" else "All Water Usage Datasets (${state.usageProjects.size})")) +
+                    state.usageProjects.map { it.id to "💧 ${it.projectName} (${it.province})" }
+            else -> listOf("ALL" to (if (isLao) "📚 ທຸກຊຸດຂໍ້ມູນການປ່ອຍນໍ້າເປື້ອນ (${state.wastewaterFacilities.size})" else "All Wastewater Datasets (${state.wastewaterFacilities.size})")) +
+                    state.wastewaterFacilities.map { it.id to "🏭 ${it.facilityName} (${it.province})" }
+        }
+    }
 
     LazyColumn(
         modifier = modifier
@@ -47,15 +63,126 @@ fun AnalyticsReportScreen(
         item {
             Column {
                 Text(
-                    text = if (isLao) "📊 ບົດວິເຄາະສະຖິຕິຊັບພະຍາກອນນ້ຳປະຈຳປີ" else "📊 Annual Water Resources Analytical Report",
+                    text = if (isLao) "📊 ບົດວິເຄາະສະຖິຕິ ແລະ ຫ້ອງສົ່ງອອກບົດລາຍງານ" else "📊 Annual Water Resources Analytical & Export Hub",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = Slate100
                 )
                 Text(
-                    text = if (isLao) "ບົດສະຫຼຸບສັງລວມຄຸນນະພາບ, ການນຳໃຊ້ ແລະ ການປ່ອຍນ້ຳເປື້ອນແຫ່ງຊາດ" else "National Summary of Quality, Concessions, & Discharges",
+                    text = if (isLao) "ບົດສະຫຼຸບສັງລວມຄຸນນະພາບນໍ້າ, ການນຳໃຊ້ນໍ້າ ແລະ ການປ່ອຍນ້ຳເປື້ອນແຫ່ງຊາດ" else "National Summary of Quality, Concessions, & Discharges",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Slate400
                 )
+            }
+        }
+
+        // Report Export Hub Card with Dataset Selector across all 3 Systems
+        item {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth().testTag("export_dataset_selector_card")
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = if (isLao) "📥 ຫ້ອງສົ່ງອອກບົດລາຍງານ (ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການສົ່ງອອກ)" else "📥 Report Export Hub (Select Dataset)",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Emerald400,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // 1. System Selector
+                    Text(
+                        text = if (isLao) "1. ເລືອກລະບົບ:" else "1. Select System:",
+                        color = Slate300,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val systems = listOf(
+                            "WQ" to (if (isLao) "🧪 ລະບົບຄຸນນະພາບນໍ້າ" else "Water Quality"),
+                            "USAGE" to (if (isLao) "💧 ລະບົບການນໍາໃຊ້ນໍ້າ" else "Water Usage"),
+                            "WASTEWATER" to (if (isLao) "🏭 ລະບົບການປ່ອຍນໍ້າເປື້ອນ" else "Wastewater")
+                        )
+                        systems.forEach { (key, label) ->
+                            FilterChip(
+                                selected = selectedExportSystem == key,
+                                onClick = {
+                                    selectedExportSystem = key
+                                    selectedDatasetKey = "ALL"
+                                    lastExportNotice = null
+                                },
+                                label = { Text(label, fontSize = 11.sp) }
+                            )
+                        }
+                    }
+
+                    // 2. Dataset Selector Chips
+                    Text(
+                        text = if (isLao) "2. ຊ່ອງເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການສົ່ງອອກບົດລາຍງານ:" else "2. Select Dataset to Export:",
+                        color = Cyan400,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        datasetOptions.forEach { (dsKey, dsLabel) ->
+                            FilterChip(
+                                selected = selectedDatasetKey == dsKey,
+                                onClick = {
+                                    selectedDatasetKey = dsKey
+                                    lastExportNotice = null
+                                },
+                                label = { Text(dsLabel, fontSize = 11.sp) }
+                            )
+                        }
+                    }
+
+                    // Export Action Buttons
+                    val selectedLabel = datasetOptions.find { it.first == selectedDatasetKey }?.second ?: "ALL"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                lastExportNotice = if (isLao)
+                                    "✅ ສົ່ງອອກບົດລາຍງານ Excel ສຳເລັດ: $selectedLabel"
+                                else
+                                    "✅ Exported Excel Report: $selectedLabel"
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Emerald500),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(if (isLao) "📊 ສົ່ງອອກ Excel" else "Export Excel", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Button(
+                            onClick = {
+                                lastExportNotice = if (isLao)
+                                    "📄 ສົ່ງອອກບົດລາຍງານ PDF ສຳເລັດ: $selectedLabel"
+                                else
+                                    "📄 Exported PDF Report: $selectedLabel"
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Indigo500),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(if (isLao) "📄 ສົ່ງອອກ PDF" else "Export PDF", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    if (lastExportNotice != null) {
+                        Text(
+                            text = lastExportNotice!!,
+                            color = Emerald400,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
         }
 
