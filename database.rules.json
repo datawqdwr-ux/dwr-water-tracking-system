@@ -1,0 +1,41 @@
+{
+  "rules": {
+    ".read": true,
+    "water_records": {
+      ".read": true,
+      "$recordId": {
+        ".write": "newData.exists() ? (newData.hasChild('companyName') || newData.hasChild('name') || newData.hasChild('stations')) : true"
+      }
+    },
+    "wastewater_projects": {
+      ".read": true,
+      "$projectId": {
+        ".write": "newData.exists() ? (newData.hasChild('name') || newData.hasChild('projectCode')) : true"
+      }
+    },
+    "water_usage_projects": {
+      ".read": true,
+      "$projectId": {
+        ".write": "newData.exists() ? (newData.hasChild('name') || newData.hasChild('projectCode')) : true"
+      }
+    },
+    "system_config": {
+      "indicators": {
+        ".read": true,
+        ".write": true
+      },
+      "users": {
+        ".read": true,
+        "$userId": {
+          ".write": "newData.exists() ? (newData.hasChild('username') || newData.hasChild('name')) : true"
+        }
+      }
+    },
+    "audit_logs": {
+      ".read": true,
+      "$logId": {
+        ".write": "!data.exists() && newData.exists()"
+      }
+    }
+  }
+}
