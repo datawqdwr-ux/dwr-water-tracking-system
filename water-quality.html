@@ -5937,7 +5937,11 @@
               <span>ອ້າງອີງ: ຂໍ້ຕົກລົງວ່າດ້ວຍມາດຕະຖານສິ່ງແວດລ້ອມ ແຫ່ງຊາດ ສະບັບເລກທີ 81/ລບ (ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ)</span>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="sendCurrentCompanyWqToWastewaterSystem()" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າສະເພາະຂອງບໍລິສັດນີ້ໄປຫາລະບົບການປ່ອຍນໍ້າເປື້ອນ ເພື່ອກໍານົດການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ">
+                <span>🔗</span>
+                <span>ລີ້ງຂໍ້ມູນບໍລິສັດໄປລະບົບການປ່ອຍນໍ້າເປື້ອນ (5 ປະເພດ 81/ລບ)</span>
+              </button>
               <button type="button" onclick="printAuditPointReport()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                 <span>🖨️</span>
                 <span>ພິມໃບປຽບທຽບ 5 ປະເພດ (81/ລບ)</span>
@@ -5949,6 +5953,99 @@
             </div>
           </div>
         `;
+      }
+    }
+
+    function syncSharedCompanyWqRecordsToStorage() {
+      try {
+        const indicatorsSnapshot = Array.isArray(customIndicators) ? customIndicators : [];
+        const payload = {
+          updatedAt: new Date().toISOString(),
+          indicators: indicatorsSnapshot,
+          datasets: Array.isArray(allAvailableRawDatasets) ? allAvailableRawDatasets : []
+        };
+        localStorage.setItem('DWR_SHARED_COMPANY_WQ_RECORDS_V1', JSON.stringify(payload));
+      } catch (err) {
+        console.warn('Could not sync company WQ records to shared storage:', err);
+      }
+    }
+
+    function resolveStationParamValue(st, paramOrDef) {
+      if (!st || !paramOrDef) return null;
+      const paramId = typeof paramOrDef === 'string' ? paramOrDef : paramOrDef.id;
+      const paramDef = (typeof LAO_STANDARD_81 !== 'undefined' && Array.isArray(LAO_STANDARD_81.parameters))
+        ? (LAO_STANDARD_81.parameters.find(x => x.id === paramId) || paramOrDef)
+        : paramOrDef;
+      return resolveEnteredStationParamValue(st, paramDef);
+    }
+
+    function sendCurrentCompanyWqToWastewaterSystem(optionalDatasetKey, optionalStationIdx) {
+      try {
+        syncSharedCompanyWqRecordsToStorage();
+        const dsKey = optionalDatasetKey || selectedAuditDatasetKey || (allAvailableRawDatasets[0] ? allAvailableRawDatasets[0].key : 'ALL');
+        const ds = allAvailableRawDatasets.find(d => String(d.key) === String(dsKey)) || allAvailableRawDatasets[0] || null;
+        const stSelect = document.getElementById('auditStationSelect');
+        const stVal = optionalStationIdx !== undefined ? String(optionalStationIdx) : (stSelect ? String(stSelect.value) : '0');
+
+        let stationObj = null;
+        if (stVal !== 'ALL' && currentAuditStationList && currentAuditStationList[Number(stVal)]) {
+          stationObj = currentAuditStationList[Number(stVal)];
+        } else if (ds && Array.isArray(ds.stations) && ds.stations.length > 0) {
+          stationObj = ds.stations[0];
+        }
+
+        const paramValues = {};
+        KEY_AUDIT_PARAMS.forEach(p => {
+          const inp = document.getElementById(`auditParamVal_${p.id}`);
+          const rawVal = inp ? inp.value.trim() : '';
+          if (rawVal !== '' && !isNaN(Number(rawVal))) {
+            paramValues[p.id] = Number(rawVal);
+          } else if (stVal === 'ALL' && Array.isArray(currentAuditStationList) && currentAuditStationList.length > 0) {
+            const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id) || p;
+            let sum = 0;
+            let count = 0;
+            currentAuditStationList.forEach(st => {
+              const v = resolveEnteredStationParamValue(st, paramObj);
+              if (v !== null && v !== undefined && !isNaN(Number(v))) {
+                sum += Number(v);
+                count++;
+              }
+            });
+            if (count > 0) {
+              const precision = p.step && p.step.includes('.') ? p.step.split('.')[1].length : 1;
+              paramValues[p.id] = +(sum / count).toFixed(precision);
+            }
+          } else if (stationObj) {
+            const paramObj = LAO_STANDARD_81.parameters.find(x => x.id === p.id) || p;
+            const v = resolveEnteredStationParamValue(stationObj, paramObj);
+            if (v !== null && v !== undefined && !isNaN(Number(v))) {
+              paramValues[p.id] = Number(v);
+            }
+          }
+        });
+
+        const linkPayload = {
+          linkedAt: new Date().toISOString(),
+          datasetKey: ds ? ds.key : dsKey,
+          companyName: (stationObj && stationObj.companyName) || (ds && ds.title) || 'ບໍລິສັດຈາກລະບົບຄຸນນະພາບນໍ້າ',
+          waterSource: (stationObj && (stationObj.basin || stationObj.section)) || (ds && ds.basin) || 'ແຫຼ່ງນໍ້າຮອງຮັບ',
+          province: (stationObj && stationObj.province) || (ds && ds.province) || 'ນະຄອນຫຼວງວຽງຈັນ',
+          sampleDate: (stationObj && stationObj.sampleDate) || (ds && ds.date) || new Date().toISOString().split('T')[0],
+          stationMode: stVal === 'ALL' ? 'ALL' : 'SINGLE',
+          stationCode: stationObj ? (stationObj.code || '') : 'ALL',
+          stationName: stVal === 'ALL'
+            ? `ຄ່າສະເລ່ຍທຸກຈຸດວັດແທກ (${ds ? ds.stations.length : 0} ຈຸດ)`
+            : (stationObj ? (stationObj.name || stationObj.code || 'ຈຸດເກັບຕົວຢ່າງ') : 'ຈຸດເກັບຕົວຢ່າງ'),
+          lat: stationObj && !isNaN(Number(stationObj.lat)) ? Number(stationObj.lat) : null,
+          lng: stationObj && !isNaN(Number(stationObj.lng)) ? Number(stationObj.lng) : null,
+          paramValues: paramValues,
+          stationCustoms: stationObj && stationObj.customs ? stationObj.customs : {}
+        };
+
+        localStorage.setItem('DWR_PENDING_WQ_TO_WASTEWATER_LINK', JSON.stringify(linkPayload));
+        window.location.href = 'wastewater.html?linkedWq=1';
+      } catch (err) {
+        console.error('Failed to link company water quality data to wastewater system:', err);
       }
     }
 
@@ -6006,6 +6103,8 @@
           }
         });
       }
+
+      syncSharedCompanyWqRecordsToStorage();
 
       const totalStationsCount = allAvailableRawDatasets.reduce((sum, d) => sum + d.stations.length, 0);
 

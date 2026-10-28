@@ -210,6 +210,7 @@ fun WastewaterScreen(
     if (showAddDialog) {
         AddFacilityDialog(
             isLao = isLao,
+            waterQualityStations = state.stations,
             onDismiss = { showAddDialog = false },
             onConfirm = { facility ->
                 onAddFacility(facility)
@@ -222,6 +223,7 @@ fun WastewaterScreen(
     if (state.selectedFacility != null) {
         FacilityDetailDialog(
             facility = state.selectedFacility,
+            waterQualityStations = state.stations,
             isLao = isLao,
             isAdmin = state.userSession.role == UserRole.ADMIN,
             onDismiss = { onSelectFacility(null) },
@@ -603,6 +605,7 @@ private fun Decree81ComparisonSection(
 @Composable
 private fun AddFacilityDialog(
     isLao: Boolean,
+    waterQualityStations: List<WaterQualityStation> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (WastewaterFacility) -> Unit
 ) {
@@ -617,6 +620,7 @@ private fun AddFacilityDialog(
     var bodText by remember { mutableStateOf("20.0") }
     var codText by remember { mutableStateOf("60.0") }
     var tssText by remember { mutableStateOf("30.0") }
+    var linkedStationLabel by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -630,6 +634,70 @@ private fun AddFacilityDialog(
         },
         text = {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (waterQualityStations.isNotEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Slate950)
+                                .padding(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = "🔗 ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າຂອງບໍລິສັດ ຈາກລະບົບຄຸນນະພາບນໍ້າ (ຈັດປະເພດ 5 ປະເພດ 81/ລບ):",
+                                color = Cyan400,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                items(waterQualityStations) { st ->
+                                    val latest = st.readings.firstOrNull()
+                                    val isSelected = linkedStationLabel == st.stationCode
+                                    Surface(
+                                        color = if (isSelected) Emerald500.copy(alpha = 0.25f) else Slate900,
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.clickable {
+                                            linkedStationLabel = st.stationCode
+                                            if (name.isBlank()) name = st.name
+                                            if (company.isBlank()) company = st.name
+                                            receivingWater = st.river
+                                            province = st.province
+                                            if (latest != null) {
+                                                phText = latest.ph.toString()
+                                                bodText = latest.bod5.toString()
+                                                codText = latest.cod.toString()
+                                                tssText = latest.tss.toString()
+                                            }
+                                        }
+                                    ) {
+                                        Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)) {
+                                            Text(
+                                                text = "🏢 ${st.name}",
+                                                color = Slate100,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = "${st.river} • BOD: ${latest?.bod5 ?: "-"}",
+                                                color = Emerald400,
+                                                fontSize = 9.sp
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            if (linkedStationLabel.isNotBlank()) {
+                                Text(
+                                    text = "✅ ດຶງຂໍ້ມູນຄຸນນະພາບນໍ້າຈາກລະຫັດ $linkedStationLabel ແລ້ວ",
+                                    color = Emerald400,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
                 item {
                     OutlinedTextField(
                         value = name,
@@ -749,7 +817,8 @@ private fun AddFacilityDialog(
                         phValue = ph,
                         bodValue = bod,
                         codValue = cod,
-                        tssValue = tss
+                        tssValue = tss,
+                        notes = if (linkedStationLabel.isNotBlank()) "ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າຈາກສະຖານີ $linkedStationLabel (81/ລບ)" else ""
                     )
                     onConfirm(facility)
                 },
@@ -769,11 +838,18 @@ private fun AddFacilityDialog(
 @Composable
 private fun FacilityDetailDialog(
     facility: WastewaterFacility,
+    waterQualityStations: List<WaterQualityStation> = emptyList(),
     isLao: Boolean,
     isAdmin: Boolean,
     onDismiss: () -> Unit,
     onDelete: () -> Unit
 ) {
+    var activePh by remember(facility.id) { mutableStateOf(facility.phValue) }
+    var activeBod by remember(facility.id) { mutableStateOf(facility.bodValue) }
+    var activeCod by remember(facility.id) { mutableStateOf(facility.codValue) }
+    var activeTss by remember(facility.id) { mutableStateOf(facility.tssValue) }
+    var linkedWqTitle by remember(facility.id) { mutableStateOf("") }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Slate900,
@@ -813,24 +889,79 @@ private fun FacilityDetailDialog(
                     Text(text = "ກວດກາລ່າສຸດ: ${facility.lastInspectionDate}", color = Slate400, fontSize = 12.sp)
                 }
 
+                if (waterQualityStations.isNotEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Slate950)
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = "🔗 ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າຂອງບໍລິສັດ ຈາກລະບົບຄຸນນະພາບນໍ້າ ເພື່ອຈັດປະເພດ 5 ປະເພດ (81/ລບ):",
+                                color = Cyan400,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                items(waterQualityStations) { st ->
+                                    val r = st.readings.firstOrNull()
+                                    val selected = linkedWqTitle == st.name
+                                    Surface(
+                                        color = if (selected) Emerald500.copy(alpha = 0.25f) else Slate900,
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.clickable {
+                                            linkedWqTitle = st.name
+                                            if (r != null) {
+                                                activePh = r.ph
+                                                activeBod = r.bod5
+                                                activeCod = r.cod
+                                                activeTss = r.tss
+                                            }
+                                        }
+                                    ) {
+                                        Text(
+                                            text = "🏢 ${st.name} (${st.stationCode})",
+                                            color = if (selected) Emerald400 else Slate200,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            if (linkedWqTitle.isNotBlank()) {
+                                Text(
+                                    text = "✅ ກໍາລັງທຽບຂໍ້ມູນລີ້ງຈາກ: $linkedWqTitle",
+                                    color = Emerald400,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+
                 item {
                     HorizontalDivider(color = Slate800)
                 }
 
                 item {
                     Text(text = "ຄ່າວັດແທກຕົວຊີ້ວັດມາດຕະຖານ:", fontWeight = FontWeight.Bold, color = Slate100, fontSize = 13.sp)
-                    Text(text = "• pH: ${facility.phValue} (ມາດຕະຖານ 6.0 – 9.0)", color = Slate300, fontSize = 12.sp)
-                    Text(text = "• BOD: ${facility.bodValue} mg/L (ມາດຕະຖານ ≤ 30 mg/L)", color = Slate300, fontSize = 12.sp)
-                    Text(text = "• COD: ${facility.codValue} mg/L (ມາດຕະຖານ ≤ 120 mg/L)", color = Slate300, fontSize = 12.sp)
-                    Text(text = "• TSS: ${facility.tssValue} mg/L (ມາດຕະຖານ ≤ 50 mg/L)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• pH: $activePh (ມາດຕະຖານ 6.0 – 9.0)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• BOD: $activeBod mg/L (ມາດຕະຖານ ≤ 30 mg/L)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• COD: $activeCod mg/L (ມາດຕະຖານ ≤ 120 mg/L)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• TSS: $activeTss mg/L (ມາດຕະຖານ ≤ 50 mg/L)", color = Slate300, fontSize = 12.sp)
                 }
 
                 item {
                     Decree81ComparisonSection(
-                        ph = facility.phValue,
-                        bod = facility.bodValue,
-                        cod = facility.codValue,
-                        tss = facility.tssValue
+                        ph = activePh,
+                        bod = activeBod,
+                        cod = activeCod,
+                        tss = activeTss
                     )
                 }
 

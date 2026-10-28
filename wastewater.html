@@ -8699,6 +8699,559 @@ function extractProjectDecree81Values(waterQuality = {}, customOverrides = {}) {
   return { valuesMap, extraCustomParams };
 }
 
+// ============================================================================
+// 🔗 ລະບົບເຊື່ອມຕໍ່ຂໍ້ມູນຄຸນນະພາບນໍ້າສະເພາະຂອງບໍລິສັດ ຈາກລະບົບຄຸນນະພາບນໍ້າ (water-quality.html)
+// ມາຫາ ລະບົບການປ່ອຍນໍ້າເປື້ອນ (wastewater.html) ເພື່ອກໍານົດການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ (81/ລບ)
+// ============================================================================
+var WQ_FIREBASE_RTDB_URL = "https://dwr-quality-tracking-system-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+var DEFAULT_COMPANY_WQ_DATASETS = [
+  {
+    key: "comp_wq_1",
+    title: "ບໍລິສັດ ພູເບ້ຍ ມາຍນິ້ງ ຈໍາກັດ (Phu Bia Mining)",
+    date: "2026-03-15",
+    province: "ໄຊສົມບູນ",
+    basin: "ອ່າງແມ່ນໍ້າງື່ມ / ນໍ້າໂມ້",
+    stations: [
+      {
+        code: "PBM-SW01",
+        name: "ຈຸດປ່ອຍນໍ້າຫຼັງບໍາບັດ ບໍ່ຄໍາ-ທອງ ພູຄໍາ (SW-01)",
+        province: "ໄຊສົມບູນ",
+        basin: "ນໍ້າໂມ້ (ອ່າງນໍ້າງື່ມ)",
+        sampleDate: "2026-03-15",
+        lat: 18.8842,
+        lng: 102.9115,
+        customs: { ph: 7.3, do: 6.2, bod: 6.5, cod: 18.0, tss: 22.0, turbidity: 14.0, ec: 385, tds: 240, temp: 25.4, nh3_n: 0.18, no3_n: 1.4, tp: 0.12, pb: 0.004, cd: 0.0008, as: 0.003 }
+      },
+      {
+        code: "PBM-SW02",
+        name: "ຈຸດຕິດຕາມລຸ່ມຈຸດປ່ອຍນໍ້າ 500 ແມັດ (SW-02)",
+        province: "ໄຊສົມບູນ",
+        basin: "ນໍ້າໂມ້ (ອ່າງນໍ້າງື່ມ)",
+        sampleDate: "2026-03-15",
+        lat: 18.8810,
+        lng: 102.9145,
+        customs: { ph: 7.4, do: 6.8, bod: 3.8, cod: 11.5, tss: 16.0, turbidity: 9.5, ec: 310, tds: 195, temp: 25.1, nh3_n: 0.12, no3_n: 1.1, tp: 0.09, pb: 0.002, cd: 0.0005, as: 0.002 }
+      }
+    ]
+  },
+  {
+    key: "comp_wq_2",
+    title: "ບໍລິສັດ ເບຍລາວ ຈໍາກັດ (Lao Brewery Co., Ltd - ໂຮງງານວຽງຈັນ)",
+    date: "2026-03-18",
+    province: "ນະຄອນຫຼວງວຽງຈັນ",
+    basin: "ອ່າງແມ່ນໍ້າຂອງ / ບຶງທາດຫຼວງ",
+    stations: [
+      {
+        code: "LBC-EF01",
+        name: "ຈຸດກວດກາຄຸນນະພາບນໍ້າຫຼັງລະບົບບໍາບັດ UASB + Activated Sludge (EF-01)",
+        province: "ນະຄອນຫຼວງວຽງຈັນ",
+        basin: "ຮ່ອງລະບາຍສູ່ບຶງທາດຫຼວງ / ແມ່ນໍ້າຂອງ",
+        sampleDate: "2026-03-18",
+        lat: 17.9125,
+        lng: 102.6620,
+        customs: { ph: 7.1, do: 5.1, bod: 16.5, cod: 48.0, tss: 24.0, turbidity: 18.0, ec: 540, tds: 350, temp: 28.2, coliform_total: 3200, coliform_fecal: 650, nh3_n: 0.32, no3_n: 2.8, tp: 0.42 }
+      }
+    ]
+  },
+  {
+    key: "comp_wq_3",
+    title: "ບໍລິສັດ ຊັນເປເປີ ໂຮນດິ້ງ ລາວ ຈໍາກັດ (Sun Paper Savannakhet)",
+    date: "2026-03-12",
+    province: "ສະຫວັນນະເຂດ",
+    basin: "ອ່າງແມ່ນໍ້າເຊບັ້ງຫຽງ",
+    stations: [
+      {
+        code: "SUN-OUT01",
+        name: "ຈຸດປ່ອຍນໍ້າບໍາບັດລວມ ໂຮງງານເຍື່ອເຈ້ຍ ເຊໂນ (OUT-01)",
+        province: "ສະຫວັນນະເຂດ",
+        basin: "ແມ່ນໍ້າເຊບັ້ງຫຽງ",
+        sampleDate: "2026-03-12",
+        lat: 16.6120,
+        lng: 105.5410,
+        customs: { ph: 7.5, do: 4.5, bod: 24.0, cod: 68.0, tss: 32.0, turbidity: 28.0, ec: 690, tds: 440, temp: 29.0, nh3_n: 0.41, no3_n: 3.2, tp: 0.65 }
+      }
+    ]
+  }
+];
+
+function resolveCompanyStationParamMap(station = {}, customIndicators = []) {
+  const paramMap = {};
+  const extraCustoms = [];
+  if (!station || typeof station !== "object") return { paramMap, extraCustoms };
+
+  const customs = station.customs && typeof station.customs === "object" ? station.customs : {};
+  const indicatorById = {};
+  if (Array.isArray(customIndicators)) {
+    customIndicators.forEach((ind) => {
+      if (ind && ind.key) indicatorById[ind.key] = ind;
+    });
+  }
+
+  LAO_STANDARD_81.parameters.forEach((p) => {
+    const candidates = [p.id, ...(p.aliases || [])];
+    for (const cKey of candidates) {
+      if (customs[cKey] !== void 0 && customs[cKey] !== null && customs[cKey] !== "" && !isNaN(parseFloat(customs[cKey]))) {
+        paramMap[p.id] = parseFloat(customs[cKey]);
+        break;
+      }
+      if (station[cKey] !== void 0 && station[cKey] !== null && station[cKey] !== "" && !isNaN(parseFloat(station[cKey]))) {
+        paramMap[p.id] = parseFloat(station[cKey]);
+        break;
+      }
+    }
+  });
+
+  Object.keys(customs).forEach((rawKey) => {
+    const rawVal = customs[rawKey];
+    if (rawVal === void 0 || rawVal === null || rawVal === "") return;
+    const numVal = parseFloat(String(rawVal).replace(/,/g, ""));
+    if (isNaN(numVal)) return;
+
+    const indMeta = indicatorById[rawKey];
+    const labelName = indMeta ? (indMeta.name || indMeta.label || rawKey) : rawKey;
+    const unitName = indMeta ? (indMeta.unit || "mg/L") : "mg/L";
+
+    const matched81 = matchCustomParamToDecree81Id(rawKey) || matchCustomParamToDecree81Id(labelName);
+    if (matched81) {
+      if (paramMap[matched81] === void 0) {
+        paramMap[matched81] = numVal;
+      }
+    } else {
+      extraCustoms.push({
+        id: `wq-ext-${rawKey}`,
+        name: labelName,
+        value: String(numVal),
+        unit: unitName,
+        standard: indMeta?.std || "-",
+        status: "compliant"
+      });
+    }
+  });
+
+  return { paramMap, extraCustoms };
+}
+
+function buildWastewaterQualityFromCompanyDataset(dataset, stationIdxOrAll = "0", customIndicators = []) {
+  if (!dataset || !Array.isArray(dataset.stations) || dataset.stations.length === 0) {
+    return null;
+  }
+
+  const stations = dataset.stations;
+  let mergedParamMap = {};
+  let mergedExtraCustoms = [];
+  let chosenStation = stations[0];
+  let stationLabel = "";
+
+  if (String(stationIdxOrAll) === "ALL" && stations.length > 0) {
+    const sums = {};
+    const counts = {};
+    stations.forEach((st) => {
+      const { paramMap, extraCustoms } = resolveCompanyStationParamMap(st, customIndicators);
+      Object.keys(paramMap).forEach((k) => {
+        sums[k] = (sums[k] || 0) + paramMap[k];
+        counts[k] = (counts[k] || 0) + 1;
+      });
+      if (mergedExtraCustoms.length === 0 && extraCustoms.length > 0) {
+        mergedExtraCustoms = extraCustoms;
+      }
+    });
+    Object.keys(sums).forEach((k) => {
+      mergedParamMap[k] = Number((sums[k] / counts[k]).toFixed(4));
+    });
+    stationLabel = `ຄ່າສະເລ່ຍທຸກຈຸດວັດແທກ (${stations.length} ຈຸດ)`;
+  } else {
+    const idx = Math.max(0, Math.min(stations.length - 1, parseInt(stationIdxOrAll, 10) || 0));
+    chosenStation = stations[idx] || stations[0];
+    const { paramMap, extraCustoms } = resolveCompanyStationParamMap(chosenStation, customIndicators);
+    mergedParamMap = paramMap;
+    mergedExtraCustoms = extraCustoms;
+    stationLabel = chosenStation.name || chosenStation.code || `ຈຸດເກັບຕົວຢ່າງທີ ${idx + 1}`;
+  }
+
+  const customParameters = [];
+  LAO_STANDARD_81.parameters.forEach((p) => {
+    if (["ph", "bod", "cod", "tss"].includes(p.id)) return;
+    if (mergedParamMap[p.id] !== void 0 && !isNaN(mergedParamMap[p.id])) {
+      const lim4 = p.classes["ປະເພດ 4"];
+      const ev4 = evaluateSingleValueAgainstLimit81(mergedParamMap[p.id], lim4, p.unit);
+      customParameters.push({
+        id: `wq81-${p.id}`,
+        name: p.name,
+        value: String(mergedParamMap[p.id]),
+        unit: p.unit,
+        standard: lim4 ? lim4.label : "",
+        status: ev4.status === "exceed" ? "exceeded" : ev4.status === "warn" ? "warning" : "compliant"
+      });
+    }
+  });
+  mergedExtraCustoms.forEach((ec) => customParameters.push(ec));
+
+  const tempWq = {
+    ph: mergedParamMap.ph !== void 0 ? mergedParamMap.ph : 7.2,
+    bod: mergedParamMap.bod !== void 0 ? mergedParamMap.bod : void 0,
+    cod: mergedParamMap.cod !== void 0 ? mergedParamMap.cod : void 0,
+    tss: mergedParamMap.tss !== void 0 ? mergedParamMap.tss : void 0,
+    status: "compliant",
+    customParameters
+  };
+
+  const eval81 = evaluateWaterQualityAgainstDecree81(tempWq, "ປະເພດ 4");
+  const computedStatus = eval81.overallStatus === "exceed" ? "exceeded" : eval81.overallStatus === "warn" ? "warning" : "compliant";
+
+  const latNum = chosenStation && chosenStation.lat !== void 0 && chosenStation.lat !== "" && !isNaN(parseFloat(chosenStation.lat)) ? parseFloat(chosenStation.lat) : null;
+  const lngNum = chosenStation && chosenStation.lng !== void 0 && chosenStation.lng !== "" && !isNaN(parseFloat(chosenStation.lng)) ? parseFloat(chosenStation.lng) : null;
+
+  return {
+    waterQuality: {
+      ...tempWq,
+      status: computedStatus,
+      linkedWqCompanyKey: dataset.key,
+      linkedWqCompanyName: dataset.title,
+      linkedWqStationCode: String(stationIdxOrAll) === "ALL" ? "ALL" : (chosenStation.code || ""),
+      linkedWqStationName: stationLabel,
+      linkedWqSampleDate: chosenStation?.sampleDate || dataset.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      linkedWqWaterSource: chosenStation?.basin || chosenStation?.section || dataset.basin || "ແຫຼ່ງນໍ້າຮອງຮັບ",
+      linkedWqBestFitClass81: eval81.overallBestFitClass || "ປະເພດ 4"
+    },
+    evaluation81: eval81,
+    companyName: dataset.title,
+    province: chosenStation?.province || dataset.province || "ນະຄອນຫຼວງວຽງຈັນ",
+    waterSource: chosenStation?.basin || chosenStation?.section || dataset.basin || "ແຫຼ່ງນໍ້າຮອງຮັບ",
+    sampleDate: chosenStation?.sampleDate || dataset.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+    stationName: stationLabel,
+    stationCode: String(stationIdxOrAll) === "ALL" ? "ALL" : (chosenStation?.code || ""),
+    coordinates: latNum !== null && lngNum !== null ? { lat: latNum, lng: lngNum } : null
+  };
+}
+
+function normalizeRawWqRecordsToDatasets(rawRecordsObjOrArr, indicators = []) {
+  const list = [];
+  if (!rawRecordsObjOrArr) return list;
+  const entries = Array.isArray(rawRecordsObjOrArr)
+    ? rawRecordsObjOrArr.map((item, idx) => [item?.fbKey || item?.id || `wq_${idx}`, item])
+    : Object.entries(rawRecordsObjOrArr);
+
+  entries.forEach(([fbKey, d], idx) => {
+    if (!d || typeof d !== "object") return;
+    const rawStations = Array.isArray(d.stations)
+      ? d.stations
+      : d.stations && typeof d.stations === "object"
+        ? Object.values(d.stations)
+        : [];
+    if (!rawStations.length) return;
+    const compTitle = d.companyName || d.name || d.title || `ບໍລິສັດ/ໂຄງການ #${idx + 1}`;
+    const dsKey = String(d.key || d.fbKey || d.id || fbKey || `ds_${idx}`);
+    list.push({
+      key: dsKey,
+      title: compTitle,
+      date: d.date || "-",
+      province: d.province || rawStations[0]?.province || "ນະຄອນຫຼວງວຽງຈັນ",
+      basin: d.waterSource || d.basin || d.projectLocation || rawStations[0]?.basin || "ແຫຼ່ງນໍ້າທໍາມະຊາດ",
+      stations: rawStations.map((st, sIdx) => ({
+        ...st,
+        code: st.code || `ST-${sIdx + 1}`,
+        name: st.name || `ຈຸດເກັບຕົວຢ່າງທີ ${sIdx + 1}`,
+        companyName: compTitle,
+        sampleDate: st.sampleDate || d.date || "-",
+        datasetKey: dsKey,
+        datasetTitle: compTitle
+      })),
+      indicators
+    });
+  });
+  return list;
+}
+
+function useCompanyWaterQualityDatasets() {
+  const [datasets, setDatasets] = useState9(() => {
+    try {
+      const cached = localStorage.getItem("DWR_SHARED_COMPANY_WQ_RECORDS_V1");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.datasets) && parsed.datasets.length > 0) {
+          return parsed.datasets;
+        }
+      }
+    } catch {
+    }
+    return DEFAULT_COMPANY_WQ_DATASETS;
+  });
+  const [indicators, setIndicators] = useState9(() => {
+    try {
+      const cached = localStorage.getItem("DWR_SHARED_COMPANY_WQ_RECORDS_V1");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.indicators)) return parsed.indicators;
+      }
+      const entCfg = localStorage.getItem("ENT_WATER_CONFIG");
+      if (entCfg) {
+        const parsed = JSON.parse(entCfg);
+        if (parsed && Array.isArray(parsed.indicators)) return parsed.indicators;
+      }
+    } catch {
+    }
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState9(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState9(null);
+
+  const refreshFromWaterQualitySystem = async () => {
+    setIsLoading(true);
+    try {
+      let latestIndicators = indicators;
+      try {
+        const indRes = await fetch(`${WQ_FIREBASE_RTDB_URL}/system_config/indicators.json`);
+        if (indRes.ok) {
+          const indData = await indRes.json();
+          if (Array.isArray(indData) && indData.length > 0) {
+            latestIndicators = indData;
+            setIndicators(indData);
+          }
+        }
+      } catch {
+      }
+
+      const recRes = await fetch(`${WQ_FIREBASE_RTDB_URL}/water_records.json`);
+      if (recRes.ok) {
+        const recData = await recRes.json();
+        const normalized = normalizeRawWqRecordsToDatasets(recData, latestIndicators);
+        if (normalized.length > 0) {
+          setDatasets(normalized);
+          setLastSyncedAt((/* @__PURE__ */ new Date()).toLocaleTimeString("lo-LA"));
+          try {
+            localStorage.setItem("DWR_SHARED_COMPANY_WQ_RECORDS_V1", JSON.stringify({
+              updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+              indicators: latestIndicators,
+              datasets: normalized
+            }));
+          } catch {
+          }
+          setIsLoading(false);
+          return normalized;
+        }
+      }
+
+      const cached = localStorage.getItem("DWR_SHARED_COMPANY_WQ_RECORDS_V1");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.datasets) && parsed.datasets.length > 0) {
+          setDatasets(parsed.datasets);
+          setLastSyncedAt((/* @__PURE__ */ new Date()).toLocaleTimeString("lo-LA"));
+          setIsLoading(false);
+          return parsed.datasets;
+        }
+      }
+    } catch (err) {
+      console.warn("WQ Firebase fetch fallback to local datasets:", err);
+    }
+    setIsLoading(false);
+    return datasets;
+  };
+
+  useEffect4(() => {
+    refreshFromWaterQualitySystem();
+  }, []);
+
+  return { datasets, indicators, isLoading, lastSyncedAt, refreshFromWaterQualitySystem };
+}
+
+var CompanyWaterQualityLinkerCard = ({
+  currentWaterQuality,
+  onApplyCompanyWaterQuality,
+  compact = false
+}) => {
+  const { datasets, indicators, isLoading, refreshFromWaterQualitySystem } = useCompanyWaterQualityDatasets();
+  const [selectedDatasetKey, setSelectedDatasetKey] = useState9(
+    currentWaterQuality?.linkedWqCompanyKey || datasets[0]?.key || ""
+  );
+  const [selectedStationIdx, setSelectedStationIdx] = useState9("0");
+  const [justLinkedMessage, setJustLinkedMessage] = useState9("");
+
+  useEffect4(() => {
+    if (currentWaterQuality?.linkedWqCompanyKey && datasets.some((d) => String(d.key) === String(currentWaterQuality.linkedWqCompanyKey))) {
+      setSelectedDatasetKey(String(currentWaterQuality.linkedWqCompanyKey));
+    } else if (!selectedDatasetKey && datasets.length > 0) {
+      setSelectedDatasetKey(String(datasets[0].key));
+    }
+  }, [datasets, currentWaterQuality?.linkedWqCompanyKey]);
+
+  const activeDataset = datasets.find((d) => String(d.key) === String(selectedDatasetKey)) || datasets[0] || null;
+  const previewBundle = activeDataset
+    ? buildWastewaterQualityFromCompanyDataset(activeDataset, selectedStationIdx, indicators)
+    : null;
+  const previewBf = previewBundle?.evaluation81?.overallBestFitClass || "ບໍ່ມີຂໍ້ມູນ";
+
+  const bfBadgeColor = previewBf === "ປະເພດ 1"
+    ? "bg-emerald-600 text-white"
+    : previewBf === "ປະເພດ 2"
+      ? "bg-sky-600 text-white"
+      : previewBf === "ປະເພດ 3"
+        ? "bg-teal-600 text-white"
+        : previewBf === "ປະເພດ 4"
+          ? "bg-amber-500 text-white"
+          : previewBf === "ປະເພດ 5"
+            ? "bg-orange-600 text-white"
+            : "bg-rose-600 text-white";
+
+  const handleLinkClick = () => {
+    if (!previewBundle || typeof onApplyCompanyWaterQuality !== "function") return;
+    onApplyCompanyWaterQuality(previewBundle);
+    setJustLinkedMessage(`✅ ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າຂອງ "${previewBundle.companyName}" (${previewBundle.stationName}) ແລະ ຈັດປະເພດຕາມ 81/ລບ (${previewBf}) ສໍາເລັດແລ້ວ!`);
+    setTimeout(() => setJustLinkedMessage(""), 5000);
+  };
+
+  return /* @__PURE__ */ jsxs9("div", { className: `rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/90 via-white to-emerald-50/60 ${compact ? "p-3.5" : "p-4"} space-y-3 shadow-xs`, children: [
+    /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-start gap-2.5", children: [
+        /* @__PURE__ */ jsx9("div", { className: "w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-base shrink-0 shadow-xs", children: "🔗" }),
+        /* @__PURE__ */ jsxs9("div", { children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+            /* @__PURE__ */ jsx9("span", { className: "text-xs sm:text-sm font-extrabold text-indigo-950", children: "ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າສະເພາະຂອງບໍລິສັດ ຈາກລະບົບຄຸນນະພາບນໍ້າ" }),
+            /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300", children: "ຈັດປະເພດ 5 ປະເພດ ຕາມ 81/ລບ" })
+          ] }),
+          /* @__PURE__ */ jsx9("p", { className: "text-[11px] text-slate-600", children: "ດຶງຄ່າວິເຄາະຄຸນນະພາບນໍ້າທີ່ບໍລິສັດໄດ້ປ້ອນເຂົ້າໃນລະບົບຄຸນນະພາບນໍ້າ ເພື່ອກໍານົດການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ (ປະເພດ 1 – 5) ອັດຕະໂນມັດ" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-1.5 shrink-0", children: [
+        /* @__PURE__ */ jsx9(
+          "button",
+          {
+            type: "button",
+            onClick: refreshFromWaterQualitySystem,
+            disabled: isLoading,
+            className: "px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-bold transition cursor-pointer flex items-center gap-1",
+            children: [
+              /* @__PURE__ */ jsx9(RotateCcw4, { size: 12, className: isLoading ? "animate-spin" : "" }),
+              isLoading ? "ກໍາລັງຊິ້ງ..." : "ຊິ້ງຂໍ້ມູນລ່າສຸດ"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsx9(
+          "a",
+          {
+            href: "water-quality.html",
+            className: "px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-bold transition flex items-center gap-1",
+            title: "ເປີດລະບົບຄຸນນະພາບນໍ້າ",
+            children: "🌊 ໄປລະບົບຄຸນນະພາບນໍ້າ"
+          }
+        )
+      ] })
+    ] }),
+
+    currentWaterQuality?.linkedWqCompanyName && /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-xs", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+        /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-md bg-emerald-600 text-white font-bold text-[10px]", children: "🔗 ລີ້ງແລ້ວ" }),
+        /* @__PURE__ */ jsxs9("span", { className: "font-bold text-emerald-950", children: [
+          "ບໍລິສັດ: ",
+          currentWaterQuality.linkedWqCompanyName
+        ] }),
+        currentWaterQuality.linkedWqStationName && /* @__PURE__ */ jsxs9("span", { className: "text-emerald-800 text-[11px]", children: [
+          "• ຈຸດວັດແທກ: ",
+          currentWaterQuality.linkedWqStationName
+        ] }),
+        currentWaterQuality.linkedWqSampleDate && /* @__PURE__ */ jsxs9("span", { className: "text-slate-500 text-[10px]", children: [
+          "(",
+          currentWaterQuality.linkedWqSampleDate,
+          ")"
+        ] })
+      ] }),
+      currentWaterQuality.linkedWqBestFitClass81 && /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-700 text-white", children: [
+        "ຈັດຢູ່: ",
+        currentWaterQuality.linkedWqBestFitClass81,
+        " (81/ລບ)"
+      ] })
+    ] }),
+
+    /* @__PURE__ */ jsxs9("div", { className: "grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "md:col-span-5", children: [
+        /* @__PURE__ */ jsxs9("label", { className: "block text-[11px] font-bold text-slate-700 mb-1", children: [
+          "🏢 1. ເລືອກບໍລິສັດທີ່ປ້ອນເຂົ້າໃນລະບົບຄຸນນະພາບນໍ້າ (",
+          datasets.length,
+          " ບໍລິສັດ):"
+        ] }),
+        /* @__PURE__ */ jsx9(
+          "select",
+          {
+            value: selectedDatasetKey,
+            onChange: (e) => {
+              setSelectedDatasetKey(e.target.value);
+              setSelectedStationIdx("0");
+            },
+            className: "w-full px-3 py-2 rounded-xl bg-white border border-indigo-200 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500",
+            children: datasets.map((ds) => /* @__PURE__ */ jsxs9("option", { value: ds.key, children: [
+              "🏢 ",
+              ds.title,
+              " (",
+              ds.stations?.length || 0,
+              " ຈຸດ • ",
+              ds.province || "-",
+              ")"
+            ] }, ds.key))
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs9("div", { className: "md:col-span-4", children: [
+        /* @__PURE__ */ jsx9("label", { className: "block text-[11px] font-bold text-slate-700 mb-1", children: "📍 2. ເລືອກຈຸດເກັບຕົວຢ່າງນໍ້າຂອງບໍລິສັດ:" }),
+        /* @__PURE__ */ jsxs9(
+          "select",
+          {
+            value: selectedStationIdx,
+            onChange: (e) => setSelectedStationIdx(e.target.value),
+            className: "w-full px-3 py-2 rounded-xl bg-white border border-indigo-200 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500",
+            children: [
+              (activeDataset?.stations || []).map((st, idx) => /* @__PURE__ */ jsxs9("option", { value: String(idx), children: [
+                "📍 ",
+                st.code ? `[${st.code}] ` : "",
+                st.name || `ຈຸດທີ ${idx + 1}`,
+                st.sampleDate ? ` (${st.sampleDate})` : ""
+              ] }, `${activeDataset?.key}-st-${idx}`)),
+              (activeDataset?.stations?.length || 0) > 1 && /* @__PURE__ */ jsxs9("option", { value: "ALL", children: [
+                "📊 ຄ່າສະເລ່ຍລວມທຸກຈຸດຂອງບໍລິສັດ (",
+                activeDataset.stations.length,
+                " ຈຸດ)"
+              ] })
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx9("div", { className: "md:col-span-3", children: /* @__PURE__ */ jsxs9(
+        "button",
+        {
+          type: "button",
+          onClick: handleLinkClick,
+          className: "w-full px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer",
+          children: [
+            /* @__PURE__ */ jsx9(Check3, { size: 14 }),
+            "ດຶງຂໍ້ມູນ & ຈັດປະເພດ 81/ລບ"
+          ]
+        }
+      ) })
+    ] }),
+
+    previewBundle && /* @__PURE__ */ jsxs9("div", { className: "bg-white/90 rounded-xl p-3 border border-slate-200/90 flex flex-col lg:flex-row lg:items-center justify-between gap-2 text-xs", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center gap-2", children: [
+        /* @__PURE__ */ jsx9("span", { className: "text-[11px] font-bold text-slate-500", children: "ຕົວຢ່າງຄ່າວິເຄາະຂອງບໍລິສັດ:" }),
+        /* @__PURE__ */ jsxs9("span", { className: "px-2 py-0.5 rounded-lg bg-slate-100 font-mono text-[11px]", children: ["pH: ", /* @__PURE__ */ jsx9("b", { children: previewBundle.waterQuality.ph ?? "-" })] }),
+        /* @__PURE__ */ jsxs9("span", { className: "px-2 py-0.5 rounded-lg bg-slate-100 font-mono text-[11px]", children: ["BOD: ", /* @__PURE__ */ jsx9("b", { children: previewBundle.waterQuality.bod ?? "-" }), " mg/L"] }),
+        /* @__PURE__ */ jsxs9("span", { className: "px-2 py-0.5 rounded-lg bg-slate-100 font-mono text-[11px]", children: ["COD: ", /* @__PURE__ */ jsx9("b", { children: previewBundle.waterQuality.cod ?? "-" }), " mg/L"] }),
+        /* @__PURE__ */ jsxs9("span", { className: "px-2 py-0.5 rounded-lg bg-slate-100 font-mono text-[11px]", children: ["TSS: ", /* @__PURE__ */ jsx9("b", { children: previewBundle.waterQuality.tss ?? "-" }), " mg/L"] }),
+        /* @__PURE__ */ jsxs9("span", { className: "text-[11px] text-indigo-700 font-semibold", children: [
+          "+ ຕົວຊີ້ວັດ 81/ລບ ເພີ່ມເຕີມ ",
+          previewBundle.waterQuality.customParameters?.length || 0,
+          " ລາຍການ"
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 shrink-0", children: [
+        /* @__PURE__ */ jsx9("span", { className: "text-[11px] font-bold text-slate-600", children: "ຜົນຈັດປະເພດ 5 ປະເພດ (81/ລບ):" }),
+        /* @__PURE__ */ jsx9("span", { className: `px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${bfBadgeColor}`, children: previewBf })
+      ] })
+    ] }),
+
+    justLinkedMessage && /* @__PURE__ */ jsx9("div", { className: "px-3 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-xs", children: justLinkedMessage })
+  ] });
+};
+
 function evaluateWaterQualityAgainstDecree81(waterQuality = {}, targetClass = "ປະເພດ 4", customOverrides = {}) {
   const classOrder = ["ປະເພດ 1", "ປະເພດ 2", "ປະເພດ 3", "ປະເພດ 4", "ປະເພດ 5"];
   const validTargetClass = classOrder.includes(targetClass) ? targetClass : "ປະເພດ 4";
@@ -9028,9 +9581,13 @@ var Decree81ComparisonPanel = ({
       /* @__PURE__ */ jsxs9("div", { children: [
         /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
           /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300", children: "ຂໍ້ຕົກລົງ 81/ລບ (5 ປະເພດ)" }),
+          waterQuality?.linkedWqCompanyName && /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-300", children: [
+            "🔗 ລີ້ງຂໍ້ມູນບໍລິສັດ (ລະບົບຄຸນນະພາບນໍ້າ): ",
+            waterQuality.linkedWqCompanyName
+          ] }),
           /* @__PURE__ */ jsx9("h4", { className: "text-sm sm:text-base font-extrabold text-slate-900", children: "ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ" })
         ] }),
-        /* @__PURE__ */ jsx9("p", { className: "text-[11px] text-slate-500 mt-0.5", children: "ປຽບທຽບຄ່າວິເຄາະນໍ້າເປື້ອນທີ່ປ້ອນເຂົ້າ ທຽບກັບມາດຕະຖານຄຸນນະພາບນໍ້າ 5 ປະເພດ (ປະເພດ 1 – 5) ພ້ອມຈັດປະເພດອັດຕະໂນມັດ" })
+        /* @__PURE__ */ jsx9("p", { className: "text-[11px] text-slate-500 mt-0.5", children: "ປຽບທຽບຄ່າວິເຄາະນໍ້າເປື້ອນທີ່ປ້ອນເຂົ້າ ຫຼື ລີ້ງມາຈາກບໍລິສັດໃນລະບົບຄຸນນະພາບນໍ້າ ທຽບກັບມາດຕະຖານຄຸນນະພາບນໍ້າ 5 ປະເພດ (ປະເພດ 1 – 5) ພ້ອມຈັດປະເພດອັດຕະໂນມັດ" })
       ] }),
       /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
         editable && /* @__PURE__ */ jsx9("button", {
@@ -9300,8 +9857,14 @@ var Decree81ComparisonPanel = ({
 // ============================================================================
 // ⚖️ ໜ້າຈໍສູນກວດສອບ ແລະ ປຽບທຽບມາດຕະຖານຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ) ສໍາລັບລະບົບການປ່ອຍນໍ້າເປື້ອນ
 // ============================================================================
-var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject }) => {
+var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject, onSaveProject, onCreateProjectFromCompanyWq }) => {
+  const { datasets: companyWqDatasets, indicators: companyWqIndicators, isLoading: isSyncingWq, refreshFromWaterQualitySystem } = useCompanyWaterQualityDatasets();
   const [selectedSourceId, setSelectedSourceId] = useState9(projects[0]?.id || "__ALL_AVG__");
+  const [selectedStationMode, setSelectedStationMode] = useState9("0");
+  const [targetLinkProjectId, setTargetLinkProjectId] = useState9(projects[0]?.id || "");
+  const [linkSuccessBanner, setLinkSuccessBanner] = useState9("");
+  const [pendingIncomingLink, setPendingIncomingLink] = useState9(null);
+
   const [customWaterQuality, setCustomWaterQuality] = useState9({
     ph: 7.2,
     bod: 18,
@@ -9316,6 +9879,75 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
       { id: "c-tp", name: "ຟົດສະຟໍທັງໝົດ (TP)", value: "0.28", unit: "mg/L", standard: "≤ 0.5", status: "compliant" }
     ]
   });
+
+  useEffect4(() => {
+    try {
+      const rawPending = localStorage.getItem("DWR_PENDING_WQ_TO_WASTEWATER_LINK");
+      if (rawPending) {
+        const parsed = JSON.parse(rawPending);
+        localStorage.removeItem("DWR_PENDING_WQ_TO_WASTEWATER_LINK");
+        if (parsed && parsed.companyName) {
+          setPendingIncomingLink(parsed);
+          const pVals = parsed.paramValues || {};
+          const customParams = [];
+          LAO_STANDARD_81.parameters.forEach((p) => {
+            if (["ph", "bod", "cod", "tss"].includes(p.id)) return;
+            if (pVals[p.id] !== void 0 && !isNaN(parseFloat(pVals[p.id]))) {
+              customParams.push({
+                id: `linked-${p.id}`,
+                name: p.name,
+                value: String(pVals[p.id]),
+                unit: p.unit,
+                standard: p.classes["ປະເພດ 4"]?.label || "",
+                status: "compliant"
+              });
+            }
+          });
+          const incomingWq = {
+            ph: pVals.ph ?? 7.2,
+            bod: pVals.bod ?? void 0,
+            cod: pVals.cod ?? void 0,
+            tss: pVals.tss ?? void 0,
+            status: "compliant",
+            customParameters: customParams,
+            linkedWqCompanyKey: parsed.datasetKey || "linked_wq",
+            linkedWqCompanyName: parsed.companyName,
+            linkedWqStationCode: parsed.stationCode || "",
+            linkedWqStationName: parsed.stationName || "ຈຸດເກັບຕົວຢ່າງ",
+            linkedWqSampleDate: parsed.sampleDate || "-",
+            linkedWqWaterSource: parsed.waterSource || "ແຫຼ່ງນໍ້າຮອງຮັບ"
+          };
+          const ev = evaluateWaterQualityAgainstDecree81(incomingWq, "ປະເພດ 4");
+          incomingWq.status = ev.overallStatus === "exceed" ? "exceeded" : ev.overallStatus === "warn" ? "warning" : "compliant";
+          incomingWq.linkedWqBestFitClass81 = ev.overallBestFitClass || "ປະເພດ 4";
+
+          if (parsed.datasetKey && companyWqDatasets.some((d) => String(d.key) === String(parsed.datasetKey))) {
+            setSelectedSourceId(`WQ_COMP::${parsed.datasetKey}`);
+          } else {
+            setCustomWaterQuality(incomingWq);
+            setSelectedSourceId("__CUSTOM__");
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to parse pending WQ link:", e);
+    }
+  }, [companyWqDatasets.length]);
+
+  useEffect4(() => {
+    if (!targetLinkProjectId && projects.length > 0) {
+      setTargetLinkProjectId(projects[0].id);
+    }
+  }, [projects]);
+
+  const isCompanyWqSource = String(selectedSourceId).startsWith("WQ_COMP::");
+  const selectedCompanyKey = isCompanyWqSource ? String(selectedSourceId).replace("WQ_COMP::", "") : null;
+  const selectedCompanyDataset = selectedCompanyKey
+    ? companyWqDatasets.find((d) => String(d.key) === String(selectedCompanyKey)) || null
+    : null;
+  const selectedCompanyBundle = selectedCompanyDataset
+    ? buildWastewaterQualityFromCompanyDataset(selectedCompanyDataset, selectedStationMode, companyWqIndicators)
+    : null;
 
   const selectedProject = projects.find((p) => p.id === selectedSourceId) || null;
 
@@ -9356,17 +9988,50 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
     };
   };
 
-  const activeWaterQuality = selectedSourceId === "__CUSTOM__"
-    ? customWaterQuality
-    : selectedSourceId === "__ALL_AVG__"
-      ? computeAverageWaterQuality()
-      : (selectedProject?.waterQuality || customWaterQuality);
+  const activeWaterQuality = isCompanyWqSource && selectedCompanyBundle
+    ? selectedCompanyBundle.waterQuality
+    : selectedSourceId === "__CUSTOM__"
+      ? customWaterQuality
+      : selectedSourceId === "__ALL_AVG__"
+        ? computeAverageWaterQuality()
+        : (selectedProject?.waterQuality || customWaterQuality);
 
-  const activeProjectInfo = selectedSourceId === "__CUSTOM__"
-    ? { projectName: "ຂໍ້ມູນທົດສອບ/ປ້ອນເອງ (Manual Audit Input)", ownerName: "ກົມຊັບພະຍາກອນນໍ້າ", permitNumber: "AUDIT-81/PM", receivingWaterBodyName: "ແຫຼ່ງນໍ້າຮອງຮັບທົ່ວໄປ" }
-    : selectedSourceId === "__ALL_AVG__"
-      ? { projectName: `ຄ່າສະເລ່ຍທຸກໂຄງການປ່ອຍນໍ້າເປື້ອນ (${projects.length} ໂຄງການ)`, ownerName: "ສັງລວມທົ່ວລະບົບ", permitNumber: "ALL-PROJECTS", receivingWaterBodyName: "ທຸກແຫຼ່ງນໍ້າຮອງຮັບ" }
-      : selectedProject;
+  const activeProjectInfo = isCompanyWqSource && selectedCompanyBundle
+    ? {
+        projectName: `${selectedCompanyBundle.companyName} (${selectedCompanyBundle.stationName})`,
+        ownerName: selectedCompanyBundle.companyName,
+        permitNumber: `WQ-LINK-${selectedCompanyBundle.stationCode || "81"}`,
+        receivingWaterBodyName: selectedCompanyBundle.waterSource
+      }
+    : selectedSourceId === "__CUSTOM__"
+      ? {
+          projectName: customWaterQuality.linkedWqCompanyName
+            ? `🔗 ${customWaterQuality.linkedWqCompanyName} (${customWaterQuality.linkedWqStationName || "ຈາກລະບົບຄຸນນະພາບນໍ້າ"})`
+            : "ຂໍ້ມູນທົດສອບ/ປ້ອນເອງ (Manual Audit Input)",
+          ownerName: customWaterQuality.linkedWqCompanyName || "ກົມຊັບພະຍາກອນນໍ້າ",
+          permitNumber: "AUDIT-81/PM",
+          receivingWaterBodyName: customWaterQuality.linkedWqWaterSource || "ແຫຼ່ງນໍ້າຮອງຮັບທົ່ວໄປ"
+        }
+      : selectedSourceId === "__ALL_AVG__"
+        ? { projectName: `ຄ່າສະເລ່ຍທຸກໂຄງການປ່ອຍນໍ້າເປື້ອນ (${projects.length} ໂຄງການ)`, ownerName: "ສັງລວມທົ່ວລະບົບ", permitNumber: "ALL-PROJECTS", receivingWaterBodyName: "ທຸກແຫຼ່ງນໍ້າຮອງຮັບ" }
+        : selectedProject;
+
+  const handleLinkActiveCompanyWqToProject = async (companyBundle, targetProjId) => {
+    if (!companyBundle || !onSaveProject) return;
+    const targetProj = projects.find((p) => p.id === (targetProjId || targetLinkProjectId));
+    if (!targetProj) return;
+    const updatedProj = {
+      ...targetProj,
+      receivingWaterBodyName: targetProj.receivingWaterBodyName || companyBundle.waterSource,
+      waterQuality: {
+        ...companyBundle.waterQuality
+      },
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    await onSaveProject(updatedProj);
+    setLinkSuccessBanner(`✅ ລີ້ງຂໍ້ມູນຄຸນນະພາບນໍ້າຂອງ "${companyBundle.companyName}" (${companyBundle.stationName}) ເຂົ້າກັບໂຄງການ "${targetProj.projectName}" ພ້ອມຈັດປະເພດ ${companyBundle.evaluation81.overallBestFitClass || "81/ລບ"} ສໍາເລັດແລ້ວ!`);
+    setTimeout(() => setLinkSuccessBanner(""), 6500);
+  };
 
   const handleUpdateWorkbenchParam = (param, rawVal) => {
     const baseWq = selectedSourceId === "__CUSTOM__" ? customWaterQuality : {
@@ -9410,23 +10075,44 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
     /* @__PURE__ */ jsxs9("div", { className: "bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-950 text-white p-5 rounded-3xl shadow-lg border border-emerald-700/40 space-y-4", children: [
       /* @__PURE__ */ jsxs9("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-4", children: [
         /* @__PURE__ */ jsxs9("div", { children: [
-          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
             /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30", children: "ຂໍ້ຕົກລົງ 81/ລບ (21 ກຸມພາ 2017)" }),
-            /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/25 text-rose-200 border border-rose-400/30", children: "ລະບົບການປ່ອຍນໍ້າເປື້ອນ" })
+            /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/40", children: "🔗 ລີ້ງຂໍ້ມູນບໍລິສັດຈາກລະບົບຄຸນນະພາບນໍ້າ ↔ ລະບົບການປ່ອຍນໍ້າເປື້ອນ" })
           ] }),
           /* @__PURE__ */ jsx9("h2", { className: "text-base sm:text-xl font-black mt-1.5", children: "⚖️ ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ" }),
-          /* @__PURE__ */ jsx9("p", { className: "text-xs text-emerald-100/80 mt-0.5", children: "ກວດສອບຄ່າວິເຄາະນໍ້າເປື້ອນກ່ອນປ່ອຍ ຂອງແຕ່ລະໂຄງການ ຫຼື ປ້ອນຂໍ້ມູນທົດສອບ ເພື່ອທຽບກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5)" })
+          /* @__PURE__ */ jsx9("p", { className: "text-xs text-emerald-100/80 mt-0.5", children: "ສາມາດເລືອກຂໍ້ມູນຄຸນນະພາບນໍ້າສະເພາະຂອງບໍລິສັດທີ່ປ້ອນເຂົ້າໃນລະບົບຄຸນນະພາບນໍ້າ ຫຼື ໂຄງການປ່ອຍນໍ້າເປື້ອນ ເພື່ອກໍານົດການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ (ປະເພດ 1 – 5)" })
         ] }),
-        /* @__PURE__ */ jsxs9("div", { className: "min-w-[280px] sm:min-w-[340px] bg-white/10 backdrop-blur-xs p-3 rounded-2xl border border-white/15 space-y-1.5", children: [
-          /* @__PURE__ */ jsx9("label", { className: "block text-[11px] font-bold text-emerald-200", children: "🔍 ເລືອກໂຄງການປ່ອຍນໍ້າເປື້ອນ ເພື່ອປຽບທຽບກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ:" }),
+        /* @__PURE__ */ jsxs9("div", { className: "min-w-[290px] sm:min-w-[380px] bg-white/10 backdrop-blur-xs p-3 rounded-2xl border border-white/15 space-y-2", children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center justify-between gap-2", children: [
+            /* @__PURE__ */ jsx9("label", { className: "block text-[11px] font-bold text-emerald-200", children: "🔍 ເລືອກບໍລິສັດ (ລະບົບຄຸນນະພາບນໍ້າ) ຫຼື ໂຄງການປ່ອຍນໍ້າເປື້ອນ:" }),
+            /* @__PURE__ */ jsx9(
+              "button",
+              {
+                type: "button",
+                onClick: refreshFromWaterQualitySystem,
+                className: "text-[10px] font-bold text-sky-300 hover:text-white underline cursor-pointer",
+                children: isSyncingWq ? "ກໍາລັງຊິ້ງ..." : "🔄 ຊິ້ງຂໍ້ມູນບໍລິສັດ"
+              }
+            )
+          ] }),
           /* @__PURE__ */ jsxs9("select", {
             value: selectedSourceId,
-            onChange: (e) => setSelectedSourceId(e.target.value),
+            onChange: (e) => {
+              setSelectedSourceId(e.target.value);
+              setSelectedStationMode("0");
+            },
             className: "w-full px-3 py-2 rounded-xl bg-slate-900 border border-emerald-500/50 text-white text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-emerald-400",
             children: [
-              /* @__PURE__ */ jsxs9("option", { value: "__ALL_AVG__", children: ["📊 ຄ່າສະເລ່ຍລວມທຸກໂຄງການ (", projects.length, " ໂຄງການ)"] }),
-              /* @__PURE__ */ jsx9("option", { value: "__CUSTOM__", children: "✏️ ປ້ອນຂໍ້ມູນທົດສອບເອງ (Manual Input 17 ຕົວຊີ້ວັດ)" }),
-              projects.map((p) => /* @__PURE__ */ jsxs9("option", { value: p.id, children: [
+              /* @__PURE__ */ jsx9("optgroup", { label: `🏢 ຂໍ້ມູນສະເພາະຂອງບໍລິສັດ ຈາກລະບົບຄຸນນະພາບນໍ້າ (${companyWqDatasets.length} ບໍລິສັດ)`, children: companyWqDatasets.map((ds) => /* @__PURE__ */ jsxs9("option", { value: `WQ_COMP::${ds.key}`, children: [
+                "🏢 [ລະບົບຄຸນນະພາບນໍ້າ] ",
+                ds.title,
+                " (",
+                ds.stations?.length || 0,
+                " ຈຸດ • ",
+                ds.province || "-",
+                ")"
+              ] }, `wq-${ds.key}`)) }),
+              /* @__PURE__ */ jsx9("optgroup", { label: `🏭 ໂຄງການໃນລະບົບການປ່ອຍນໍ້າເປື້ອນ (${projects.length} ໂຄງການ)`, children: projects.map((p) => /* @__PURE__ */ jsxs9("option", { value: p.id, children: [
                 "🏭 ",
                 p.projectName,
                 " (",
@@ -9434,11 +10120,86 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
                 " • BOD: ",
                 p.waterQuality.bod ?? "-",
                 ")"
-              ] }, p.id))
+              ] }, p.id)) }),
+              /* @__PURE__ */ jsxs9("optgroup", { label: "🌐 ຕົວເລືອກສັງລວມ & ທົດສອບ", children: [
+                /* @__PURE__ */ jsxs9("option", { value: "__ALL_AVG__", children: ["📊 ຄ່າສະເລ່ຍລວມທຸກໂຄງການປ່ອຍນໍ້າເປື້ອນ (", projects.length, " ໂຄງການ)"] }),
+                /* @__PURE__ */ jsx9("option", { value: "__CUSTOM__", children: "✏️ ປ້ອນຂໍ້ມູນທົດສອບເອງ (Manual Input 17 ຕົວຊີ້ວັດ)" })
+              ] })
             ]
-          })
+          }),
+          isCompanyWqSource && selectedCompanyDataset && /* @__PURE__ */ jsxs9("div", { className: "pt-1 space-y-1.5", children: [
+            /* @__PURE__ */ jsx9("label", { className: "block text-[10.5px] font-bold text-indigo-200", children: "📍 ເລືອກຈຸດເກັບຕົວຢ່າງນໍ້າຂອງບໍລິສັດ:" }),
+            /* @__PURE__ */ jsxs9("select", {
+              value: selectedStationMode,
+              onChange: (e) => setSelectedStationMode(e.target.value),
+              className: "w-full px-2.5 py-1.5 rounded-xl bg-slate-900 border border-indigo-400/50 text-white text-xs font-bold",
+              children: [
+                (selectedCompanyDataset.stations || []).map((st, idx) => /* @__PURE__ */ jsxs9("option", { value: String(idx), children: [
+                  "📍 ",
+                  st.code ? `[${st.code}] ` : "",
+                  st.name || `ຈຸດທີ ${idx + 1}`,
+                  " (",
+                  st.sampleDate || "-",
+                  ")"
+                ] }, `st-opt-${idx}`)),
+                (selectedCompanyDataset.stations?.length || 0) > 1 && /* @__PURE__ */ jsxs9("option", { value: "ALL", children: [
+                  "📊 ຄ່າສະເລ່ຍລວມທຸກຈຸດຂອງບໍລິສັດ (",
+                  selectedCompanyDataset.stations.length,
+                  " ຈຸດ)"
+                ] })
+              ]
+            })
+          ] })
         ] })
-      ] })
+      ] }),
+
+      /* Action Bar when a Company from Water Quality System is active */
+      (isCompanyWqSource && selectedCompanyBundle || pendingIncomingLink) && /* @__PURE__ */ jsxs9("div", { className: "p-3.5 rounded-2xl bg-indigo-950/80 border border-indigo-400/40 flex flex-col lg:flex-row lg:items-center justify-between gap-3", children: [
+        /* @__PURE__ */ jsxs9("div", { className: "space-y-0.5", children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+            /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-md bg-indigo-500 text-white text-[10px] font-black", children: "🔗 ຂໍ້ມູນບໍລິສັດຈາກລະບົບຄຸນນະພາບນໍ້າ" }),
+            /* @__PURE__ */ jsx9("span", { className: "text-xs sm:text-sm font-extrabold text-white", children: selectedCompanyBundle?.companyName || pendingIncomingLink?.companyName }),
+            /* @__PURE__ */ jsxs9("span", { className: "text-xs text-indigo-200", children: [
+              "• ",
+              selectedCompanyBundle?.stationName || pendingIncomingLink?.stationName
+            ] })
+          ] }),
+          /* @__PURE__ */ jsx9("p", { className: "text-[11px] text-indigo-200/90", children: "ທ່ານສາມາດລີ້ງຜົນວິເຄາະ ແລະ ການຈັດປະເພດ 5 ປະເພດ (81/ລບ) ຂອງບໍລິສັດນີ້ ເຂົ້າກັບໂຄງການປ່ອຍນໍ້າເປື້ອນທີ່ມີຢູ່ ຫຼື ສ້າງເປັນໂຄງການປ່ອຍນໍ້າເປື້ອນໃໝ່ໄດ້ທັນທີ:" })
+        ] }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center gap-2", children: [
+          projects.length > 0 && /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-indigo-400/30", children: [
+            /* @__PURE__ */ jsx9(
+              "select",
+              {
+                value: targetLinkProjectId,
+                onChange: (e) => setTargetLinkProjectId(e.target.value),
+                className: "px-2.5 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-bold border border-slate-700 max-w-[220px]",
+                children: projects.map((p) => /* @__PURE__ */ jsxs9("option", { value: p.id, children: ["🏭 ", p.projectName] }, p.id))
+              }
+            ),
+            /* @__PURE__ */ jsx9(
+              "button",
+              {
+                type: "button",
+                onClick: () => handleLinkActiveCompanyWqToProject(selectedCompanyBundle || buildWastewaterQualityFromCompanyDataset(companyWqDatasets[0], "0", companyWqIndicators), targetLinkProjectId),
+                className: "px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition cursor-pointer shrink-0",
+                children: "🔗 ລີ້ງເຂົ້າໂຄງການນີ້"
+              }
+            )
+          ] }),
+          onCreateProjectFromCompanyWq && /* @__PURE__ */ jsx9(
+            "button",
+            {
+              type: "button",
+              onClick: () => onCreateProjectFromCompanyWq(selectedCompanyBundle || buildWastewaterQualityFromCompanyDataset(companyWqDatasets[0], "0", companyWqIndicators)),
+              className: "px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer shadow-xs",
+              children: "➕ ສ້າງໂຄງການປ່ອຍນໍ້າເປື້ອນໃໝ່ຈາກຂໍ້ມູນບໍລິສັດນີ້"
+            }
+          )
+        ] })
+      ] }),
+
+      linkSuccessBanner && /* @__PURE__ */ jsx9("div", { className: "px-4 py-2.5 rounded-2xl bg-emerald-500 text-white text-xs font-extrabold shadow-sm", children: linkSuccessBanner })
     ] }),
 
     /* Main Comparison Panel (5-Class Cards + 5-Class Comparison Table) */
@@ -9449,6 +10210,112 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
       editable: true,
       onUpdateParameterValue: handleUpdateWorkbenchParam
     }),
+
+    /* 🏢 Dedicated Table: Company-Specific Water Quality Datasets from Water Quality System (water-quality.html) */
+    /* @__PURE__ */ jsxs9("div", { className: "bg-white border-2 border-indigo-200/80 rounded-2xl p-5 shadow-xs space-y-3", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100", children: [
+        /* @__PURE__ */ jsxs9("div", { children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+            /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-300", children: "🔗 ຖານຂໍ້ມູນຮ່ວມ ລະບົບຄຸນນະພາບນໍ້າ ↔ ລະບົບການປ່ອຍນໍ້າເປື້ອນ" }),
+            /* @__PURE__ */ jsx9("h3", { className: "text-sm sm:text-base font-extrabold text-slate-900", children: "🏢 ຂໍ້ມູນຄຸນນະພາບນໍ້າສະເພາະຂອງບໍລິສັດ ທີ່ປ້ອນເຂົ້າໃນລະບົບຄຸນນະພາບນໍ້າ (ຈັດປະເພດ 5 ປະເພດ ຕາມ 81/ລບ)" })
+          ] }),
+          /* @__PURE__ */ jsx9("p", { className: "text-xs text-slate-500 mt-0.5", children: "ຄລິກເລືອກບໍລິສັດ ເພື່ອກວດສອບຕາຕະລາງປຽບທຽບ 5 ປະເພດ (ປະເພດ 1 – 5) ຂ້າງເທິງ ຫຼື ກົດລີ້ງເຂົ້າກັບໂຄງການປ່ອຍນໍ້າເປື້ອນ" })
+        ] }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxs9("span", { className: "text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-xl", children: ["ທັງໝົດ ", companyWqDatasets.length, " ບໍລິສັດ"] }),
+          /* @__PURE__ */ jsx9(
+            "a",
+            {
+              href: "water-quality.html",
+              className: "px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition",
+              children: "🌊 ເປີດລະບົບຄຸນນະພາບນໍ້າ"
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx9("div", { className: "overflow-x-auto rounded-xl border border-slate-200", children: /* @__PURE__ */ jsxs9("table", { className: "w-full text-xs text-left", children: [
+        /* @__PURE__ */ jsx9("thead", { className: "bg-indigo-50/70 text-slate-700 font-extrabold border-b border-slate-200 text-[11px]", children: /* @__PURE__ */ jsxs9("tr", { children: [
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center", children: "ລ/ດ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3", children: "ຊື່ບໍລິສັດ / ຊຸດຂໍ້ມູນ (ຈາກລະບົບຄຸນນະພາບນໍ້າ)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3", children: "ແຫຼ່ງນໍ້າ / ອ່າງຮັບນໍ້າ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "ຈໍານວນຈຸດ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "pH" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "BOD (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "COD (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "TSS (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center bg-emerald-50 text-emerald-900", children: "🎯 ຈັດປະເພດ 5 ປະເພດ (81/ລບ)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center", children: "ການລີ້ງກັບລະບົບປ່ອຍນໍ້າເປື້ອນ" })
+        ] }) }),
+        /* @__PURE__ */ jsx9("tbody", { className: "divide-y divide-slate-100", children: companyWqDatasets.map((ds, idx) => {
+          const bundle = buildWastewaterQualityFromCompanyDataset(ds, "ALL", companyWqIndicators);
+          const bf = bundle?.evaluation81?.overallBestFitClass || "ບໍ່ມີຂໍ້ມູນ";
+          const isSelected = selectedSourceId === `WQ_COMP::${ds.key}`;
+          const linkedProj = projects.find((p) =>
+            p.waterQuality?.linkedWqCompanyKey === ds.key ||
+            (p.waterQuality?.linkedWqCompanyName && p.waterQuality.linkedWqCompanyName === ds.title)
+          );
+          const badgeCls = bf === "ປະເພດ 1" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : bf === "ປະເພດ 2" ? "bg-sky-100 text-sky-800 border-sky-300" : bf === "ປະເພດ 3" ? "bg-teal-100 text-teal-800 border-teal-300" : bf === "ປະເພດ 4" ? "bg-amber-100 text-amber-800 border-amber-300" : bf === "ປະເພດ 5" ? "bg-orange-100 text-orange-800 border-orange-300" : "bg-rose-100 text-rose-800 border-rose-300";
+
+          return /* @__PURE__ */ jsxs9("tr", {
+            onClick: () => {
+              setSelectedSourceId(`WQ_COMP::${ds.key}`);
+              setSelectedStationMode("0");
+            },
+            className: `cursor-pointer transition ${isSelected ? "bg-indigo-50/90 font-bold" : "hover:bg-slate-50"}`,
+            children: [
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center font-mono text-slate-400", children: idx + 1 }),
+              /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3", children: [
+                /* @__PURE__ */ jsx9("div", { className: "font-bold text-slate-900", children: ds.title }),
+                /* @__PURE__ */ jsxs9("div", { className: "text-[10px] text-slate-500", children: [
+                  "ແຂວງ: ",
+                  ds.province || "-",
+                  " • ວັນທີເກັບຕົວຢ່າງ: ",
+                  ds.date || "-"
+                ] })
+              ] }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-slate-700", children: ds.basin || "-" }),
+              /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-2 text-center font-mono", children: [ds.stations?.length || 0, " ຈຸດ"] }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono", children: bundle?.waterQuality?.ph ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono font-bold", children: bundle?.waterQuality?.bod ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono font-bold", children: bundle?.waterQuality?.cod ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono", children: bundle?.waterQuality?.tss ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center", children: /* @__PURE__ */ jsx9("span", { className: `px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeCls}`, children: bf }) }),
+              /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3 text-center", onClick: (e) => e.stopPropagation(), children: [
+                /* @__PURE__ */ jsx9(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => {
+                      setSelectedSourceId(`WQ_COMP::${ds.key}`);
+                      setSelectedStationMode("0");
+                    },
+                    className: "px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold mr-1 cursor-pointer",
+                    children: "⚖️ ທຽບ 5 ປະເພດ"
+                  }
+                ),
+                linkedProj ? /* @__PURE__ */ jsxs9(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => onSelectProject && onSelectProject(linkedProj),
+                    className: "px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold cursor-pointer",
+                    children: ["🔗 ລີ້ງແລ້ວ (", linkedProj.projectName.slice(0, 14), "...)"]
+                  }
+                ) : onCreateProjectFromCompanyWq && /* @__PURE__ */ jsx9(
+                  "button",
+                  {
+                    type: "button",
+                    onClick: () => bundle && onCreateProjectFromCompanyWq(bundle),
+                    className: "px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold cursor-pointer",
+                    children: "➕ ສ້າງໂຄງການປ່ອຍນໍ້າເປື້ອນ"
+                  }
+                )
+              ] })
+            ]
+          }, ds.key);
+        }) })
+      ] }) })
+    ] }),
 
     /* Summary Table of All Wastewater Projects vs 5 Water Quality Classes (81/ລບ) */
     /* @__PURE__ */ jsxs9("div", { className: "bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3", children: [
@@ -9482,7 +10349,10 @@ var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject })
             children: [
               /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center font-mono text-slate-400", children: i + 1 }),
               /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3", children: [
-                /* @__PURE__ */ jsx9("div", { className: "font-bold text-slate-900", children: p.projectName }),
+                /* @__PURE__ */ jsxs9("div", { className: "font-bold text-slate-900 flex items-center gap-1.5 flex-wrap", children: [
+                  /* @__PURE__ */ jsx9("span", { children: p.projectName }),
+                  p.waterQuality?.linkedWqCompanyName && /* @__PURE__ */ jsx9("span", { className: "px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[9px] font-extrabold border border-indigo-200", title: `ລີ້ງຈາກລະບົບຄຸນນະພາບນໍ້າ: ${p.waterQuality.linkedWqCompanyName}`, children: "🔗 WQ Linked" })
+                ] }),
                 /* @__PURE__ */ jsxs9("div", { className: "text-[10px] text-slate-500", children: [p.projectCategory, " • ", p.projectLocation.province] })
               ] }),
               /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 font-medium text-slate-700", children: p.receivingWaterBodyName }),
@@ -10777,6 +11647,31 @@ var ProjectFormModal = ({
       }
     }, className: "flex-1 overflow-y-auto p-6 space-y-6", children: [
       activeTab === "general" && /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
+        /* @__PURE__ */ jsx9(CompanyWaterQualityLinkerCard, {
+          compact: true,
+          currentWaterQuality: formData.waterQuality,
+          onApplyCompanyWaterQuality: (bundle) => {
+            setFormData((prev) => ({
+              ...prev,
+              projectName: prev.projectName || bundle.companyName,
+              ownerName: prev.ownerName || bundle.companyName,
+              receivingWaterBodyName: prev.receivingWaterBodyName || bundle.waterSource,
+              projectLocation: {
+                ...(prev.projectLocation || {}),
+                province: bundle.province || prev.projectLocation?.province || "ນະຄອນຫຼວງວຽງຈັນ",
+                coordinates: bundle.coordinates || prev.projectLocation?.coordinates || { lat: 17.9757, lng: 102.6331 }
+              },
+              dischargePoint: {
+                ...(prev.dischargePoint || {}),
+                locationName: prev.dischargePoint?.locationName || bundle.stationName,
+                coordinates: bundle.coordinates || prev.dischargePoint?.coordinates || { lat: 17.9742, lng: 102.6315 }
+              },
+              waterQuality: {
+                ...bundle.waterQuality
+              }
+            }));
+          }
+        }),
         /* @__PURE__ */ jsxs9("h4", { className: "text-sm font-bold text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-2", children: [
           /* @__PURE__ */ jsx9(Building24, { size: 16, className: "text-sky-600" }),
           "ຊື່ໂຄງການ ແລະ ຂໍ້ມູນເຈົ້າຂອງໂຄງການ/ກິດຈະການ"
@@ -11392,6 +12287,20 @@ var ProjectFormModal = ({
           /* @__PURE__ */ jsx9(Activity6, { size: 16, className: "text-indigo-600" }),
           "ລະບົບບໍາບັດນໍ້າເສຍ ແລະ ຄ່າວິເຄາະຄຸນນະພາບນໍ້າກ່ອນປ່ອຍ"
         ] }),
+        /* @__PURE__ */ jsx9(CompanyWaterQualityLinkerCard, {
+          currentWaterQuality: formData.waterQuality,
+          onApplyCompanyWaterQuality: (bundle) => {
+            setFormData((prev) => ({
+              ...prev,
+              projectName: prev.projectName || bundle.companyName,
+              ownerName: prev.ownerName || bundle.companyName,
+              receivingWaterBodyName: prev.receivingWaterBodyName || bundle.waterSource,
+              waterQuality: {
+                ...bundle.waterQuality
+              }
+            }));
+          }
+        }),
         /* @__PURE__ */ jsxs9("div", { children: [
           /* @__PURE__ */ jsx9("label", { className: "block text-xs font-semibold text-slate-700 mb-1", children: "ລະບົບບໍາບັດນໍ້າເສຍທີ່ຕິດຕັ້ງ (Wastewater Treatment Plant - WWTP) *" }),
           /* @__PURE__ */ jsx9(
@@ -12241,9 +13150,11 @@ var ProjectDetailModal = ({
   onDelete,
   onOpenDirectMessage,
   onViewOnMap,
-  onRenewPermit
+  onRenewPermit,
+  onSaveProject
 }) => {
   if (!isOpen || !project) return null;
+  let [showCompanyWqLinker, setShowCompanyWqLinker] = useState10(!1);
   let expired = isPermitExpired(project.permitExpiryDate), daysLeft = getDaysUntilExpiry(project.permitExpiryDate), issueTime = new Date(project.permitIssueDate).getTime(), expiryTime = new Date(project.permitExpiryDate).getTime(), nowTime = Date.now(), totalDuration = expiryTime - issueTime, elapsed = nowTime - issueTime, permitPercent = totalDuration > 0 ? Math.min(100, Math.max(0, Math.round(elapsed / totalDuration * 100))) : 100, cleanPhone = project.contactPhone.replace(/\D/g, ""), waLink = cleanPhone ? `https://wa.me/856${cleanPhone.startsWith("0") ? cleanPhone.slice(1) : cleanPhone}` : null, [showQuickRenewModal, setShowQuickRenewModal] = useState10(!1), [isRenewing, setIsRenewing] = useState10(!1), [quickRenewalDate, setQuickRenewalDate] = useState10((/* @__PURE__ */ new Date()).toISOString().split("T")[0]), [quickNewExpiry, setQuickNewExpiry] = useState10(""), [quickRefDoc, setQuickRefDoc] = useState10(""), [quickApprovedBy, setQuickApprovedBy] = useState10("ກົມຊັບພະຍາກອນນໍ້າ (DWR)"), [quickFee, setQuickFee] = useState10(5e6), [quickNotes, setQuickNotes] = useState10(""), modalChartRef = useRef7(null), [isExportingChart, setIsExportingChart] = useState10(!1), handleExportProjectChart = async () => {
     if (!(!modalChartRef.current || !project)) {
       setIsExportingChart(!0);
@@ -12429,13 +13340,56 @@ var ProjectDetailModal = ({
           ] })
         ] }),
         /* @__PURE__ */ jsxs10("div", { className: "bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3", children: [
-          /* @__PURE__ */ jsxs10("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ jsxs10("div", { className: "flex flex-wrap items-center justify-between gap-2", children: [
             /* @__PURE__ */ jsxs10("h4", { className: "text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5", children: [
               /* @__PURE__ */ jsx10(Activity7, { size: 14, className: "text-indigo-600" }),
               "ຜົນວິເຄາະຄຸນນະພາບນໍ້າກ່ອນປ່ອຍ (Wastewater Quality Parameters)"
             ] }),
-            /* @__PURE__ */ jsx10("span", { className: `text-[10px] font-bold px-2 py-0.5 rounded-full ${getQualityBadgeStyle(project.waterQuality.status)}`, children: getQualityLaoText(project.waterQuality.status) })
+            /* @__PURE__ */ jsxs10("div", { className: "flex items-center gap-2 flex-wrap", children: [
+              /* @__PURE__ */ jsx10("button", {
+                type: "button",
+                onClick: () => setShowCompanyWqLinker((v) => !v),
+                className: "px-2.5 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[10.5px] font-bold transition cursor-pointer flex items-center gap-1 shadow-2xs",
+                children: showCompanyWqLinker ? "🔼 ປິດກ່ອງລີ້ງຂໍ້ມູນບໍລິສັດ" : "🔗 ລີ້ງຂໍ້ມູນບໍລິສັດຈາກລະບົບຄຸນນະພາບນໍ້າ (81/ລບ)"
+              }),
+              /* @__PURE__ */ jsx10("span", { className: `text-[10px] font-bold px-2 py-0.5 rounded-full ${getQualityBadgeStyle(project.waterQuality.status)}`, children: getQualityLaoText(project.waterQuality.status) })
+            ] })
           ] }),
+          project.waterQuality?.linkedWqCompanyName && /* @__PURE__ */ jsxs10("div", { className: "px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-wrap items-center justify-between gap-2 text-xs", children: [
+            /* @__PURE__ */ jsxs10("div", { className: "flex items-center gap-2 flex-wrap", children: [
+              /* @__PURE__ */ jsx10("span", { className: "px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[10px] font-bold", children: "🔗 ລີ້ງຈາກລະບົບຄຸນນະພາບນໍ້າ" }),
+              /* @__PURE__ */ jsxs10("span", { className: "font-bold text-indigo-950", children: [
+                project.waterQuality.linkedWqCompanyName,
+                project.waterQuality.linkedWqStationName ? ` (${project.waterQuality.linkedWqStationName})` : ""
+              ] }),
+              project.waterQuality.linkedWqSampleDate && /* @__PURE__ */ jsxs10("span", { className: "text-[10.5px] text-slate-500", children: ["• ວັນທີເກັບຕົວຢ່າງ: ", project.waterQuality.linkedWqSampleDate] })
+            ] }),
+            project.waterQuality.linkedWqBestFitClass81 && /* @__PURE__ */ jsxs10("span", { className: "px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold", children: [
+              "ຈັດຢູ່: ",
+              project.waterQuality.linkedWqBestFitClass81,
+              " (81/ລບ)"
+            ] })
+          ] }),
+          showCompanyWqLinker && /* @__PURE__ */ jsx10(CompanyWaterQualityLinkerCard, {
+            compact: true,
+            currentWaterQuality: project.waterQuality,
+            onApplyCompanyWaterQuality: async (bundle) => {
+              const updatedProject = {
+                ...project,
+                receivingWaterBodyName: project.receivingWaterBodyName || bundle.waterSource,
+                waterQuality: {
+                  ...bundle.waterQuality
+                },
+                updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+              };
+              if (onSaveProject) {
+                await onSaveProject(updatedProject);
+              }
+              if (onRenewPermit) {
+                onRenewPermit(updatedProject);
+              }
+            }
+          }),
           /* @__PURE__ */ jsxs10("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center font-mono", children: [
             /* @__PURE__ */ jsxs10("div", { className: "bg-white p-2 rounded-xl border border-slate-200", children: [
               /* @__PURE__ */ jsx10("span", { className: "text-[10px] text-slate-500 block", children: "BOD" }),
@@ -13826,7 +14780,16 @@ var LoginModal = ({
 import { AlertTriangle as AlertTriangle8, MapPin as MapPin5, CheckCircle2 as CheckCircle29, Plus as Plus9, Trash2 as Trash28, X as X8, ArrowRight as ArrowRight2 } from "lucide-react";
 import { jsx as jsx15, jsxs as jsxs15 } from "react/jsx-runtime";
 function App() {
-  let [projects, setProjects] = useState15([]), [directMessages, setDirectMessages] = useState15([]), [auditLogs, setAuditLogs] = useState15([]), [activeTab, setActiveTab] = useState15("map"), [selectedProject, setSelectedProject] = useState15(null), [isFormOpen, setIsFormOpen] = useState15(!1), [editingProject, setEditingProject] = useState15(null), [isDirectMessageOpen, setIsDirectMessageOpen] = useState15(!1), [directMessageProject, setDirectMessageProject] = useState15(null), [isSearchOpen, setIsSearchOpen] = useState15(!1), [projectToDelete, setProjectToDelete] = useState15(null), [isDeleting, setIsDeleting] = useState15(!1), [isLoginModalOpen, setIsLoginModalOpen] = useState15(!1), [pickingMode, setPickingMode] = useState15(null), [pickedCoordinates, setPickedCoordinates] = useState15(null), [users, setUsers] = useState15(() => {
+  let [projects, setProjects] = useState15([]), [directMessages, setDirectMessages] = useState15([]), [auditLogs, setAuditLogs] = useState15([]), [activeTab, setActiveTab] = useState15(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("linkedWq") === "1" || localStorage.getItem("DWR_PENDING_WQ_TO_WASTEWATER_LINK")) {
+        return "standards81";
+      }
+    } catch {
+    }
+    return "map";
+  }), [selectedProject, setSelectedProject] = useState15(null), [isFormOpen, setIsFormOpen] = useState15(!1), [editingProject, setEditingProject] = useState15(null), [isDirectMessageOpen, setIsDirectMessageOpen] = useState15(!1), [directMessageProject, setDirectMessageProject] = useState15(null), [isSearchOpen, setIsSearchOpen] = useState15(!1), [projectToDelete, setProjectToDelete] = useState15(null), [isDeleting, setIsDeleting] = useState15(!1), [isLoginModalOpen, setIsLoginModalOpen] = useState15(!1), [pickingMode, setPickingMode] = useState15(null), [pickedCoordinates, setPickedCoordinates] = useState15(null), [users, setUsers] = useState15(() => {
     let cached = localStorage.getItem("lao_wastewater_users_shared_v3");
     if (cached)
       try {
@@ -14127,6 +15090,48 @@ function App() {
         onSelectProject: (p) => setSelectedProject(p),
         onEditProject: (p) => {
           setEditingProject(p), setIsFormOpen(!0);
+        },
+        onSaveProject: handleSaveProject,
+        onCreateProjectFromCompanyWq: (bundle) => {
+          const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+          const nextYear = new Date(Date.now() + 365 * 24 * 60 * 60 * 1e3).toISOString().split("T")[0];
+          setEditingProject({
+            id: `proj-ww-${Date.now()}`,
+            projectName: bundle.companyName,
+            projectCategory: "ໂຮງງານອຸດສາຫະກຳປຸງແຕ່ງ",
+            ownerName: bundle.companyName,
+            contactPhone: "020 5555 8888",
+            contactEmail: "",
+            permitNumber: `DWR-81/${(/* @__PURE__ */ new Date()).getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+            permitIssueDate: today,
+            permitExpiryDate: nextYear,
+            permitStatus: "active",
+            receivingWaterBodyName: bundle.waterSource || "ແຫຼ່ງນໍ້າຮອງຮັບ",
+            receivingWaterBodyType: "river",
+            treatmentSystem: "ລະບົບບໍາບັດນໍ້າເສຍມາດຕະຖານ (ລີ້ງຈາກລະບົບຄຸນນະພາບນໍ້າ)",
+            dailyDischargeVolumeM3: 450,
+            dischargeSchedule: "ປ່ອຍຕໍ່ເນື່ອງ ຫຼັງຜ່ານການກວດກາຄຸນນະພາບນໍ້າ 81/ລບ",
+            projectLocation: {
+              village: "-",
+              district: "-",
+              province: bundle.province || "ນະຄອນຫຼວງວຽງຈັນ",
+              coordinates: bundle.coordinates || { lat: 17.9757, lng: 102.6331 }
+            },
+            waterIntakePoint: {
+              sourceName: bundle.waterSource || "ແຫຼ່ງນໍ້າທໍາມະຊາດ",
+              dailyIntakeVolumeM3: 550,
+              coordinates: bundle.coordinates || { lat: 17.9765, lng: 102.634 }
+            },
+            dischargePoint: {
+              locationName: bundle.stationName || "ຈຸດປ່ອຍນໍ້າຫຼັງບໍາບັດ",
+              coordinates: bundle.coordinates || { lat: 17.9742, lng: 102.6315 }
+            },
+            waterQuality: {
+              ...bundle.waterQuality
+            },
+            monthlyHistory: []
+          });
+          setIsFormOpen(!0);
         }
       }),
       activeTab === "export" && /* @__PURE__ */ jsx15(
@@ -14222,6 +15227,7 @@ function App() {
         isOpen: !!selectedProject,
         onClose: () => setSelectedProject(null),
         project: selectedProject,
+        onSaveProject: handleSaveProject,
         onRenewPermit: (updated) => {
           setSelectedProject(updated);
         },
