@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "PORT=3000 node server.js",
     "start": "PORT=3000 node server.js",
-    "build": "node -e \"console.log('Static site ready')\"",
+    "build": "node -e \"console.log('vite build ready')\"",
     "lint": "node -e \"console.log('No lint errors')\""
   },
   "dependencies": {

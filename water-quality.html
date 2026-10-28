@@ -1638,15 +1638,29 @@
         </div>
 
         <!-- Filter Bar for Station Audit Table -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2">
-          <div class="flex items-center gap-2">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 pt-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <h4 class="text-xs font-bold text-slate-800">
               📋 ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າຂອງທຸກສະຖານີ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ)
             </h4>
+            <span id="auditTableDatasetCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              ທັງໝົດ 0 ສະຖານີ
+            </span>
             <span class="text-[10px] text-slate-400">ຄລິກ "🔍 ທຽບ 5 ປະເພດ" ເພື່ອເບິ່ງລາຍລະອຽດ</span>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
+            <!-- 📁 Dataset Selector for Station Comparison Table -->
+            <div class="flex items-center gap-1.5 bg-indigo-50/80 border border-indigo-200 rounded-xl px-2.5 py-1 shadow-2xs">
+              <label for="auditTableDatasetSelect" class="text-[11px] font-bold text-indigo-900 whitespace-nowrap flex items-center gap-1">
+                <span>📁</span>
+                <span>ເລືອກຊຸດຂໍ້ມູນ:</span>
+              </label>
+              <select id="auditTableDatasetSelect" onchange="onAuditTableDatasetChange(this.value)" class="bg-white border border-indigo-200 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 min-w-[195px] max-w-[300px] cursor-pointer">
+                <option value="ALL">🌐 ທຸກຊຸດຂໍ້ມູນ (ທັງໝົດ)</option>
+              </select>
+            </div>
+
             <!-- Search -->
             <div class="relative">
               <input type="text" id="auditSearchInput" oninput="filterAuditStationsTable()" placeholder="ຄົ້ນຫາຊື່, ພິກັດ Lat/Lng, ແຂວງ..." class="pl-7 pr-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs outline-none focus:ring-1 focus:ring-indigo-500 w-52">
@@ -5957,11 +5971,13 @@
     }
 
     let selectedAuditDatasetKey = '';
+    let selectedAuditTableDatasetKey = 'ALL';
     let allAvailableRawDatasets = [];
 
     function populateAuditDatasetSelect() {
       const select = document.getElementById('auditDatasetSelect');
-      if (!select) return;
+      const tableSelect = document.getElementById('auditTableDatasetSelect');
+      if (!select && !tableSelect) return;
 
       allAvailableRawDatasets = [];
 
@@ -6017,8 +6033,41 @@
         optionsHtml = `<option value="">-- ຍັງບໍ່ມີຊຸດຂໍ້ມູນໃນລະບົບ (ກະລຸນາກົດ + ເພີ່ມຂໍ້ມູນ) --</option>`;
       }
 
-      select.innerHTML = optionsHtml;
-      select.value = selectedAuditDatasetKey;
+      if (select) {
+        select.innerHTML = optionsHtml;
+        select.value = selectedAuditDatasetKey;
+      }
+
+      if (tableSelect) {
+        if (selectedAuditTableDatasetKey !== 'ALL' && !allAvailableRawDatasets.some(d => String(d.key) === String(selectedAuditTableDatasetKey))) {
+          selectedAuditTableDatasetKey = 'ALL';
+        }
+        let tableOptsHtml = `<option value="ALL">🌐 ທຸກຊຸດຂໍ້ມູນ (${totalStationsCount} ສະຖານີ)</option>`;
+        if (allAvailableRawDatasets.length > 0) {
+          tableOptsHtml += `<optgroup label="🏢 ຊຸດຂໍ້ມູນໃນລະບົບ (${allAvailableRawDatasets.length} ຊຸດ)">`;
+          allAvailableRawDatasets.forEach(d => {
+            tableOptsHtml += `<option value="${escapeHtml(d.key)}">📁 ${escapeHtml(d.title)} (${d.stations.length} ສະຖານີ) - [${escapeHtml(d.date)}]</option>`;
+          });
+          tableOptsHtml += `</optgroup>`;
+        }
+        tableSelect.innerHTML = tableOptsHtml;
+        tableSelect.value = selectedAuditTableDatasetKey || 'ALL';
+      }
+    }
+
+    function onAuditTableDatasetChange(val) {
+      selectedAuditTableDatasetKey = String(val || 'ALL');
+      updateAuditSummaryKpis();
+      filterAuditStationsTable();
+
+      // If a specific dataset is selected in the table, also sync the top workbench dataset selector
+      if (selectedAuditTableDatasetKey && selectedAuditTableDatasetKey !== 'ALL') {
+        const topSelect = document.getElementById('auditDatasetSelect');
+        if (topSelect && String(topSelect.value) !== selectedAuditTableDatasetKey) {
+          topSelect.value = selectedAuditTableDatasetKey;
+          onAuditDatasetChange();
+        }
+      }
     }
 
     function onAuditDatasetChange() {
@@ -6754,32 +6803,72 @@
       filterAuditStationsTable();
     }
 
+    function updateAuditSummaryKpis() {
+      const dsKey = selectedAuditTableDatasetKey || 'ALL';
+      const subset = currentAuditSearchResults.filter(r =>
+        dsKey === 'ALL' || String(r.datasetKey) === String(dsKey)
+      );
+      const totalSt = subset.length;
+      const passCount = subset.filter(r => r.status === 'PASS').length;
+      const warnCount = subset.filter(r => r.status === 'WARN').length;
+      const exceedCount = subset.filter(r => r.status === 'EXCEED').length;
+
+      const elTotal = document.getElementById('auditTotalStations');
+      const elPass = document.getElementById('auditPassStations');
+      const elPassRate = document.getElementById('auditPassRate');
+      const elWarn = document.getElementById('auditWarnStations');
+      const elExceed = document.getElementById('auditExceedStations');
+
+      if (elTotal) elTotal.innerText = totalSt;
+      if (elPass) elPass.innerText = passCount;
+      if (elPassRate) elPassRate.innerText = totalSt > 0 ? `(${Math.round((passCount / totalSt) * 100)}%)` : '(0%)';
+      if (elWarn) elWarn.innerText = warnCount;
+      if (elExceed) elExceed.innerText = exceedCount;
+    }
+
     function filterAuditStationsTable() {
       const q = (document.getElementById('auditSearchInput')?.value || '').toLowerCase().trim();
       const statusFilter = currentAuditFilterStatus;
+      const dsFilter = document.getElementById('auditTableDatasetSelect')?.value || selectedAuditTableDatasetKey || 'ALL';
+      selectedAuditTableDatasetKey = String(dsFilter);
 
       const filtered = currentAuditSearchResults.filter(r => {
+        const matchDataset = dsFilter === 'ALL' || String(r.datasetKey) === String(dsFilter);
+
         const matchQuery = !q ||
           r.name.toLowerCase().includes(q) ||
+          (r.code && r.code.toLowerCase().includes(q)) ||
           r.company.toLowerCase().includes(q) ||
+          (r.datasetTitle && r.datasetTitle.toLowerCase().includes(q)) ||
           r.basin.toLowerCase().includes(q) ||
           r.province.toLowerCase().includes(q) ||
           String(r.lat).includes(q) ||
           String(r.lng).includes(q);
 
         const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
-        return matchQuery && matchStatus;
+        return matchDataset && matchQuery && matchStatus;
       });
+
+      const countBadge = document.getElementById('auditTableDatasetCountBadge');
+      if (countBadge) {
+        if (dsFilter === 'ALL') {
+          countBadge.innerHTML = `🌐 ທຸກຊຸດຂໍ້ມູນ: ${filtered.length} ສະຖານີ`;
+        } else {
+          const dsObj = allAvailableRawDatasets.find(d => String(d.key) === String(dsFilter));
+          const dsName = dsObj ? dsObj.title : 'ຊຸດຂໍ້ມູນທີ່ເລືອກ';
+          countBadge.innerHTML = `📁 ${escapeHtml(dsName)}: ${filtered.length} ສະຖານີ`;
+        }
+      }
 
       const tb = document.getElementById('auditStationsTableBody');
       if (!tb) return;
 
       if (filtered.length === 0) {
-        tb.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">ບໍ່ພົບສະຖານີທີ່ກົງກັບເງື່ອນໄຂການຄົ້ນຫາ</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">ບໍ່ພົບສະຖານີທີ່ກົງກັບຊຸດຂໍ້ມູນ ຫຼື ເງື່ອນໄຂການຄົ້ນຫາ</td></tr>`;
         return;
       }
 
-      tb.innerHTML = filtered.map(r => {
+      tb.innerHTML = filtered.map((r, rowIdx) => {
         let badgeHtml = '';
         if (r.status === 'PASS') {
           badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">✅ ຜ່ານ</span>`;
@@ -6811,7 +6900,7 @@
 
         return `
           <tr class="hover:bg-slate-50/70 transition">
-            <td class="p-2.5 text-center text-slate-400 font-mono">${r.idx}</td>
+            <td class="p-2.5 text-center text-slate-400 font-mono">${rowIdx + 1}</td>
             <td class="p-2.5 font-bold text-slate-800">
               ${escapeHtml(r.code ? `[${r.code}] ` : '')}${escapeHtml(r.name)}
               <div class="text-[10px] font-normal text-slate-400">📁 ${escapeHtml(r.datasetTitle || r.company)}</div>
@@ -6998,18 +7087,8 @@
         };
       });
 
-      // Update KPI counters
-      const elTotal = document.getElementById('auditTotalStations');
-      const elPass = document.getElementById('auditPassStations');
-      const elPassRate = document.getElementById('auditPassRate');
-      const elWarn = document.getElementById('auditWarnStations');
-      const elExceed = document.getElementById('auditExceedStations');
-
-      if (elTotal) elTotal.innerText = totalSt;
-      if (elPass) elPass.innerText = passCount;
-      if (elPassRate) elPassRate.innerText = totalSt > 0 ? `(${Math.round((passCount / totalSt) * 100)}%)` : '(0%)';
-      if (elWarn) elWarn.innerText = warnCount;
-      if (elExceed) elExceed.innerText = exceedCount;
+      // Update KPI counters according to selected table dataset
+      updateAuditSummaryKpis();
 
       // Filter and render table
       filterAuditStationsTable();
@@ -7076,8 +7155,10 @@
     function filterModalAuditStations() {
       const q = (document.getElementById('modalAuditSearchInput')?.value || '').toLowerCase().trim();
       const kpiType = currentModalKpiType || 'TOTAL';
+      const dsFilter = selectedAuditTableDatasetKey || 'ALL';
 
       const filtered = currentAuditSearchResults.filter(r => {
+        const matchDataset = dsFilter === 'ALL' || String(r.datasetKey) === String(dsFilter);
         let matchKpi = true;
         if (kpiType === 'PASS') matchKpi = r.status === 'PASS';
         else if (kpiType === 'WARN') matchKpi = r.status === 'WARN';
@@ -7091,7 +7172,7 @@
           String(r.lat).includes(q) ||
           String(r.lng).includes(q);
 
-        return matchKpi && matchQuery;
+        return matchDataset && matchKpi && matchQuery;
       });
 
       const badge = document.getElementById('auditKpiModalBadge');
@@ -7100,6 +7181,8 @@
       const countText = document.getElementById('modalAuditCountText');
       if (countText) {
         const totalMatchingKpi = currentAuditSearchResults.filter(r => {
+          const matchDataset = dsFilter === 'ALL' || String(r.datasetKey) === String(dsFilter);
+          if (!matchDataset) return false;
           if (kpiType === 'PASS') return r.status === 'PASS';
           if (kpiType === 'WARN') return r.status === 'WARN';
           if (kpiType === 'EXCEED') return r.status === 'EXCEED';
@@ -7351,6 +7434,7 @@
     window.populateAuditDatasetSelect = populateAuditDatasetSelect;
     window.populateAuditStationSelect = populateAuditStationSelect;
     window.onAuditDatasetChange = onAuditDatasetChange;
+    window.onAuditTableDatasetChange = onAuditTableDatasetChange;
     window.onAuditStationChange = onAuditStationChange;
     window.selectStationForAudit = selectStationForAudit;
     window.selectStationFromModal = selectStationFromModal;
