@@ -1626,8 +1626,33 @@ var AppSidebar = ({
                   /* @__PURE__ */ jsx("span", { className: "text-base", children: "📊" }),
                   /* @__PURE__ */ jsx("span", { className: "flex-1 truncate", children: "ສະຖິຕິປະຈໍາປີ" })
                 ]
+              }),
+              /* Decree 81/PM 5-Class Comparison */
+              /* @__PURE__ */ jsxs("button", {
+                type: "button",
+                onClick: () => { setActiveTab("standards81"); setIsSidebarOpen(!1); },
+                className: `w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer ${activeTab === "standards81" ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/20" : "text-emerald-300 bg-emerald-950/35 border border-emerald-800/40 hover:text-white hover:bg-emerald-900/50"}`,
+                children: [
+                  /* @__PURE__ */ jsx("span", { className: "text-base", children: "⚖️" }),
+                  /* @__PURE__ */ jsx("span", { className: "flex-1 truncate", children: "ທຽບ 5 ປະເພດຄຸນນະພາບນໍ້າ (81/ລບ)" }),
+                  /* @__PURE__ */ jsx("span", { className: "text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-900/80 text-emerald-200 border border-emerald-600/50", children: "81/ລບ" })
+                ]
               })
             ] })
+          ] }),
+          /* Box: ມາດຕະຖານຄຸນນະພາບນໍ້າ 81/ລບ (5 ປະເພດ) */
+          /* @__PURE__ */ jsxs("div", { className: "p-3 rounded-xl bg-gradient-to-br from-emerald-950/60 via-slate-900 to-teal-950/50 border border-emerald-700/40 space-y-2", children: [
+            /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
+              /* @__PURE__ */ jsx("span", { className: "text-[11px] font-bold text-emerald-300 flex items-center gap-1", children: "⚖️ ມາດຕະຖານ 81/ລບ (5 ປະເພດ)" }),
+              /* @__PURE__ */ jsx("span", { className: "text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold", children: "17 ຕົວຊີ້ວັດ" })
+            ] }),
+            /* @__PURE__ */ jsx("p", { className: "text-[10px] text-slate-300 leading-relaxed", children: "ປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ (ປະເພດ 1–5) ຕາມຂໍ້ຕົກລົງ 81/ລບ" }),
+            /* @__PURE__ */ jsx("button", {
+              type: "button",
+              onClick: () => { setActiveTab("standards81"); setIsSidebarOpen(!1); },
+              className: "w-full py-1.5 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer",
+              children: "🔍 ເປີດຕາຕະລາງທຽບ 5 ປະເພດ (81/ລບ)"
+            })
           ] }),
           /* Group 2: ຈັດການ & ລາຍງານ */
           /* @__PURE__ */ jsxs("div", { children: [
@@ -1719,6 +1744,7 @@ var AppTopBar = ({
     map: { title: "🗺️ ແຜນທີ່ GIS ສະແດງທີ່ຕັ້ງໂຄງການ ແລະ ຈຸດປ່ອຍນໍ້າເປື້ອນ", sub: "Interactive Outfall Geospatial Map ສະແດງທີ່ຕັ້ງໂຄງການ ແລະ ຈຸດປ່ອຍນໍ້າ" },
     table: { title: "📋 ຖານຂໍ້ມູນໂຄງການປ່ອຍນໍ້າເປື້ອນ", sub: "ຄົ້ນຫາ, ກວດກາ ແລະ ຈັດການໂຄງການທັງໝົດ" },
     stats: { title: "📊 ສະຖິຕິການປ່ອຍນ້ຳເປື້ອນປະຈໍາປີ", sub: "ວິເຄາະປະລິມານ ແລະ ຄຸນນະພາບນໍ້າເປື້ອນທີ່ປ່ອຍ" },
+    standards81: { title: "⚖️ ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ ຕາມຂໍ້ຕົກລົງ 81/ລບ", sub: "ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5) ໃນລະບົບການປ່ອຍນໍ້າເປື້ອນ" },
     export: { title: "📥 ສູນສົ່ງອອກລາຍງານ", sub: "ດາວໂຫຼດຂໍ້ມູນ Excel, CSV ແລະ ລາຍງານທາງການ" },
     backup: { title: "💾 ສຳຮອງ ແລະ ກູ້ຄືນຂໍ້ມູນ (Backup & Restore)", sub: "ຈັດການໄຟລ໌ສຳຮອງຖານຂໍ້ມູນໂຄງການ" },
     settings: { title: "⚙️ ຕັ້ງຄ່າລະບົບ & ບັນຊີຜູ້ໃຊ້", sub: "ຈັດການສິດທິ, ລະຫັດຜ່ານ ແລະ ຂໍ້ມູນລະບົບ" }
@@ -3596,8 +3622,21 @@ var ProjectTable = ({
                 /* @__PURE__ */ jsx3("span", { className: `inline-block px-2 py-0.5 rounded-md text-[10px] font-bold ${getQualityBadgeStyle(p.waterQuality.status)}`, children: getQualityLaoText(p.waterQuality.status) }),
                 /* @__PURE__ */ jsxs3("div", { className: "text-[10px] text-slate-400 mt-0.5", children: [
                   "BOD: ",
-                  p.waterQuality.bod ?? "-"
-                ] })
+                  p.waterQuality.bod ?? "-",
+                  " | COD: ",
+                  p.waterQuality.cod ?? "-"
+                ] }),
+                (() => {
+                  const eval81 = typeof evaluateWaterQualityAgainstDecree81 === "function" ? evaluateWaterQualityAgainstDecree81(p.waterQuality, "ປະເພດ 4") : null;
+                  if (!eval81 || !eval81.overallBestFitClass) return null;
+                  const bf = eval81.overallBestFitClass;
+                  const clsBadge = bf === "ປະເພດ 1" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : bf === "ປະເພດ 2" ? "bg-sky-100 text-sky-800 border-sky-300" : bf === "ປະເພດ 3" ? "bg-teal-100 text-teal-800 border-teal-300" : bf === "ປະເພດ 4" ? "bg-amber-100 text-amber-800 border-amber-300" : bf === "ປະເພດ 5" ? "bg-orange-100 text-orange-800 border-orange-300" : "bg-rose-100 text-rose-800 border-rose-300";
+                  return /* @__PURE__ */ jsx3("div", { className: "mt-1", children: /* @__PURE__ */ jsxs3("span", {
+                    className: `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${clsBadge}`,
+                    title: "ການຈັດປະເພດຄຸນນະພາບນໍ້າຕາມຂໍ້ຕົກລົງ 81/ລບ (5 ປະເພດ)",
+                    children: ["🎯 81/ລບ: ", bf]
+                  }) });
+                })()
               ] }),
               /* @__PURE__ */ jsxs3("td", { className: "py-3.5 px-4", children: [
                 /* @__PURE__ */ jsx3("div", { className: "font-mono font-bold text-slate-800", children: p.permitNumber }),
@@ -8193,17 +8232,1286 @@ import {
 } from "lucide-react";
 import { jsx as jsx9, jsxs as jsxs9 } from "react/jsx-runtime";
 var COMMON_PARAM_PRESETS = [
-  { name: "ໄນໂຕຣເຈນທັງໝົດ (TN)", unit: "mg/L", standard: "≤ 15" },
-  { name: "ຟົດສະຟໍທັງໝົດ (TP)", unit: "mg/L", standard: "≤ 2.0" },
-  { name: "ນໍ້າມັນ ແລະ ໄຂມັນ (Oil & Grease)", unit: "mg/L", standard: "≤ 5.0" },
   { name: "ອົກຊີເຈນລະລາຍ (DO)", unit: "mg/L", standard: "≥ 4.0" },
-  { name: "ທາດສານໜູ (Arsenic - As)", unit: "mg/L", standard: "≤ 0.05" },
-  { name: "ທາດຕະກົ່ວ (Lead - Pb)", unit: "mg/L", standard: "≤ 0.05" },
+  { name: "ຄວາມຂຸ່ນ (Turbidity)", unit: "NTU", standard: "≤ 40" },
+  { name: "ການນໍາໄຟຟ້າ (EC)", unit: "µS/cm", standard: "≤ 1000" },
+  { name: "ທາດລະລາຍທັງໝົດ (TDS)", unit: "mg/L", standard: "≤ 1000" },
+  { name: "ອຸນຫະພູມ (Temperature)", unit: "°C", standard: "≤ 35" },
+  { name: "ໂຄລິຟອມທັງໝົດ (Total Coliform)", unit: "MPN/100mL", standard: "≤ 20000" },
+  { name: "ຟີໂຄລ ໂຄລິຟອມ (Fecal Coliform)", unit: "MPN/100mL", standard: "≤ 4000" },
+  { name: "ແອມໂມເນຍ-ໄນໂຕຣເຈນ (NH3-N)", unit: "mg/L", standard: "≤ 0.5" },
+  { name: "ໄນເຕຣດ-ໄນໂຕຣເຈນ (NO3-N)", unit: "mg/L", standard: "≤ 5.0" },
+  { name: "ຟົດສະຟໍທັງໝົດ (TP)", unit: "mg/L", standard: "≤ 2.0" },
+  { name: "ທາດຊືນ (Lead - Pb)", unit: "mg/L", standard: "≤ 0.05" },
+  { name: "ທາດແຄັດມຽມ (Cadmium - Cd)", unit: "mg/L", standard: "≤ 0.005" },
+  { name: "ທາດສານໜູ (Arsenic - As)", unit: "mg/L", standard: "≤ 0.01" },
+  { name: "ໄນໂຕຣເຈນທັງໝົດ (TN)", unit: "mg/L", standard: "≤ 15" },
+  { name: "ນໍ້າມັນ ແລະ ໄຂມັນ (Oil & Grease)", unit: "mg/L", standard: "≤ 5.0" },
   { name: "ໄຊຍາໄນດ໌ (Cyanide - CN)", unit: "mg/L", standard: "≤ 0.1" },
-  { name: "ທາດບາຫຼອດ (Mercury - Hg)", unit: "mg/L", standard: "≤ 0.005" },
-  { name: "ຄວາມຂຸ່ນ (Turbidity)", unit: "NTU", standard: "≤ 20" },
-  { name: "ການນໍາໄຟຟ້າ (EC)", unit: "µS/cm", standard: "≤ 1000" }
+  { name: "ທາດບາຫຼອດ (Mercury - Hg)", unit: "mg/L", standard: "≤ 0.005" }
 ];
+
+// ============================================================================
+// ⚖️ ມາດຕະຖານຄຸນນະພາບນໍ້າໜ້າດິນ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ (21 ກຸມພາ 2017)
+// ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ
+// ແລະ ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5)
+// ============================================================================
+var LAO_STANDARD_81 = {
+  title: "ມາດຕະຖານຄຸນນະພາບນໍ້າໜ້າດິນ ຕາມຂໍ້ຕົກລົງ 81/ລບ (21 ກຸມພາ 2017)",
+  classes: [
+    {
+      id: "ປະເພດ 1",
+      short: "ປະເພດ 1",
+      name: "ນໍ້າທໍາມະຊາດ ບໍ່ຜ່ານການນໍາໃຊ້ (Conservation)",
+      desc: "ແຫຼ່ງນໍ້າສະອາດຕາມທໍາມະຊາດ ບໍ່ມີການປ່ອຍນໍ້າເປື້ອນລົງໃສ່, ໃຊ້ເພື່ອອະນຸລັກລະບົບນິເວດ",
+      color: "emerald",
+      shortUse: "🏔️ ອະນຸລັກຕົ້ນນ້ຳທຳມະຊາດ"
+    },
+    {
+      id: "ປະເພດ 2",
+      short: "ປະເພດ 2",
+      name: "ນໍ້າເພື່ອການອຸປະໂພກ-ບໍລິໂພກ (ໂດຍຜ່ານການຂ້າເຊື້ອ) & ອະນຸລັກສັດນໍ້າ",
+      desc: "ໃຊ້ເປັນແຫຼ່ງນໍ້າດິບຜະລິດນໍ້າประປາ, ການປະມົງ ແລະ ກິລາທາງນໍ້າ",
+      color: "sky",
+      shortUse: "💧 ອຸປະໂພກ-ບໍລິໂພກ"
+    },
+    {
+      id: "ປະເພດ 3",
+      short: "ປະເພດ 3",
+      name: "ນໍ້າເພື່ອການກະສິກໍາ, ລ້ຽງສັດ ແລະ ອຸປະໂພກທົ່ວໄປ (ມາດຕະຖານອ້າງອີງຫຼັກ)",
+      desc: "ໃຊ້ເປັນແຫຼ່ງນໍ້າດິບປະປາ (ຜ່ານການບໍາບັດປົກກະຕິ), ຊົນລະປະທານກະສິກໍາ ແລະ ລ້ຽງສັດ",
+      color: "teal",
+      shortUse: "🌾 ກະສິກຳ & ລ້ຽງສັດ"
+    },
+    {
+      id: "ປະເພດ 4",
+      short: "ປະເພດ 4",
+      name: "ນໍ້າເພື່ອການອຸດສາຫະກໍາ ແລະ ຄົມມະນາຄົມທາງນໍ້າ",
+      desc: "ໃຊ້ໃນໂຮງງານອຸດສາຫະກໍາ ຫຼື ບໍລິໂພກໂດຍຕ້ອງຜ່ານຂະບວນການບໍາບັດພິເສດ",
+      color: "amber",
+      shortUse: "🏭 ອຸດສາຫະກຳ & ຄົມມະນາຄົມ"
+    },
+    {
+      id: "ປະເພດ 5",
+      short: "ປະເພດ 5",
+      name: "ນໍ້າເພື່ອການຄົມມະນາຄົມທາງນໍ້າ ແລະ ຮองຮັບການລະບາຍນໍ້າ",
+      desc: "ແຫຼ່ງນໍ້າທີ່ມີມົນລະພິດສູງ, ໃຊ້ສະເພາະການເດີນເຮືອ ແລະ ຮອງຮັບນໍ້າເສຍທີ່ຜ່ານການບໍາບັດ",
+      color: "rose",
+      shortUse: "🚢 ຄົມມະນາຄົມ & ລະບາຍນ້ຳ"
+    }
+  ],
+  parameters: [
+    {
+      id: "ph",
+      name: "ຄວາມເປັນກົດ-ດ່າງ (pH)",
+      en: "pH Value",
+      unit: "",
+      defaultVal: 7.2,
+      aliases: ["ph", "ຄວາມເປັນກົດ-ດ່າງ", "ຄ່າ ph", "ph value"],
+      classes: {
+        "ປະເພດ 1": { type: "range", min: 6.0, max: 8.5, label: "6.0 – 8.5" },
+        "ປະເພດ 2": { type: "range", min: 6.0, max: 8.5, label: "6.0 – 8.5" },
+        "ປະເພດ 3": { type: "range", min: 5.0, max: 9.0, label: "5.0 – 9.0" },
+        "ປະເພດ 4": { type: "range", min: 5.0, max: 9.0, label: "5.0 – 9.0" },
+        "ປະເພດ 5": { type: "range", min: 5.0, max: 9.0, label: "5.0 – 9.0" }
+      }
+    },
+    {
+      id: "do",
+      name: "ອົກຊີເຈນລະລາຍນໍ້າ (DO)",
+      en: "Dissolved Oxygen (DO)",
+      unit: "mg/L",
+      defaultVal: 6.5,
+      aliases: ["do", "dissolved oxygen", "ອົກຊີເຈນລະລາຍ", "ອົກຊີເຈນ", "o2"],
+      classes: {
+        "ປະເພດ 1": { type: "min", min: 7.0, label: "≥ 7.0" },
+        "ປະເພດ 2": { type: "min", min: 6.0, label: "≥ 6.0" },
+        "ປະເພດ 3": { type: "min", min: 4.0, label: "≥ 4.0" },
+        "ປະເພດ 4": { type: "min", min: 2.0, label: "≥ 2.0" },
+        "ປະເພດ 5": { type: "min", min: 1.0, label: "≥ 1.0" }
+      }
+    },
+    {
+      id: "bod",
+      name: "ຄວາມຕ້ອງການອົກຊີເຈນຊີວະเคມີ (BOD₅)",
+      en: "Biochemical Oxygen Demand (BOD)",
+      unit: "mg/L",
+      defaultVal: 1.8,
+      aliases: ["bod", "bod5", "ຄວາມຕ້ອງການອົກຊີເຈນຊີວະເຄມີ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 1.5, label: "≤ 1.5" },
+        "ປະເພດ 2": { type: "max", max: 1.5, label: "≤ 1.5" },
+        "ປະເພດ 3": { type: "max", max: 2.0, label: "≤ 2.0" },
+        "ປະເພດ 4": { type: "max", max: 4.0, label: "≤ 4.0" },
+        "ປະເພດ 5": { type: "max", max: 10.0, label: "≤ 10.0" }
+      }
+    },
+    {
+      id: "cod",
+      name: "ຄວາມຕ້ອງການອົກຊີເຈນທາງເຄມີ (COD)",
+      en: "Chemical Oxygen Demand (COD)",
+      unit: "mg/L",
+      defaultVal: 4.5,
+      aliases: ["cod", "ຄວາມຕ້ອງການອົກຊີເຈນທາງເຄມີ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 5.0, label: "≤ 5.0" },
+        "ປະເພດ 2": { type: "max", max: 5.0, label: "≤ 5.0" },
+        "ປະເພດ 3": { type: "max", max: 7.0, label: "≤ 7.0" },
+        "ປະເພດ 4": { type: "max", max: 10.0, label: "≤ 10.0" },
+        "ປະເພດ 5": { type: "max", max: 25.0, label: "≤ 25.0" }
+      }
+    },
+    {
+      id: "tss",
+      name: "ທາດแขວນລອຍທັງໝົດ (TSS)",
+      en: "Total Suspended Solids (TSS)",
+      unit: "mg/L",
+      defaultVal: 22,
+      aliases: ["tss", "ss", "ທາດແຂວນລອຍ", "suspended solids"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 10, label: "≤ 10" },
+        "ປະເພດ 2": { type: "max", max: 25, label: "≤ 25" },
+        "ປະເພດ 3": { type: "max", max: 40, label: "≤ 40" },
+        "ປະເພດ 4": { type: "max", max: 60, label: "≤ 60" },
+        "ປະເພດ 5": { type: "max", max: 100, label: "≤ 100" }
+      }
+    },
+    {
+      id: "turbidity",
+      name: "ຄວາມຂຸ່ນ (Turbidity)",
+      en: "Turbidity",
+      unit: "NTU",
+      defaultVal: 18,
+      aliases: ["turbidity", "ntu", "ຄວາມຂຸ່ນ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 10, label: "≤ 10" },
+        "ປະເພດ 2": { type: "max", max: 25, label: "≤ 25" },
+        "ປະເພດ 3": { type: "max", max: 40, label: "≤ 40" },
+        "ປະເພດ 4": { type: "max", max: 80, label: "≤ 80" },
+        "ປະເພດ 5": { type: "max", max: 150, label: "≤ 150" }
+      }
+    },
+    {
+      id: "ec",
+      name: "ຄ່າຊັກນໍາໄຟຟ້າ (EC)",
+      en: "Electrical Conductivity (EC)",
+      unit: "µS/cm",
+      defaultVal: 210,
+      aliases: ["ec", "conductivity", "ຄ່າຊັກນຳໄຟຟ້າ", "ຄ່າຊັກນໍາໄຟຟ້າ", "ການນໍາໄຟຟ້າ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 500, label: "≤ 500" },
+        "ປະເພດ 2": { type: "max", max: 1000, label: "≤ 1,000" },
+        "ປະເພດ 3": { type: "max", max: 1000, label: "≤ 1,000" },
+        "ປະເພດ 4": { type: "max", max: 2000, label: "≤ 2,000" },
+        "ປະເພດ 5": { type: "max", max: 4000, label: "≤ 4,000" }
+      }
+    },
+    {
+      id: "tds",
+      name: "ທາດລະລາຍທັງໝົດ (TDS)",
+      en: "Total Dissolved Solids (TDS)",
+      unit: "mg/L",
+      defaultVal: 140,
+      aliases: ["tds", "ທາດລະລາຍທັງໝົດ", "dissolved solids"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 250, label: "≤ 250" },
+        "ປະເພດ 2": { type: "max", max: 500, label: "≤ 500" },
+        "ປະເພດ 3": { type: "max", max: 1000, label: "≤ 1,000" },
+        "ປະເພດ 4": { type: "max", max: 1000, label: "≤ 1,000" },
+        "ປະເພດ 5": { type: "max", max: 2000, label: "≤ 2,000" }
+      }
+    },
+    {
+      id: "temp",
+      name: "ອຸນຫະພູມນໍ້າ (Temperature)",
+      en: "Water Temperature",
+      unit: "°C",
+      defaultVal: 27.5,
+      aliases: ["temp", "temperature", "ອຸນຫະພູມ", "ອຸນຫະພູມນໍ້າ"],
+      classes: {
+        "ປະເພດ 1": { type: "none", label: "ທຳມະຊາດ" },
+        "ປະເພດ 2": { type: "max", max: 32, label: "≤ 32" },
+        "ປະເພດ 3": { type: "max", max: 35, label: "≤ 35" },
+        "ປະເພດ 4": { type: "max", max: 35, label: "≤ 35" },
+        "ປະເພດ 5": { type: "max", max: 38, label: "≤ 38" }
+      }
+    },
+    {
+      id: "coliform_total",
+      name: "ໂຄລິຟອມທັງໝົດ (Total Coliform)",
+      en: "Total Coliform Bacteria",
+      unit: "MPN/100mL",
+      defaultVal: 3500,
+      aliases: ["total coliform", "coliform", "ໂຄລິຟອມທັງໝົດ", "ໂຄລິຟອມ"],
+      classes: {
+        "ປະເພດ 1": { type: "none", label: "ທຳມະຊາດ" },
+        "ປະເພດ 2": { type: "max", max: 5000, label: "≤ 5,000" },
+        "ປະເພດ 3": { type: "max", max: 20000, label: "≤ 20,000" },
+        "ປະເພດ 4": { type: "max", max: 50000, label: "≤ 50,000" },
+        "ປະເພດ 5": { type: "max", max: 100000, label: "≤ 100,000" }
+      }
+    },
+    {
+      id: "coliform_fecal",
+      name: "ຟີໂຄລ ໂຄລິຟອມ (Fecal Coliform)",
+      en: "Fecal Coliform Bacteria",
+      unit: "MPN/100mL",
+      defaultVal: 800,
+      aliases: ["fecal coliform", "e.coli", "ຟີໂຄລ ໂຄລິຟອມ", "ຟີໂຄລ"],
+      classes: {
+        "ປະເພດ 1": { type: "none", label: "ທຳມະຊາດ" },
+        "ປະເພດ 2": { type: "max", max: 1000, label: "≤ 1,000" },
+        "ປະເພດ 3": { type: "max", max: 4000, label: "≤ 4,000" },
+        "ປະເພດ 4": { type: "max", max: 10000, label: "≤ 10,000" },
+        "ປະເພດ 5": { type: "max", max: 20000, label: "≤ 20,000" }
+      }
+    },
+    {
+      id: "nh3_n",
+      name: "ແອມໂມເນຍ-ໄນໂຕຣເຈນ (NH₃-N)",
+      en: "Ammonia Nitrogen (NH3-N)",
+      unit: "mg/L",
+      defaultVal: 0.15,
+      aliases: ["nh3-n", "nh3", "ammonia", "ແອມໂມເນຍ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 0.2, label: "≤ 0.2" },
+        "ປະເພດ 2": { type: "max", max: 0.5, label: "≤ 0.5" },
+        "ປະເພດ 3": { type: "max", max: 0.5, label: "≤ 0.5" },
+        "ປະເພດ 4": { type: "max", max: 0.5, label: "≤ 0.5" },
+        "ປະເພດ 5": { type: "max", max: 1.5, label: "≤ 1.5" }
+      }
+    },
+    {
+      id: "no3_n",
+      name: "ໄນເຕຣດ-ໄນໂຕຣເຈນ (NO₃-N)",
+      en: "Nitrate Nitrogen (NO3-N)",
+      unit: "mg/L",
+      defaultVal: 1.2,
+      aliases: ["no3-n", "no3", "nitrate", "ໄນເຕຣດ", "tn", "ໄນໂຕຣເຈນທັງໝົດ", "total nitrogen"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 2.0, label: "≤ 2.0" },
+        "ປະເພດ 2": { type: "max", max: 5.0, label: "≤ 5.0" },
+        "ປະເພດ 3": { type: "max", max: 5.0, label: "≤ 5.0" },
+        "ປະເພດ 4": { type: "max", max: 5.0, label: "≤ 5.0" },
+        "ປະເພດ 5": { type: "max", max: 10.0, label: "≤ 10.0" }
+      }
+    },
+    {
+      id: "tp",
+      name: "ຟົດສະຟໍຣັດທັງໝົດ (Total Phosphorus - TP)",
+      en: "Total Phosphorus (TP)",
+      unit: "mg/L",
+      defaultVal: 0.12,
+      aliases: ["tp", "phosphorus", "po4", "ຟົດສະຟໍ", "ຟົດສະຟໍທັງໝົດ", "ຟົດສະຟໍຣັດ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 0.1, label: "≤ 0.1" },
+        "ປະເພດ 2": { type: "max", max: 0.2, label: "≤ 0.2" },
+        "ປະເພດ 3": { type: "max", max: 0.5, label: "≤ 0.5" },
+        "ປະເພດ 4": { type: "max", max: 1.0, label: "≤ 1.0" },
+        "ປະເພດ 5": { type: "max", max: 2.0, label: "≤ 2.0" }
+      }
+    },
+    {
+      id: "pb",
+      name: "ທາດຊືນ (Lead - Pb)",
+      en: "Lead (Pb)",
+      unit: "mg/L",
+      defaultVal: 0.008,
+      aliases: ["pb", "lead", "ຊືນ", "ທາດຊືນ", "ທາດຕະກົ່ວ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 0.01, label: "≤ 0.01" },
+        "ປະເພດ 2": { type: "max", max: 0.05, label: "≤ 0.05" },
+        "ປະເພດ 3": { type: "max", max: 0.05, label: "≤ 0.05" },
+        "ປະເພດ 4": { type: "max", max: 0.05, label: "≤ 0.05" },
+        "ປະເພດ 5": { type: "max", max: 0.1, label: "≤ 0.10" }
+      }
+    },
+    {
+      id: "cd",
+      name: "ທາດແຄັດມຽມ (Cadmium - Cd)",
+      en: "Cadmium (Cd)",
+      unit: "mg/L",
+      defaultVal: 0.001,
+      aliases: ["cd", "cadmium", "ແຄັດມຽມ", "ທາດແຄັດມຽມ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 0.003, label: "≤ 0.003" },
+        "ປະເພດ 2": { type: "max", max: 0.005, label: "≤ 0.005" },
+        "ປະເພດ 3": { type: "max", max: 0.005, label: "≤ 0.005" },
+        "ປະເພດ 4": { type: "max", max: 0.005, label: "≤ 0.005" },
+        "ປະເພດ 5": { type: "max", max: 0.01, label: "≤ 0.01" }
+      }
+    },
+    {
+      id: "as",
+      name: "ທາດສານໜູ (Arsenic - As)",
+      en: "Arsenic (As)",
+      unit: "mg/L",
+      defaultVal: 0.004,
+      aliases: ["as", "arsenic", "ສານໜູ", "ທາດສານໜູ"],
+      classes: {
+        "ປະເພດ 1": { type: "max", max: 0.01, label: "≤ 0.01" },
+        "ປະເພດ 2": { type: "max", max: 0.01, label: "≤ 0.01" },
+        "ປະເພດ 3": { type: "max", max: 0.01, label: "≤ 0.01" },
+        "ປະເພດ 4": { type: "max", max: 0.01, label: "≤ 0.01" },
+        "ປະເພດ 5": { type: "max", max: 0.05, label: "≤ 0.05" }
+      }
+    }
+  ]
+};
+
+function evaluateSingleValueAgainstLimit81(numVal, limitObj, unit = "") {
+  if (numVal === null || numVal === void 0 || isNaN(numVal)) {
+    return { status: "empty", diffLabel: "ບໍ່ໄດ້ປ້ອນຂໍ້ມູນ" };
+  }
+  if (!limitObj || limitObj.type === "none") {
+    return { status: "pass", diffLabel: "ຕາມສະພາບທຳມະຊາດ" };
+  }
+  let status = "pass";
+  let diffLabel = "ຢູ່ໃນເກນມາດຕະຖານ";
+
+  if (limitObj.type === "range") {
+    const min = limitObj.min;
+    const max = limitObj.max;
+    const span = max - min;
+    const warnMargin = span * 0.1;
+    if (numVal < min) {
+      status = "exceed";
+      const diff = (min - numVal).toFixed(2);
+      diffLabel = `ຕ່ຳກວ່າເກນ (-${diff})`;
+    } else if (numVal > max) {
+      status = "exceed";
+      const diff = (numVal - max).toFixed(2);
+      diffLabel = `ເກີນເກນ (+${diff})`;
+    } else if (numVal < min + warnMargin || numVal > max - warnMargin) {
+      status = "warn";
+      diffLabel = "ໃກ້ຂອບເຂດເຝົ້າລະວັງ";
+    }
+  } else if (limitObj.type === "min") {
+    const min = limitObj.min;
+    if (numVal < min) {
+      status = "exceed";
+      const diff = (min - numVal).toFixed(2);
+      const pct = min > 0 ? (((min - numVal) / min) * 100).toFixed(1) : 0;
+      diffLabel = `ຕ່ຳກວ່າເກນ (-${diff} ${unit}, -${pct}%)`;
+    } else if (numVal < min * 1.15) {
+      status = "warn";
+      diffLabel = `ໃກ້ຄ່າຕ່ຳສຸດ (+${(numVal - min).toFixed(2)} ${unit})`;
+    }
+  } else if (limitObj.type === "max") {
+    const max = limitObj.max;
+    if (numVal > max) {
+      status = "exceed";
+      const diff = Number((numVal - max).toFixed(3));
+      const pct = max > 0 ? (((numVal - max) / max) * 100).toFixed(1) : 0;
+      diffLabel = `ເກີນເກນ (+${diff} ${unit}, +${pct}%)`;
+    } else if (numVal >= max * 0.85) {
+      status = "warn";
+      const remain = Number((max - numVal).toFixed(3));
+      diffLabel = `ໃກ້ເກີນເກນ (ເຫຼືອ ${remain} ${unit})`;
+    }
+  }
+  return { status, diffLabel };
+}
+
+function determineParamBestFitClass81(param, numVal) {
+  if (numVal === null || numVal === void 0 || isNaN(numVal)) return null;
+  const classOrder = ["ປະເພດ 1", "ປະເພດ 2", "ປະເພດ 3", "ປະເພດ 4", "ປະເພດ 5"];
+  for (const cId of classOrder) {
+    const lim = param.classes[cId];
+    if (!lim) continue;
+    if (lim.type === "none") continue;
+    const ev = evaluateSingleValueAgainstLimit81(numVal, lim, param.unit);
+    if (ev.status !== "exceed") {
+      return cId;
+    }
+  }
+  return "ເກີນປະເພດ 5";
+}
+
+function matchCustomParamToDecree81Id(customParamName) {
+  if (!customParamName) return null;
+  const norm = String(customParamName).trim().toLowerCase();
+  for (const p of LAO_STANDARD_81.parameters) {
+    if (norm === p.id.toLowerCase() || norm === p.name.toLowerCase() || norm === p.en.toLowerCase()) {
+      return p.id;
+    }
+    if (Array.isArray(p.aliases)) {
+      for (const alias of p.aliases) {
+        const aNorm = alias.toLowerCase();
+        if (norm === aNorm || norm.includes(aNorm)) {
+          return p.id;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function extractProjectDecree81Values(waterQuality = {}, customOverrides = {}) {
+  const valuesMap = {};
+  const extraCustomParams = [];
+
+  if (waterQuality) {
+    if (waterQuality.ph !== void 0 && waterQuality.ph !== null && waterQuality.ph !== "" && !isNaN(parseFloat(waterQuality.ph))) {
+      valuesMap.ph = parseFloat(waterQuality.ph);
+    }
+    if (waterQuality.bod !== void 0 && waterQuality.bod !== null && waterQuality.bod !== "" && !isNaN(parseFloat(waterQuality.bod))) {
+      valuesMap.bod = parseFloat(waterQuality.bod);
+    }
+    if (waterQuality.cod !== void 0 && waterQuality.cod !== null && waterQuality.cod !== "" && !isNaN(parseFloat(waterQuality.cod))) {
+      valuesMap.cod = parseFloat(waterQuality.cod);
+    }
+    if (waterQuality.tss !== void 0 && waterQuality.tss !== null && waterQuality.tss !== "" && !isNaN(parseFloat(waterQuality.tss))) {
+      valuesMap.tss = parseFloat(waterQuality.tss);
+    }
+
+    const customList = Array.isArray(waterQuality.customParameters) ? waterQuality.customParameters : [];
+    customList.forEach((cp) => {
+      if (!cp || (!cp.name && (cp.value === void 0 || cp.value === ""))) return;
+      const matchedId = matchCustomParamToDecree81Id(cp.name);
+      const parsedVal = parseFloat(String(cp.value ?? "").replace(/,/g, ""));
+      if (matchedId && !isNaN(parsedVal)) {
+        if (valuesMap[matchedId] === void 0) {
+          valuesMap[matchedId] = parsedVal;
+        }
+      } else if (cp.name && String(cp.value ?? "").trim() !== "") {
+        extraCustomParams.push(cp);
+      }
+    });
+  }
+
+  if (customOverrides && typeof customOverrides === "object") {
+    Object.keys(customOverrides).forEach((k) => {
+      const raw = customOverrides[k];
+      if (raw === "" || raw === null || raw === void 0) {
+        if (k in customOverrides && customOverrides[k] === "") {
+          delete valuesMap[k];
+        }
+      } else {
+        const num = parseFloat(raw);
+        if (!isNaN(num)) {
+          valuesMap[k] = num;
+        }
+      }
+    });
+  }
+
+  return { valuesMap, extraCustomParams };
+}
+
+function evaluateWaterQualityAgainstDecree81(waterQuality = {}, targetClass = "ປະເພດ 4", customOverrides = {}) {
+  const classOrder = ["ປະເພດ 1", "ປະເພດ 2", "ປະເພດ 3", "ປະເພດ 4", "ປະເພດ 5"];
+  const validTargetClass = classOrder.includes(targetClass) ? targetClass : "ປະເພດ 4";
+  const { valuesMap, extraCustomParams } = extractProjectDecree81Values(waterQuality, customOverrides);
+
+  let passCount = 0;
+  let warnCount = 0;
+  let exceedCount = 0;
+  let totalEvaluated = 0;
+
+  const allClassSummaries = {};
+  classOrder.forEach((cId) => {
+    allClassSummaries[cId] = { pass: 0, warn: 0, exceed: 0, total: 0, status: "empty" };
+  });
+
+  let worstClassIndex = -1;
+
+  const rows = LAO_STANDARD_81.parameters.map((param, idx) => {
+    const rawVal = valuesMap[param.id];
+    const hasVal = rawVal !== void 0 && rawVal !== null && rawVal !== "" && !isNaN(parseFloat(rawVal));
+    const numVal = hasVal ? parseFloat(rawVal) : null;
+
+    const limitObj = param.classes[validTargetClass];
+    const targetEval = evaluateSingleValueAgainstLimit81(numVal, limitObj, param.unit);
+    const status = targetEval.status;
+    const diffLabel = targetEval.diffLabel;
+
+    if (status === "pass") { passCount++; totalEvaluated++; }
+    else if (status === "warn") { warnCount++; totalEvaluated++; }
+    else if (status === "exceed") { exceedCount++; totalEvaluated++; }
+
+    const classEvaluations = {};
+    classOrder.forEach((cId) => {
+      const cLim = param.classes[cId];
+      const cEv = evaluateSingleValueAgainstLimit81(numVal, cLim, param.unit);
+      classEvaluations[cId] = {
+        ...cEv,
+        limitLabel: cLim ? cLim.label : "-"
+      };
+      if (hasVal) {
+        allClassSummaries[cId].total++;
+        if (cEv.status === "pass") allClassSummaries[cId].pass++;
+        else if (cEv.status === "warn") allClassSummaries[cId].warn++;
+        else if (cEv.status === "exceed") allClassSummaries[cId].exceed++;
+      }
+    });
+
+    const bestFitClass = determineParamBestFitClass81(param, numVal);
+    if (bestFitClass) {
+      const cIdx = classOrder.indexOf(bestFitClass);
+      if (bestFitClass === "ເກີນປະເພດ 5") {
+        worstClassIndex = Math.max(worstClassIndex, 5);
+      } else if (cIdx > worstClassIndex) {
+        worstClassIndex = cIdx;
+      }
+    }
+
+    return {
+      index: idx + 1,
+      param,
+      numVal,
+      limitObj,
+      status,
+      diffLabel,
+      classEvaluations,
+      bestFitClass
+    };
+  });
+
+  classOrder.forEach((cId) => {
+    const s = allClassSummaries[cId];
+    if (s.total > 0) {
+      if (s.exceed > 0) s.status = "exceed";
+      else if (s.warn > 0) s.status = "warn";
+      else s.status = "pass";
+    }
+  });
+
+  const overallBestFitClass = worstClassIndex === -1
+    ? null
+    : worstClassIndex >= 5
+      ? "ເກີນປະເພດ 5"
+      : classOrder[worstClassIndex];
+
+  const overallStatus = totalEvaluated === 0
+    ? "empty"
+    : exceedCount > 0
+      ? "exceed"
+      : warnCount > 0
+        ? "warn"
+        : "pass";
+
+  return {
+    targetClass: validTargetClass,
+    passCount,
+    warnCount,
+    exceedCount,
+    totalEvaluated,
+    overallStatus,
+    overallBestFitClass,
+    allClassSummaries,
+    rows,
+    valuesMap,
+    extraCustomParams
+  };
+}
+
+function printDecree81ComparisonReport(projectInfo, evaluation) {
+  const titleName = projectInfo?.projectName || "ໂຄງການປ່ອຍນໍ້າເປື້ອນ";
+  const ownerName = projectInfo?.ownerName || "-";
+  const permitNo = projectInfo?.permitNumber || "-";
+  const receivingWater = projectInfo?.receivingWaterBodyName || "-";
+  const province = projectInfo?.projectLocation?.province || "-";
+  const district = projectInfo?.projectLocation?.district || "-";
+  const village = projectInfo?.projectLocation?.village || "-";
+  const dateStr = (/* @__PURE__ */ new Date()).toLocaleDateString("lo-LA");
+
+  const classCardsHtml = LAO_STANDARD_81.classes.map((c) => {
+    const s = evaluation.allClassSummaries[c.id];
+    const isBest = evaluation.overallBestFitClass === c.id;
+    const bg = s.status === "pass" ? "#ecfdf5" : s.status === "warn" ? "#fffbeb" : s.status === "exceed" ? "#fff1f2" : "#f8fafc";
+    const border = isBest ? "2px solid #059669" : "1px solid #cbd5e1";
+    const statusTxt = s.total === 0 ? "ບໍ່ມີຂໍ້ມູນ" : s.exceed > 0 ? `❌ ເກີນເກນ (${s.exceed})` : s.warn > 0 ? `⚠️ ເຝົ້າລະວັງ (${s.warn})` : `✅ ຜ່ານເກນ (${s.pass}/${s.total})`;
+    return `<td style="background:${bg};border:${border};padding:8px;text-align:center;width:20%;border-radius:6px;">
+      <div style="font-weight:bold;font-size:12px;">${c.id} ${isBest ? "🎯" : ""}</div>
+      <div style="font-size:10px;color:#475569;">${c.shortUse}</div>
+      <div style="font-weight:bold;font-size:11px;margin-top:4px;">${statusTxt}</div>
+    </td>`;
+  }).join("");
+
+  const rowsHtml = evaluation.rows.map((r) => {
+    const valStr = r.numVal !== null ? `${r.numVal} ${r.param.unit}`.trim() : "-";
+    const c1 = r.classEvaluations["ປະເພດ 1"];
+    const c2 = r.classEvaluations["ປະເພດ 2"];
+    const c3 = r.classEvaluations["ປະເພດ 3"];
+    const c4 = r.classEvaluations["ປະເພດ 4"];
+    const c5 = r.classEvaluations["ປະເພດ 5"];
+    const cellFmt = (ev) => {
+      if (r.numVal === null) return `<span style="color:#64748b;">${ev.limitLabel}</span>`;
+      const icon = ev.status === "pass" ? "✅" : ev.status === "warn" ? "⚠️" : "❌";
+      const clr = ev.status === "pass" ? "#065f46" : ev.status === "warn" ? "#92400e" : "#9f1239";
+      return `<div style="font-weight:bold;color:${clr};">${ev.limitLabel}</div><div style="font-size:10px;color:${clr};">${icon}</div>`;
+    };
+    return `<tr>
+      <td style="text-align:center;">${r.index}</td>
+      <td><b>${r.param.name}</b><br/><span style="font-size:10px;color:#64748b;">${r.param.en} ${r.param.unit ? `(${r.param.unit})` : ""}</span></td>
+      <td style="text-align:center;font-weight:bold;">${valStr}</td>
+      <td style="text-align:center;">${cellFmt(c1)}</td>
+      <td style="text-align:center;">${cellFmt(c2)}</td>
+      <td style="text-align:center;">${cellFmt(c3)}</td>
+      <td style="text-align:center;">${cellFmt(c4)}</td>
+      <td style="text-align:center;">${cellFmt(c5)}</td>
+      <td style="text-align:center;font-weight:bold;">${r.bestFitClass || "-"}</td>
+      <td>${r.diffLabel}</td>
+    </tr>`;
+  }).join("");
+
+  const html = `<!DOCTYPE html>
+  <html lang="lo">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ໃບລາຍງານການປຽບທຽບຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ) - ${titleName}</title>
+    <style>
+      body { font-family: 'Phetsarath OT', 'Noto Sans Lao', 'Times New Roman', serif; padding: 20px; color: #0f172a; }
+      h1, h2, h3 { margin: 4px 0; }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
+      th, td { border: 1px solid #94a3b8; padding: 6px 8px; }
+      th { background: #f1f5f9; font-weight: bold; }
+      @media print { .no-print { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="no-print" style="margin-bottom:14px;text-align:right;">
+      <button onclick="window.print()" style="padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">🖨️ ພິມລາຍງານ / ບັນທຶກ PDF</button>
+    </div>
+    <div style="text-align:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:14px;">
+      <div style="font-weight:bold;font-size:14px;">ສາທາລະນະລັດ ປະຊາທິປະໄຕ ປະຊາຊົນລາວ</div>
+      <div style="font-size:12px;">ສັນຕິພາບ ເອກະລາດ ປະຊາທິປະໄຕ ເອກະພາບ ວັດທະນາຖາວອນ</div>
+      <h2 style="margin-top:10px;font-size:16px;">ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ</h2>
+      <div style="font-size:12px;color:#334155;">ລະບົບຕິດຕາມໂຄງການປ່ອຍນໍ້າເປື້ອນ — ກົມຊັບພະຍາກອນນໍ້າ (DWR)</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:12px;background:#f8fafc;padding:10px;border:1px solid #cbd5e1;border-radius:8px;">
+      <div>
+        <div><b>ຊື່ໂຄງການ/ກິດຈະການ:</b> ${titleName}</div>
+        <div><b>ເຈົ້າຂອງໂຄງການ:</b> ${ownerName} | <b>ເລກທີໃບອະນຸຍາດ:</b> ${permitNo}</div>
+        <div><b>ທີ່ຕັ້ງ:</b> ບ້ານ${village}, ເມືອງ${district}, ແຂວງ${province} | <b>ແຫຼ່ງນໍ້າຮອງຮັບ:</b> ${receivingWater}</div>
+      </div>
+      <div style="text-align:right;">
+        <div><b>ວັນທີລາຍງານ:</b> ${dateStr}</div>
+        <div><b>ເກນອ້າງອີງ:</b> ${evaluation.targetClass}</div>
+        <div style="font-size:13px;font-weight:bold;color:#047857;">🎯 ຈັດຢູ່ປະເພດ: ${evaluation.overallBestFitClass || "ບໍ່ມີຂໍ້ມູນ"}</div>
+      </div>
+    </div>
+    <h3 style="font-size:13px;">1. ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ:</h3>
+    <table style="margin-bottom:14px;"><tr>${classCardsHtml}</tr></table>
+    <h3 style="font-size:13px;">2. ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5):</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ລ/ດ</th>
+          <th>ຕົວຊີ້ວັດ (Parameter)</th>
+          <th>📥 ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ</th>
+          <th>🌿 ປະເພດ 1</th>
+          <th>💧 ປະເພດ 2</th>
+          <th>🌾 ປະເພດ 3</th>
+          <th>🏭 ປະເພດ 4</th>
+          <th>🚢 ປະເພດ 5</th>
+          <th>🎯 ຈັດຢູ່ປະເພດ</th>
+          <th>ສະຖານະທຽບເກນ (${evaluation.targetClass})</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+  </body>
+  </html>`;
+
+  const w = window.open("", "_blank", "width=1100,height=800");
+  if (w) {
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+  }
+}
+
+function exportDecree81ComparisonExcel(projectInfo, evaluation) {
+  const titleName = projectInfo?.projectName || "Wastewater_Project";
+  const exportData = evaluation.rows.map((r) => {
+    const fmtClass = (cId) => {
+      const ev = r.classEvaluations[cId];
+      if (!ev) return "-";
+      if (r.numVal === null) return `${ev.limitLabel} (ບໍ່ໄດ້ປ້ອນ)`;
+      const st = ev.status === "pass" ? "ຜ່ານ" : ev.status === "warn" ? "ເຝົ້າລະວັງ" : "ເກີນເກນ";
+      return `${ev.limitLabel} [${st}]`;
+    };
+    return {
+      "ລ/ດ": r.index,
+      "ຕົວຊີ້ວັດ (Lao)": r.param.name,
+      "Parameter (EN)": r.param.en,
+      "ຫົວໜ່ວຍ": r.param.unit || "-",
+      "ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ": r.numVal !== null ? r.numVal : "ບໍ່ໄດ້ປ້ອນ",
+      "ປະເພດ 1 (ທຳມະຊາດ)": fmtClass("ປະເພດ 1"),
+      "ປະເພດ 2 (ອຸປະໂພກ)": fmtClass("ປະເພດ 2"),
+      "ປະເພດ 3 (ກະສິກຳ)": fmtClass("ປະເພດ 3"),
+      "ປະເພດ 4 (ອຸດສາຫະກຳ)": fmtClass("ປະເພດ 4"),
+      "ປະເພດ 5 (ລະບາຍນ້ຳ)": fmtClass("ປະເພດ 5"),
+      "ຈັດຢູ່ປະເພດ (81/ລບ)": r.bestFitClass || "ບໍ່ມີຂໍ້ມູນ",
+      [`ສະຖານະທຽບເກນ (${evaluation.targetClass})`]: r.diffLabel
+    };
+  });
+
+  const ws = XLSX3.utils.json_to_sheet(exportData);
+  const wb = XLSX3.utils.book_new();
+  XLSX3.utils.book_append_sheet(wb, ws, "Decree81_5Classes");
+  const safeName = String(titleName).replace(/[^a-zA-Z0-9ກ-ໝ_-]/g, "_").slice(0, 40);
+  XLSX3.writeFile(wb, `Decree81_5Class_Comparison_${safeName}.xlsx`);
+}
+
+// ============================================================================
+// 🏛️ ຄອມໂພເນັ້ນສະແດງຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ
+// ແລະ ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5)
+// ============================================================================
+var Decree81ComparisonPanel = ({
+  waterQuality,
+  projectInfo,
+  defaultTargetClass = "ປະເພດ 4",
+  editable = false,
+  onUpdateParameterValue,
+  compact = false
+}) => {
+  const [targetClass, setTargetClass] = useState9(defaultTargetClass);
+  const [filterMode, setFilterMode] = useState9("all"); // "all" | "entered"
+  const [localOverrides, setLocalOverrides] = useState9({});
+  const [showQuickInputGrid, setShowQuickInputGrid] = useState9(false);
+
+  const evaluation = evaluateWaterQualityAgainstDecree81(waterQuality, targetClass, localOverrides);
+  const enteredRowsCount = evaluation.rows.filter((r) => r.numVal !== null).length;
+  const visibleRows = filterMode === "entered"
+    ? evaluation.rows.filter((r) => r.numVal !== null)
+    : evaluation.rows;
+
+  const handleParamChange = (param, rawVal) => {
+    setLocalOverrides((prev) => ({ ...prev, [param.id]: rawVal }));
+    if (typeof onUpdateParameterValue === "function") {
+      onUpdateParameterValue(param, rawVal);
+    }
+  };
+
+  const statusMeta = {
+    pass: {
+      badge: `✅ ຜ່ານມາດຕະຖານ ${evaluation.targetClass}`,
+      cls: "bg-emerald-50 border-emerald-300 text-emerald-900",
+      pill: "bg-emerald-600 text-white",
+      desc: "ຄ່າວິເຄາະທຸກຕົວຊີ້ວັດທີ່ປ້ອນເຂົ້າ ແມ່ນຢູ່ໃນເກນມາດຕະຖານຄຸນນະພາບນໍ້າ ຕາມຂໍ້ຕົກລົງ 81/ລບ."
+    },
+    warn: {
+      badge: `⚠️ ຢູ່ໃນເກນເຝົ້າລະວັງ (${evaluation.targetClass})`,
+      cls: "bg-amber-50 border-amber-300 text-amber-900",
+      pill: "bg-amber-500 text-white",
+      desc: "ມີບາງຕົວຊີ້ວັດເຂົ້າໃກ້ຂອບເຂດມາດຕະຖານ ຄວນຕິດຕາມລະບົບບໍາບັດນໍ້າເປື້ອນຢ່າງໃກ້ຊິດ."
+    },
+    exceed: {
+      badge: `❌ ເກີນເກນມາດຕະຖານ ${evaluation.targetClass} (${evaluation.exceedCount} ຕົວຊີ້ວັດ)`,
+      cls: "bg-rose-50 border-rose-300 text-rose-900",
+      pill: "bg-rose-600 text-white",
+      desc: "ພົບຕົວຊີ້ວັດທີ່ບໍ່ຜ່ານເກນມາດຕະຖານ 81/ລບ! ຕ້ອງປັບປຸງປະສິດທິພາບລະບົບບໍາບັດນໍ້າເປື້ອນກ່ອນປ່ອຍລົງສູ່ແຫຼ່ງນໍ້າຮອງຮັບ."
+    },
+    empty: {
+      badge: "⏳ ກະລຸນາປ້ອນຄ່າວິເຄາະເພື່ອປຽບທຽບ",
+      cls: "bg-slate-50 border-slate-200 text-slate-700",
+      pill: "bg-slate-600 text-white",
+      desc: "ປ້ອນຕົວເລກຜົນວິເຄາະຄຸນນະພາບນໍ້າ ເພື່ອໃຫ້ລະບົບຄິດໄລ່ ແລະ ຈັດປະເພດທຽບກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ ອັດຕະໂນມັດ."
+    }
+  }[evaluation.overallStatus];
+
+  const bestFitBadgeStyle = {
+    "ປະເພດ 1": "bg-emerald-600 text-white border-emerald-700",
+    "ປະເພດ 2": "bg-sky-600 text-white border-sky-700",
+    "ປະເພດ 3": "bg-teal-600 text-white border-teal-700",
+    "ປະເພດ 4": "bg-amber-500 text-white border-amber-600",
+    "ປະເພດ 5": "bg-orange-600 text-white border-orange-700",
+    "ເກີນປະເພດ 5": "bg-rose-600 text-white border-rose-700"
+  }[evaluation.overallBestFitClass] || "bg-slate-200 text-slate-700 border-slate-300";
+
+  return /* @__PURE__ */ jsxs9("div", { className: "bg-white border-2 border-emerald-200/90 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xs", children: [
+    /* Top Header & Actions */
+    /* @__PURE__ */ jsxs9("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-200", children: [
+      /* @__PURE__ */ jsxs9("div", { children: [
+        /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+          /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300", children: "ຂໍ້ຕົກລົງ 81/ລບ (5 ປະເພດ)" }),
+          /* @__PURE__ */ jsx9("h4", { className: "text-sm sm:text-base font-extrabold text-slate-900", children: "ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ" })
+        ] }),
+        /* @__PURE__ */ jsx9("p", { className: "text-[11px] text-slate-500 mt-0.5", children: "ປຽບທຽບຄ່າວິເຄາະນໍ້າເປື້ອນທີ່ປ້ອນເຂົ້າ ທຽບກັບມາດຕະຖານຄຸນນະພາບນໍ້າ 5 ປະເພດ (ປະເພດ 1 – 5) ພ້ອມຈັດປະເພດອັດຕະໂນມັດ" })
+      ] }),
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2 flex-wrap", children: [
+        editable && /* @__PURE__ */ jsx9("button", {
+          type: "button",
+          onClick: () => setShowQuickInputGrid(!showQuickInputGrid),
+          className: `px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer flex items-center gap-1.5 ${showQuickInputGrid ? "bg-indigo-600 text-white border-indigo-700" : "bg-indigo-50 text-indigo-800 border-indigo-200 hover:bg-indigo-100"}`,
+          children: showQuickInputGrid ? "🔼 ປິດຊ່ອງປ້ອນ 17 ຕົວຊີ້ວັດ (81/ລບ)" : "✏️ ປ້ອນ/ແກ້ໄຂຄ່າວິເຄາະທັງ 17 ຕົວຊີ້ວັດ (81/ລບ)"
+        }),
+        /* @__PURE__ */ jsx9("button", {
+          type: "button",
+          onClick: () => printDecree81ComparisonReport(projectInfo, evaluation),
+          className: "px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition cursor-pointer",
+          children: "🖨️ ພິມໃບປຽບທຽບ 5 ປະເພດ (81/ລບ)"
+        }),
+        /* @__PURE__ */ jsx9("button", {
+          type: "button",
+          onClick: () => exportDecree81ComparisonExcel(projectInfo, evaluation),
+          className: "px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition cursor-pointer",
+          children: "📊 ສົ່ງອອກ Excel (ທຽບ 5 ປະເພດ)"
+        })
+      ] })
+    ] }),
+
+    /* Optional Quick Input Grid for all 17 Decree 81/PM Parameters */
+    editable && showQuickInputGrid && /* @__PURE__ */ jsxs9("div", { className: "p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200 space-y-3", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex items-center justify-between flex-wrap gap-2", children: [
+        /* @__PURE__ */ jsx9("div", { className: "text-xs font-extrabold text-indigo-950", children: "🧪 ປ້ອນຂໍ້ມູນຄ່າວິເຄາະຄຸນນະພາບນໍ້າທັງ 17 ຕົວຊີ້ວັດ ຕາມຂໍ້ຕົກລົງ 81/ລບ (ອັບເດດຕາຕະລາງທຽບ 5 ປະເພດທັນທີ):" }),
+        /* @__PURE__ */ jsx9("span", { className: "text-[11px] text-indigo-700 font-semibold", children: "💡 ຄ່າທີ່ປ້ອນຢູ່ນີ້ຈະຖືກບັນທຶກເຂົ້າໃນຂໍ້ມູນຄຸນນະພາບນໍ້າຂອງໂຄງການໂດຍອັດຕະໂນມັດ" })
+      ] }),
+      /* @__PURE__ */ jsx9("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5", children: LAO_STANDARD_81.parameters.map((param) => {
+        const curVal = evaluation.valuesMap[param.id] ?? "";
+        const lim = param.classes[targetClass];
+        return /* @__PURE__ */ jsxs9("div", { className: "bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs", children: [
+          /* @__PURE__ */ jsx9("label", { className: "block text-[11px] font-bold text-slate-700 truncate", title: param.name, children: param.name }),
+          /* @__PURE__ */ jsxs9("div", { className: "text-[9px] text-slate-400 mb-1 flex justify-between", children: [
+            /* @__PURE__ */ jsx9("span", { children: param.unit || "pH" }),
+            /* @__PURE__ */ jsxs9("span", { className: "font-mono text-emerald-700", children: ["ເກນ: ", lim ? lim.label : "-"] })
+          ] }),
+          /* @__PURE__ */ jsx9("input", {
+            type: "number",
+            step: "any",
+            value: curVal,
+            onChange: (e) => handleParamChange(param, e.target.value),
+            placeholder: String(param.defaultVal),
+            className: "w-full px-2 py-1 text-xs font-mono font-bold border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-slate-50/50"
+          })
+        ] }, param.id);
+      }) })
+    ] }),
+
+    /* Overall Banner + Best-Fit Classification Box */
+    /* @__PURE__ */ jsx9("div", { className: `p-4 rounded-2xl border-2 ${statusMeta.cls} transition-all`, children: /* @__PURE__ */ jsxs9("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-4", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "space-y-1.5", children: [
+        /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsx9("span", { className: `px-3 py-1 rounded-full text-xs font-extrabold shadow-2xs ${statusMeta.pill}`, children: statusMeta.badge }),
+          projectInfo?.projectName && /* @__PURE__ */ jsxs9("span", { className: "text-xs font-bold text-slate-700", children: ["🏭 ", projectInfo.projectName] }),
+          projectInfo?.receivingWaterBodyName && /* @__PURE__ */ jsxs9("span", { className: "text-[11px] font-semibold text-sky-800 bg-sky-100/80 px-2 py-0.5 rounded-md border border-sky-200", children: ["🌊 ປ່ອຍລົງ: ", projectInfo.receivingWaterBodyName] })
+        ] }),
+        /* @__PURE__ */ jsx9("p", { className: "text-xs opacity-90", children: statusMeta.desc }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold", children: [
+          /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-lg bg-white/80 border border-slate-200 text-slate-700", children: ["📊 ຂໍ້ມູນປ້ອນເຂົ້າ: ", enteredRowsCount, " / 17 ຕົວຊີ້ວັດ"] }),
+          /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-lg bg-emerald-100/90 border border-emerald-300 text-emerald-800", children: ["✅ ຜ່ານ: ", evaluation.passCount] }),
+          /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-lg bg-amber-100/90 border border-amber-300 text-amber-800", children: ["⚠️ ເຝົ້າລະວັງ: ", evaluation.warnCount] }),
+          /* @__PURE__ */ jsxs9("span", { className: "px-2.5 py-0.5 rounded-lg bg-rose-100/90 border border-rose-300 text-rose-800", children: ["❌ ເກີນເກນ: ", evaluation.exceedCount] })
+        ] })
+      ] }),
+      /* Right Box: Actual Classification */
+      /* @__PURE__ */ jsxs9("div", { className: "bg-white/95 p-3.5 rounded-xl border border-slate-200/90 flex flex-col items-start lg:items-end justify-center shrink-0 shadow-2xs", children: [
+        /* @__PURE__ */ jsx9("span", { className: "text-[10px] font-extrabold uppercase tracking-wider text-slate-500", children: "🎯 ການຈັດປະເພດຄຸນນະພາບນໍ້າຕົວຈິງ (5 ປະເພດ 81/ລບ)" }),
+        /* @__PURE__ */ jsx9("div", { className: "mt-1.5 flex items-center gap-2", children: /* @__PURE__ */ jsx9("span", {
+          className: `px-3.5 py-1 rounded-xl text-sm font-black border shadow-xs ${bestFitBadgeStyle}`,
+          children: evaluation.overallBestFitClass ? `ຈັດຢູ່ໃນเกນ: ${evaluation.overallBestFitClass}` : "ຍັງບໍ່ມີຂໍ້ມູນປ້ອນເຂົ້າ"
+        }) }),
+        /* @__PURE__ */ jsx9("span", { className: "text-[10px] text-slate-500 mt-1", children: "ຄິດໄລ່ຈາກຕົວຊີ້ວັດທີ່ມີຄ່າສູງສຸດ/ຕ່ຳສຸດ ທຽບທັງ 5 ປະເພດ" })
+      ] })
+    ] }) }),
+
+    /* SECTION 1: 5-Class Classification Overview Cards */
+    /* @__PURE__ */ jsxs9("div", { className: "bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap items-center justify-between gap-2", children: [
+        /* @__PURE__ */ jsx9("span", { className: "text-xs font-extrabold text-slate-800 flex items-center gap-1.5", children: "🏛️ ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ:" }),
+        /* @__PURE__ */ jsx9("span", { className: "text-[11px] text-slate-500 font-medium", children: "💡 ຄລິກໃສ່ບັດປະເພດ 1–5 ເພື່ອປ່ຽນເກນອ້າງອີງຫຼັກ" })
+      ] }),
+      /* @__PURE__ */ jsx9("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5", children: LAO_STANDARD_81.classes.map((c) => {
+        const s = evaluation.allClassSummaries[c.id];
+        const isSelected = evaluation.targetClass === c.id;
+        const isBestFit = evaluation.overallBestFitClass === c.id;
+        const cardCls = s.status === "pass"
+          ? "border-emerald-300 bg-emerald-50/70"
+          : s.status === "warn"
+            ? "border-amber-300 bg-amber-50/70"
+            : s.status === "exceed"
+              ? "border-rose-300 bg-rose-50/70"
+              : "border-slate-200 bg-white";
+        const badgeCls = s.status === "pass"
+          ? "bg-emerald-600 text-white"
+          : s.status === "warn"
+            ? "bg-amber-500 text-white"
+            : s.status === "exceed"
+              ? "bg-rose-600 text-white"
+              : "bg-slate-200 text-slate-600";
+        const badgeTxt = s.total === 0
+          ? "ບໍ່ມີຂໍ້ມູນ"
+          : s.exceed > 0
+            ? `❌ ເກີນເກນ ${s.exceed} ຕົວຊີ້ວັດ`
+            : s.warn > 0
+              ? `⚠️ ເຝົ້າລະວັງ (${s.pass}/${s.total})`
+              : `✅ ຜ່ານເກນ (${s.pass}/${s.total})`;
+
+        return /* @__PURE__ */ jsxs9("div", {
+          onClick: () => setTargetClass(c.id),
+          className: `p-3 rounded-xl border-2 transition cursor-pointer hover:shadow-md ${cardCls} ${isSelected ? "ring-2 ring-indigo-500 shadow-xs" : ""} ${isBestFit ? "ring-2 ring-emerald-500" : ""}`,
+          children: [
+            /* @__PURE__ */ jsxs9("div", { className: "flex items-center justify-between gap-1", children: [
+              /* @__PURE__ */ jsx9("span", { className: "font-extrabold text-xs text-slate-900", children: c.id }),
+              /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-1", children: [
+                isBestFit && /* @__PURE__ */ jsx9("span", { className: "px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-extrabold", children: "🎯 ຈັດຢູ່ປະເພດນີ້" }),
+                isSelected && /* @__PURE__ */ jsx9("span", { className: "px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[9px] font-bold", children: "ເກນທີ່ເລືອກ" })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx9("div", { className: "text-[11px] font-bold text-slate-700 mt-1 truncate", title: c.name, children: c.shortUse }),
+            /* @__PURE__ */ jsx9("div", { className: "text-[10px] text-slate-500 line-clamp-1 mt-0.5", title: c.desc, children: c.name }),
+            /* @__PURE__ */ jsxs9("div", { className: "mt-2 pt-2 border-t border-slate-200/70 flex items-center justify-between gap-1", children: [
+              /* @__PURE__ */ jsx9("span", { className: `px-2 py-0.5 rounded-md text-[10px] font-extrabold ${badgeCls}`, children: badgeTxt }),
+              s.total > 0 && /* @__PURE__ */ jsxs9("span", { className: "text-[10px] font-mono font-bold text-slate-600", children: ["ຜ່ານ ", s.pass, "/", s.total] })
+            ] })
+          ]
+        }, c.id);
+      }) })
+    ] }),
+
+    /* SECTION 2: 5-Class Parameter Comparison Table */
+    /* @__PURE__ */ jsxs9("div", { className: "space-y-2.5", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2", children: [
+        /* @__PURE__ */ jsxs9("div", { className: "text-xs sm:text-sm font-extrabold text-slate-800 flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsx9("span", { children: "📋 ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5):" }),
+          /* @__PURE__ */ jsxs9("span", { className: "text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200", children: ["ເກນອ້າງອີງ: ", evaluation.targetClass] })
+        ] }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxs9("button", {
+            type: "button",
+            onClick: () => setFilterMode("all"),
+            className: `px-2.5 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${filterMode === "all" ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"}`,
+            children: ["ສະແດງທັງໝົດ (", evaluation.rows.length, ")"]
+          }),
+          /* @__PURE__ */ jsxs9("button", {
+            type: "button",
+            onClick: () => setFilterMode("entered"),
+            className: `px-2.5 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${filterMode === "entered" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"}`,
+            children: ["ສະເພາະຂໍ້ມູນທີ່ປ້ອນເຂົ້າ (", enteredRowsCount, ")"]
+          })
+        ] })
+      ] }),
+
+      /* Table Container */
+      /* @__PURE__ */ jsx9("div", { className: "overflow-x-auto rounded-2xl border border-slate-200 shadow-2xs bg-white", children: /* @__PURE__ */ jsxs9("table", { className: "w-full text-xs text-left border-collapse", children: [
+        /* @__PURE__ */ jsx9("thead", { className: "bg-slate-100 text-slate-800 border-b border-slate-200 text-[11px] font-extrabold", children: /* @__PURE__ */ jsxs9("tr", { children: [
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2.5 text-center w-10", children: "ລ/ດ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 min-w-[180px]", children: "ຕົວຊີ້ວັດ (Parameter)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center bg-sky-50/90 text-sky-900 border-x border-sky-200 min-w-[115px]", children: "📥 ຂໍ້ມູນທີ່ປ້ອນເຂົ້າ" }),
+          /* @__PURE__ */ jsx9("th", { className: `py-2.5 px-2 text-center ${evaluation.targetClass === "ປະເພດ 1" ? "bg-emerald-100/90 text-emerald-950 ring-1 ring-emerald-400" : ""}`, children: "🌿 ປະເພດ 1 (ທຳມະຊາດ)" }),
+          /* @__PURE__ */ jsx9("th", { className: `py-2.5 px-2 text-center ${evaluation.targetClass === "ປະເພດ 2" ? "bg-sky-100/90 text-sky-950 ring-1 ring-sky-400" : ""}`, children: "💧 ປະເພດ 2 (ອຸປະໂພກ)" }),
+          /* @__PURE__ */ jsx9("th", { className: `py-2.5 px-2 text-center ${evaluation.targetClass === "ປະເພດ 3" ? "bg-teal-100/90 text-teal-950 ring-1 ring-teal-400" : ""}`, children: "🌾 ປະເພດ 3 (ກະສິກຳ)" }),
+          /* @__PURE__ */ jsx9("th", { className: `py-2.5 px-2 text-center ${evaluation.targetClass === "ປະເພດ 4" ? "bg-amber-100/90 text-amber-950 ring-1 ring-amber-400" : ""}`, children: "🏭 ປະເພດ 4 (ອຸດສາຫະກຳ)" }),
+          /* @__PURE__ */ jsx9("th", { className: `py-2.5 px-2 text-center ${evaluation.targetClass === "ປະເພດ 5" ? "bg-rose-100/90 text-rose-950 ring-1 ring-rose-400" : ""}`, children: "🚢 ປະເພດ 5 (ລະບາຍນ້ຳ)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2.5 text-center bg-emerald-50/70 text-emerald-950 border-x border-emerald-200 min-w-[110px]", children: "🎯 ຈັດຢູ່ປະເພດ" }),
+          /* @__PURE__ */ jsxs9("th", { className: "py-2.5 px-3 min-w-[150px]", children: ["ສະຖານະທຽບເກນ (", evaluation.targetClass, ")"] })
+        ] }) }),
+        /* @__PURE__ */ jsx9("tbody", { className: "divide-y divide-slate-100", children: visibleRows.length === 0 ? /* @__PURE__ */ jsx9("tr", { children: /* @__PURE__ */ jsx9("td", { colSpan: 10, className: "py-8 text-center text-slate-400 font-semibold", children: "ຍັງບໍ່ມີຂໍ້ມູນຕົວຊີ້ວັດທີ່ປ້ອນເຂົ້າ. ກະລຸນາປ້ອນຄ່າ BOD, COD, pH, TSS ຫຼື ຕົວຊີ້ວັດເພີ່ມເຕີມ." }) }) : visibleRows.map((r) => {
+          const hasVal = r.numVal !== null;
+          const rowBg = !hasVal
+            ? "opacity-75 hover:opacity-100"
+            : r.status === "exceed"
+              ? "bg-rose-50/40 hover:bg-rose-50/70"
+              : r.status === "warn"
+                ? "bg-amber-50/35 hover:bg-amber-50/60"
+                : "bg-emerald-50/20 hover:bg-emerald-50/40";
+
+          const renderClassCell = (cId) => {
+            const ev = r.classEvaluations[cId];
+            const isTarget = evaluation.targetClass === cId;
+            const isBest = r.bestFitClass === cId;
+            if (!hasVal) {
+              return /* @__PURE__ */ jsx9("td", {
+                className: `py-2 px-2 text-center font-mono text-[11px] text-slate-500 ${isTarget ? "bg-indigo-50/40 font-bold" : ""}`,
+                children: ev ? ev.limitLabel : "-"
+              }, cId);
+            }
+            const cellStyle = ev.status === "pass"
+              ? "text-emerald-800 bg-emerald-50/60"
+              : ev.status === "warn"
+                ? "text-amber-800 bg-amber-50/70"
+                : "text-rose-800 bg-rose-50/70";
+            const statusTag = ev.status === "pass" ? "✅ ຜ່ານ" : ev.status === "warn" ? "⚠️ ເຝົ້າລະວັງ" : "❌ ເກີນ";
+
+            return /* @__PURE__ */ jsxs9("td", {
+              className: `py-2 px-2 text-center font-mono text-[11px] ${cellStyle} ${isTarget ? "ring-1 ring-inset ring-indigo-400 font-extrabold" : ""} ${isBest ? "ring-2 ring-inset ring-emerald-500" : ""}`,
+              children: [
+                /* @__PURE__ */ jsx9("div", { className: "font-bold", children: ev ? ev.limitLabel : "-" }),
+                /* @__PURE__ */ jsx9("div", { className: "text-[9px] font-sans font-extrabold mt-0.5", children: statusTag })
+              ]
+            }, cId);
+          };
+
+          const bestFitBadge = !hasVal
+            ? /* @__PURE__ */ jsx9("span", { className: "text-[10px] text-slate-400", children: "ບໍ່ມີຂໍ້ມູນ" })
+            : r.bestFitClass === "ເກີນປະເພດ 5"
+              ? /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300", children: "🚨 ເກີນປະເພດ 5" })
+              : /* @__PURE__ */ jsxs9("span", { className: `px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${r.bestFitClass === "ປະເພດ 1" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : r.bestFitClass === "ປະເພດ 2" ? "bg-sky-100 text-sky-800 border-sky-300" : r.bestFitClass === "ປະເພດ 3" ? "bg-teal-100 text-teal-800 border-teal-300" : r.bestFitClass === "ປະເພດ 4" ? "bg-amber-100 text-amber-800 border-amber-300" : "bg-orange-100 text-orange-800 border-orange-300"}`, children: ["🎯 ", r.bestFitClass] });
+
+          const targetStatusBadge = !hasVal
+            ? /* @__PURE__ */ jsx9("span", { className: "text-[10px] text-slate-400", children: "⚪ ບໍ່ໄດ້ປ້ອນ" })
+            : r.status === "pass"
+              ? /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-100 text-emerald-800", children: "✅ ຜ່ານເກນ" })
+              : r.status === "warn"
+                ? /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-100 text-amber-800", children: "⚠️ ເຝົ້າລະວັງ" })
+                : /* @__PURE__ */ jsx9("span", { className: "px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-rose-100 text-rose-800", children: "❌ ເກີນເກນ" });
+
+          return /* @__PURE__ */ jsxs9("tr", { className: `transition-colors ${rowBg}`, children: [
+            /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2.5 text-center font-mono text-slate-400 font-bold", children: r.index }),
+            /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3", children: [
+              /* @__PURE__ */ jsxs9("div", { className: "font-bold text-slate-900 flex items-center gap-1.5 flex-wrap", children: [
+                /* @__PURE__ */ jsx9("span", { children: r.param.name }),
+                hasVal && /* @__PURE__ */ jsx9("span", { className: "px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800 border border-sky-200", children: "ປ້ອນແລ້ວ" })
+              ] }),
+              /* @__PURE__ */ jsxs9("div", { className: "text-[10px] text-slate-400", children: [
+                r.param.en,
+                r.param.unit ? ` (${r.param.unit})` : ""
+              ] })
+            ] }),
+            /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center bg-sky-50/40 border-x border-sky-100 font-mono", children: hasVal ? /* @__PURE__ */ jsxs9("div", { children: [
+              /* @__PURE__ */ jsx9("span", { className: "text-sm font-black text-sky-950", children: r.numVal }),
+              r.param.unit && /* @__PURE__ */ jsxs9("span", { className: "text-[10px] text-slate-500 ml-1", children: [r.param.unit] })
+            ] }) : /* @__PURE__ */ jsx9("span", { className: "text-[11px] text-slate-400 font-sans", children: "ບໍ່ໄດ້ປ້ອນ" }) }),
+            renderClassCell("ປະເພດ 1"),
+            renderClassCell("ປະເພດ 2"),
+            renderClassCell("ປະເພດ 3"),
+            renderClassCell("ປະເພດ 4"),
+            renderClassCell("ປະເພດ 5"),
+            /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2.5 text-center bg-emerald-50/30 border-x border-emerald-100", children: bestFitBadge }),
+            /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3", children: [
+              /* @__PURE__ */ jsx9("div", { children: targetStatusBadge }),
+              /* @__PURE__ */ jsx9("div", { className: "text-[10px] text-slate-500 mt-0.5 font-medium", children: r.diffLabel })
+            ] })
+          ] }, r.param.id);
+        }) })
+      ] }) }),
+
+      /* Extra Custom Parameters (outside the 17 standard Decree 81/PM indicators) */
+      evaluation.extraCustomParams.length > 0 && /* @__PURE__ */ jsxs9("div", { className: "p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-2", children: [
+        /* @__PURE__ */ jsx9("div", { className: "text-xs font-extrabold text-indigo-950", children: "📌 ຂໍ້ມູນຕົວຊີ້ວັດເພີ່ມເຕີມທີ່ໄດ້ປ້ອນເຂົ້າ (ນອກເໜືອຈາກ 17 ຕົວຊີ້ວັດພື້ນຖານ 81/ລບ):" }),
+        /* @__PURE__ */ jsx9("div", { className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2", children: evaluation.extraCustomParams.map((cp, idx) => /* @__PURE__ */ jsxs9("div", { className: "bg-white p-2.5 rounded-xl border border-indigo-100 flex items-center justify-between text-xs shadow-2xs", children: [
+          /* @__PURE__ */ jsxs9("div", { children: [
+            /* @__PURE__ */ jsx9("div", { className: "font-bold text-slate-800", children: cp.name }),
+            /* @__PURE__ */ jsxs9("div", { className: "text-[10px] text-slate-500", children: ["ເກນມາດຕະຖານ: ", cp.standard || "-"] })
+          ] }),
+          /* @__PURE__ */ jsxs9("div", { className: "text-right", children: [
+            /* @__PURE__ */ jsxs9("div", { className: "font-mono font-black text-indigo-950", children: [cp.value, " ", cp.unit] }),
+            /* @__PURE__ */ jsx9("span", { className: `inline-block px-1.5 py-0.2 rounded text-[9px] font-bold ${cp.status === "exceeded" ? "bg-rose-100 text-rose-800" : cp.status === "warning" ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`, children: cp.status === "exceeded" ? "🔴 ເກີນເກນ" : cp.status === "warning" ? "🟡 ເຝົ້າລະວັງ" : "🟢 ຜ່ານເກນ" })
+          ] })
+        ] }, cp.id || idx)) })
+      ] })
+    ] })
+  ] });
+};
+
+// ============================================================================
+// ⚖️ ໜ້າຈໍສູນກວດສອບ ແລະ ປຽບທຽບມາດຕະຖານຄຸນນະພາບນໍ້າ 5 ປະເພດ (81/ລບ) ສໍາລັບລະບົບການປ່ອຍນໍ້າເປື້ອນ
+// ============================================================================
+var Decree81AuditWorkbench = ({ projects = [], onSelectProject, onEditProject }) => {
+  const [selectedSourceId, setSelectedSourceId] = useState9(projects[0]?.id || "__ALL_AVG__");
+  const [customWaterQuality, setCustomWaterQuality] = useState9({
+    ph: 7.2,
+    bod: 18,
+    cod: 55,
+    tss: 25,
+    status: "compliant",
+    customParameters: [
+      { id: "c-do", name: "ອົກຊີເຈນລະລາຍ (DO)", value: "5.2", unit: "mg/L", standard: "≥ 4.0", status: "compliant" },
+      { id: "c-turb", name: "ຄວາມຂຸ່ນ (Turbidity)", value: "24", unit: "NTU", standard: "≤ 40", status: "compliant" },
+      { id: "c-ec", name: "ການນໍາໄຟຟ້າ (EC)", value: "420", unit: "µS/cm", standard: "≤ 1000", status: "compliant" },
+      { id: "c-nh3", name: "ແອມໂມເນຍ-ໄນໂຕຣເຈນ (NH3-N)", value: "0.35", unit: "mg/L", standard: "≤ 0.5", status: "compliant" },
+      { id: "c-tp", name: "ຟົດສະຟໍທັງໝົດ (TP)", value: "0.28", unit: "mg/L", standard: "≤ 0.5", status: "compliant" }
+    ]
+  });
+
+  const selectedProject = projects.find((p) => p.id === selectedSourceId) || null;
+
+  const computeAverageWaterQuality = () => {
+    if (!projects.length) return customWaterQuality;
+    let phSum = 0, phCnt = 0, bodSum = 0, bodCnt = 0, codSum = 0, codCnt = 0, tssSum = 0, tssCnt = 0;
+    const customAgg = {};
+    projects.forEach((p) => {
+      const wq = p.waterQuality || {};
+      if (!isNaN(parseFloat(wq.ph))) { phSum += parseFloat(wq.ph); phCnt++; }
+      if (!isNaN(parseFloat(wq.bod))) { bodSum += parseFloat(wq.bod); bodCnt++; }
+      if (!isNaN(parseFloat(wq.cod))) { codSum += parseFloat(wq.cod); codCnt++; }
+      if (!isNaN(parseFloat(wq.tss))) { tssSum += parseFloat(wq.tss); tssCnt++; }
+      (wq.customParameters || []).forEach((cp) => {
+        const mId = matchCustomParamToDecree81Id(cp.name);
+        const v = parseFloat(cp.value);
+        if (mId && !isNaN(v)) {
+          if (!customAgg[mId]) customAgg[mId] = { sum: 0, cnt: 0, name: cp.name, unit: cp.unit };
+          customAgg[mId].sum += v;
+          customAgg[mId].cnt++;
+        }
+      });
+    });
+    const avgCustom = Object.keys(customAgg).map((k) => ({
+      id: `avg-${k}`,
+      name: customAgg[k].name,
+      value: Number((customAgg[k].sum / customAgg[k].cnt).toFixed(3)),
+      unit: customAgg[k].unit || "mg/L",
+      status: "compliant"
+    }));
+    return {
+      ph: phCnt ? Number((phSum / phCnt).toFixed(2)) : 7.2,
+      bod: bodCnt ? Number((bodSum / bodCnt).toFixed(2)) : 20,
+      cod: codCnt ? Number((codSum / codCnt).toFixed(2)) : 60,
+      tss: tssCnt ? Number((tssSum / tssCnt).toFixed(2)) : 30,
+      status: "compliant",
+      customParameters: avgCustom
+    };
+  };
+
+  const activeWaterQuality = selectedSourceId === "__CUSTOM__"
+    ? customWaterQuality
+    : selectedSourceId === "__ALL_AVG__"
+      ? computeAverageWaterQuality()
+      : (selectedProject?.waterQuality || customWaterQuality);
+
+  const activeProjectInfo = selectedSourceId === "__CUSTOM__"
+    ? { projectName: "ຂໍ້ມູນທົດສອບ/ປ້ອນເອງ (Manual Audit Input)", ownerName: "ກົມຊັບພະຍາກອນນໍ້າ", permitNumber: "AUDIT-81/PM", receivingWaterBodyName: "ແຫຼ່ງນໍ້າຮອງຮັບທົ່ວໄປ" }
+    : selectedSourceId === "__ALL_AVG__"
+      ? { projectName: `ຄ່າສະເລ່ຍທຸກໂຄງການປ່ອຍນໍ້າເປື້ອນ (${projects.length} ໂຄງການ)`, ownerName: "ສັງລວມທົ່ວລະບົບ", permitNumber: "ALL-PROJECTS", receivingWaterBodyName: "ທຸກແຫຼ່ງນໍ້າຮອງຮັບ" }
+      : selectedProject;
+
+  const handleUpdateWorkbenchParam = (param, rawVal) => {
+    const baseWq = selectedSourceId === "__CUSTOM__" ? customWaterQuality : {
+      ...activeWaterQuality,
+      customParameters: [...(activeWaterQuality.customParameters || [])]
+    };
+    if (selectedSourceId !== "__CUSTOM__") {
+      setSelectedSourceId("__CUSTOM__");
+    }
+    const numVal = rawVal === "" ? void 0 : parseFloat(rawVal);
+    if (["ph", "bod", "cod", "tss"].includes(param.id)) {
+      setCustomWaterQuality({
+        ...baseWq,
+        [param.id]: numVal
+      });
+    } else {
+      const existingList = [...(baseWq.customParameters || [])];
+      const idx = existingList.findIndex((cp) => matchCustomParamToDecree81Id(cp.name) === param.id);
+      if (idx >= 0) {
+        if (rawVal === "") existingList.splice(idx, 1);
+        else existingList[idx] = { ...existingList[idx], value: String(rawVal) };
+      } else if (rawVal !== "") {
+        existingList.push({
+          id: `custom-${param.id}-${Date.now()}`,
+          name: param.name,
+          value: String(rawVal),
+          unit: param.unit,
+          standard: param.classes["ປະເພດ 4"]?.label || "",
+          status: "compliant"
+        });
+      }
+      setCustomWaterQuality({
+        ...baseWq,
+        customParameters: existingList
+      });
+    }
+  };
+
+  return /* @__PURE__ */ jsxs9("div", { className: "space-y-6", children: [
+    /* Top Selector Card */
+    /* @__PURE__ */ jsxs9("div", { className: "bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-950 text-white p-5 rounded-3xl shadow-lg border border-emerald-700/40 space-y-4", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-4", children: [
+        /* @__PURE__ */ jsxs9("div", { children: [
+          /* @__PURE__ */ jsxs9("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/25 text-emerald-200 border border-emerald-400/30", children: "ຂໍ້ຕົກລົງ 81/ລບ (21 ກຸມພາ 2017)" }),
+            /* @__PURE__ */ jsx9("span", { className: "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/25 text-rose-200 border border-rose-400/30", children: "ລະບົບການປ່ອຍນໍ້າເປື້ອນ" })
+          ] }),
+          /* @__PURE__ */ jsx9("h2", { className: "text-base sm:text-xl font-black mt-1.5", children: "⚖️ ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ" }),
+          /* @__PURE__ */ jsx9("p", { className: "text-xs text-emerald-100/80 mt-0.5", children: "ກວດສອບຄ່າວິເຄາະນໍ້າເປື້ອນກ່ອນປ່ອຍ ຂອງແຕ່ລະໂຄງການ ຫຼື ປ້ອນຂໍ້ມູນທົດສອບ ເພື່ອທຽບກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5)" })
+        ] }),
+        /* @__PURE__ */ jsxs9("div", { className: "min-w-[280px] sm:min-w-[340px] bg-white/10 backdrop-blur-xs p-3 rounded-2xl border border-white/15 space-y-1.5", children: [
+          /* @__PURE__ */ jsx9("label", { className: "block text-[11px] font-bold text-emerald-200", children: "🔍 ເລືອກໂຄງການປ່ອຍນໍ້າເປື້ອນ ເພື່ອປຽບທຽບກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ:" }),
+          /* @__PURE__ */ jsxs9("select", {
+            value: selectedSourceId,
+            onChange: (e) => setSelectedSourceId(e.target.value),
+            className: "w-full px-3 py-2 rounded-xl bg-slate-900 border border-emerald-500/50 text-white text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-emerald-400",
+            children: [
+              /* @__PURE__ */ jsxs9("option", { value: "__ALL_AVG__", children: ["📊 ຄ່າສະເລ່ຍລວມທຸກໂຄງການ (", projects.length, " ໂຄງການ)"] }),
+              /* @__PURE__ */ jsx9("option", { value: "__CUSTOM__", children: "✏️ ປ້ອນຂໍ້ມູນທົດສອບເອງ (Manual Input 17 ຕົວຊີ້ວັດ)" }),
+              projects.map((p) => /* @__PURE__ */ jsxs9("option", { value: p.id, children: [
+                "🏭 ",
+                p.projectName,
+                " (",
+                p.projectLocation.province,
+                " • BOD: ",
+                p.waterQuality.bod ?? "-",
+                ")"
+              ] }, p.id))
+            ]
+          })
+        ] })
+      ] })
+    ] }),
+
+    /* Main Comparison Panel (5-Class Cards + 5-Class Comparison Table) */
+    /* @__PURE__ */ jsx9(Decree81ComparisonPanel, {
+      waterQuality: activeWaterQuality,
+      projectInfo: activeProjectInfo,
+      defaultTargetClass: "ປະເພດ 4",
+      editable: true,
+      onUpdateParameterValue: handleUpdateWorkbenchParam
+    }),
+
+    /* Summary Table of All Wastewater Projects vs 5 Water Quality Classes (81/ລບ) */
+    /* @__PURE__ */ jsxs9("div", { className: "bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100", children: [
+        /* @__PURE__ */ jsxs9("div", { children: [
+          /* @__PURE__ */ jsx9("h3", { className: "text-sm sm:text-base font-extrabold text-slate-900", children: "🏭 ຕາຕະລາງສັງລວມການຈັດປະເພດຄຸນນະພາບນໍ້າ (5 ປະເພດ 81/ລບ) ຂອງທຸກໂຄງການປ່ອຍນໍ້າເປື້ອນ" }),
+          /* @__PURE__ */ jsx9("p", { className: "text-xs text-slate-500", children: "ຄລິກໃສ່ແຖວໂຄງການ ເພື່ອເບິ່ງຜົນການປຽບທຽບລະອຽດທັງ 5 ປະເພດ ຂ້າງເທິງ" })
+        ] }),
+        /* @__PURE__ */ jsxs9("span", { className: "text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl", children: ["ທັງໝົດ ", projects.length, " ໂຄງການ"] })
+      ] }),
+      /* @__PURE__ */ jsx9("div", { className: "overflow-x-auto rounded-xl border border-slate-200", children: /* @__PURE__ */ jsxs9("table", { className: "w-full text-xs text-left", children: [
+        /* @__PURE__ */ jsx9("thead", { className: "bg-slate-50 text-slate-700 font-extrabold border-b border-slate-200 text-[11px]", children: /* @__PURE__ */ jsxs9("tr", { children: [
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center", children: "ລ/ດ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3", children: "ຊື່ໂຄງການ / ກິດຈະການ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3", children: "ແຫຼ່ງນໍ້າຮອງຮັບ" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "pH" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "BOD (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "COD (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-2 text-center", children: "TSS (mg/L)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center bg-emerald-50 text-emerald-900", children: "🎯 ຈັດຢູ່ປະເພດ (81/ລບ)" }),
+          /* @__PURE__ */ jsx9("th", { className: "py-2.5 px-3 text-center", children: "ຈັດການ" })
+        ] }) }),
+        /* @__PURE__ */ jsx9("tbody", { className: "divide-y divide-slate-100", children: projects.map((p, i) => {
+          const ev = evaluateWaterQualityAgainstDecree81(p.waterQuality, "ປະເພດ 4");
+          const bf = ev.overallBestFitClass || "ບໍ່ມີຂໍ້ມູນ";
+          const isActive = selectedSourceId === p.id;
+          const badgeCls = bf === "ປະເພດ 1" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : bf === "ປະເພດ 2" ? "bg-sky-100 text-sky-800 border-sky-300" : bf === "ປະເພດ 3" ? "bg-teal-100 text-teal-800 border-teal-300" : bf === "ປະເພດ 4" ? "bg-amber-100 text-amber-800 border-amber-300" : bf === "ປະເພດ 5" ? "bg-orange-100 text-orange-800 border-orange-300" : "bg-rose-100 text-rose-800 border-rose-300";
+          return /* @__PURE__ */ jsxs9("tr", {
+            onClick: () => setSelectedSourceId(p.id),
+            className: `cursor-pointer transition ${isActive ? "bg-emerald-50/80 font-bold" : "hover:bg-slate-50"}`,
+            children: [
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center font-mono text-slate-400", children: i + 1 }),
+              /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3", children: [
+                /* @__PURE__ */ jsx9("div", { className: "font-bold text-slate-900", children: p.projectName }),
+                /* @__PURE__ */ jsxs9("div", { className: "text-[10px] text-slate-500", children: [p.projectCategory, " • ", p.projectLocation.province] })
+              ] }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 font-medium text-slate-700", children: p.receivingWaterBodyName }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono", children: p.waterQuality.ph ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono font-bold", children: p.waterQuality.bod ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono font-bold", children: p.waterQuality.cod ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-2 text-center font-mono", children: p.waterQuality.tss ?? "-" }),
+              /* @__PURE__ */ jsx9("td", { className: "py-2.5 px-3 text-center", children: /* @__PURE__ */ jsx9("span", { className: `px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeCls}`, children: bf }) }),
+              /* @__PURE__ */ jsxs9("td", { className: "py-2.5 px-3 text-center", onClick: (e) => e.stopPropagation(), children: [
+                /* @__PURE__ */ jsx9("button", {
+                  type: "button",
+                  onClick: () => onSelectProject && onSelectProject(p),
+                  className: "px-2 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold mr-1 cursor-pointer",
+                  children: "ລາຍລະອຽດ"
+                }),
+                /* @__PURE__ */ jsx9("button", {
+                  type: "button",
+                  onClick: () => onEditProject && onEditProject(p),
+                  className: "px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-[10px] font-bold cursor-pointer",
+                  children: "ແກ້ໄຂ"
+                })
+              ] })
+            ]
+          }, p.id);
+        }) })
+      ] }) })
+    ] })
+  ] });
+};
 
 // 🧭 ຄອມໂພເນັ້ນປ້ອນ/ຄົ້ນຫາພິກັດໃນຮູບແບບອົງສາ (Degree DMS: ອົງສາ-ລິບດາ-ຟີລິບດາ) ແລະ ຄົ້ນຫາຜ່ານ Google Maps
 var WastewaterDmsCoordField = ({
@@ -10319,7 +11627,51 @@ var ProjectFormModal = ({
               ) })
             ] }, param.id)) })
           ] }) }) : /* @__PURE__ */ jsx9("div", { className: "py-4 text-center text-xs text-indigo-400 border border-dashed border-indigo-200 rounded-xl", children: 'ຍັງບໍ່ມີຄ່າວິເຄາະເພີ່ມເຕີມ. ທ່ານສາມາດກົດເລືອກຈາກປຸ່ມ "ເລືອກດ່ວນ" ຂ້າງເທິງ ຫຼື ກົດ "+ ເພີ່ມຄ່າໃໝ່"' })
-        ] })
+        ] }),
+        /* Live Decree 81/PM 5-Class Classification & Comparison Table inside ProjectFormModal */
+        /* @__PURE__ */ jsx9(Decree81ComparisonPanel, {
+          waterQuality: formData.waterQuality,
+          projectInfo: formData,
+          defaultTargetClass: "ປະເພດ 4",
+          editable: true,
+          onUpdateParameterValue: (param, rawVal) => {
+            const numVal = rawVal === "" ? void 0 : parseFloat(rawVal);
+            if (["ph", "bod", "cod", "tss"].includes(param.id)) {
+              setFormData((prev) => ({
+                ...prev,
+                waterQuality: {
+                  ...prev.waterQuality,
+                  [param.id]: isNaN(numVal) ? void 0 : numVal
+                }
+              }));
+            } else {
+              setFormData((prev) => {
+                const list = [...(prev.waterQuality?.customParameters || [])];
+                const idx = list.findIndex((cp) => matchCustomParamToDecree81Id(cp.name) === param.id);
+                if (idx >= 0) {
+                  if (rawVal === "") list.splice(idx, 1);
+                  else list[idx] = { ...list[idx], value: String(rawVal) };
+                } else if (rawVal !== "") {
+                  list.push({
+                    id: `param-${param.id}-${Date.now()}`,
+                    name: param.name,
+                    value: String(rawVal),
+                    unit: param.unit,
+                    standard: param.classes["ປະເພດ 4"]?.label || "",
+                    status: "compliant"
+                  });
+                }
+                return {
+                  ...prev,
+                  waterQuality: {
+                    ...prev.waterQuality,
+                    customParameters: list
+                  }
+                };
+              });
+            }
+          }
+        })
       ] }),
       activeTab === "location" && /* @__PURE__ */ jsxs9("div", { className: "space-y-4", children: [
         /* @__PURE__ */ jsxs9("div", { className: "flex items-center justify-between pb-2 border-b border-emerald-100", children: [
@@ -11225,7 +12577,14 @@ var ProjectDetailModal = ({
             /* @__PURE__ */ jsx10("span", { className: "font-semibold text-slate-800", children: "ລະບົບບໍາບັດທີ່ນໍາໃຊ້:" }),
             " ",
             project.treatmentSystem
-          ] })
+          ] }),
+          /* Decree 81/PM 5-Class Classification & Comparison Table inside ProjectDetailModal */
+          /* @__PURE__ */ jsx10("div", { className: "pt-2", children: /* @__PURE__ */ jsx10(Decree81ComparisonPanel, {
+            waterQuality: project.waterQuality,
+            projectInfo: project,
+            defaultTargetClass: "ປະເພດ 4",
+            editable: false
+          }) })
         ] }),
         /* @__PURE__ */ jsxs10("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [
           /* @__PURE__ */ jsxs10("div", { className: "bg-emerald-50/60 border border-emerald-200 p-4 rounded-2xl space-y-2 text-xs", children: [
@@ -12763,6 +14122,13 @@ function App() {
         )
       ] }),
       activeTab === "stats" && /* @__PURE__ */ jsx15(YearlyStatistics, { projects }),
+      activeTab === "standards81" && /* @__PURE__ */ jsx15(Decree81AuditWorkbench, {
+        projects,
+        onSelectProject: (p) => setSelectedProject(p),
+        onEditProject: (p) => {
+          setEditingProject(p), setIsFormOpen(!0);
+        }
+      }),
       activeTab === "export" && /* @__PURE__ */ jsx15(
         ExportReports,
         {

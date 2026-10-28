@@ -323,6 +323,279 @@ private fun FacilityCard(
                 Text(text = "COD: ${facility.codValue} mg/L", fontSize = 11.sp, color = Rose400)
                 Text(text = "TSS: ${facility.tssValue} mg/L", fontSize = 11.sp, color = Slate300)
             }
+
+            // Decree 81/PM 5-Class Classification Badge
+            val bestFitClass = classifyDecree81Overall(
+                ph = facility.phValue,
+                bod = facility.bodValue,
+                cod = facility.codValue,
+                tss = facility.tssValue
+            )
+            Surface(
+                color = Emerald500.copy(alpha = 0.14f),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (isLao) "⚖️ ຈັດປະເພດຕາມ 81/ລບ (5 ປະເພດ):" else "⚖️ Decree 81/PM (5 Classes):",
+                        fontSize = 10.sp,
+                        color = Slate300,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "🎯 $bestFitClass",
+                        fontSize = 11.sp,
+                        color = if (bestFitClass.contains("ເກີນ")) Rose400 else Emerald400,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class Decree81ParamRow(
+    val nameLao: String,
+    val unit: String,
+    val enteredValue: Double,
+    val classLimits: List<String>,
+    val classPassed: List<Boolean>,
+    val bestClass: String
+)
+
+private fun classifyDecree81Param(
+    value: Double,
+    c1: (Double) -> Boolean,
+    c2: (Double) -> Boolean,
+    c3: (Double) -> Boolean,
+    c4: (Double) -> Boolean,
+    c5: (Double) -> Boolean
+): Pair<List<Boolean>, String> {
+    val passed = listOf(c1(value), c2(value), c3(value), c4(value), c5(value))
+    val idx = passed.indexOfFirst { it }
+    val best = if (idx >= 0) "ປະເພດ ${idx + 1}" else "ເກີນປະເພດ 5"
+    return passed to best
+}
+
+private fun buildDecree81ComparisonRows(
+    ph: Double,
+    bod: Double,
+    cod: Double,
+    tss: Double
+): List<Decree81ParamRow> {
+    val (phPass, phBest) = classifyDecree81Param(
+        ph,
+        { it in 6.0..8.5 },
+        { it in 6.0..8.5 },
+        { it in 5.0..9.0 },
+        { it in 5.0..9.0 },
+        { it in 5.0..9.0 }
+    )
+    val (bodPass, bodBest) = classifyDecree81Param(
+        bod,
+        { it <= 1.5 },
+        { it <= 1.5 },
+        { it <= 2.0 },
+        { it <= 4.0 },
+        { it <= 10.0 }
+    )
+    val (codPass, codBest) = classifyDecree81Param(
+        cod,
+        { it <= 5.0 },
+        { it <= 5.0 },
+        { it <= 7.0 },
+        { it <= 10.0 },
+        { it <= 25.0 }
+    )
+    val (tssPass, tssBest) = classifyDecree81Param(
+        tss,
+        { it <= 10.0 },
+        { it <= 25.0 },
+        { it <= 40.0 },
+        { it <= 60.0 },
+        { it <= 100.0 }
+    )
+    return listOf(
+        Decree81ParamRow(
+            nameLao = "pH (ກົດ-ດ່າງ)",
+            unit = "",
+            enteredValue = ph,
+            classLimits = listOf("6-8.5", "6-8.5", "5-9", "5-9", "5-9"),
+            classPassed = phPass,
+            bestClass = phBest
+        ),
+        Decree81ParamRow(
+            nameLao = "BOD₅",
+            unit = "mg/L",
+            enteredValue = bod,
+            classLimits = listOf("≤1.5", "≤1.5", "≤2.0", "≤4.0", "≤10"),
+            classPassed = bodPass,
+            bestClass = bodBest
+        ),
+        Decree81ParamRow(
+            nameLao = "COD",
+            unit = "mg/L",
+            enteredValue = cod,
+            classLimits = listOf("≤5.0", "≤5.0", "≤7.0", "≤10", "≤25"),
+            classPassed = codPass,
+            bestClass = codBest
+        ),
+        Decree81ParamRow(
+            nameLao = "TSS",
+            unit = "mg/L",
+            enteredValue = tss,
+            classLimits = listOf("≤10", "≤25", "≤40", "≤60", "≤100"),
+            classPassed = tssPass,
+            bestClass = tssBest
+        )
+    )
+}
+
+private fun classifyDecree81Overall(
+    ph: Double,
+    bod: Double,
+    cod: Double,
+    tss: Double
+): String {
+    val rows = buildDecree81ComparisonRows(ph, bod, cod, tss)
+    val order = listOf("ປະເພດ 1", "ປະເພດ 2", "ປະເພດ 3", "ປະເພດ 4", "ປະເພດ 5", "ເກີນປະເພດ 5")
+    var worstIdx = 0
+    rows.forEach { r ->
+        val idx = order.indexOf(r.bestClass)
+        if (idx > worstIdx) worstIdx = idx
+    }
+    return order[worstIdx]
+}
+
+@Composable
+private fun Decree81ComparisonSection(
+    ph: Double,
+    bod: Double,
+    cod: Double,
+    tss: Double
+) {
+    val rows = buildDecree81ComparisonRows(ph, bod, cod, tss)
+    val overallClass = classifyDecree81Overall(ph, bod, cod, tss)
+    val classLabels = listOf(
+        "ປະເພດ 1" to "🏔️ ທຳມະຊາດ",
+        "ປະເພດ 2" to "💧 ອຸປະໂພກ",
+        "ປະເພດ 3" to "🌾 ກະສິກຳ",
+        "ປະເພດ 4" to "🏭 ອຸດສາຫະກຳ",
+        "ປະເພດ 5" to "🚢 ລະບາຍນ້ຳ"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(Slate950)
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "🏛️ ຜົນການປຽບທຽບຂໍ້ມູນທີ່ປ້ອນເຂົ້າ ກັບ ການຈັດປະເພດຄຸນນະພາບນໍ້າທັງ 5 ປະເພດ ຕາມຂໍ້ຕົກລົງ 81/ລບ:",
+            color = Emerald400,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Surface(
+            color = if (overallClass.contains("ເກີນ")) Rose500.copy(alpha = 0.2f) else Emerald500.copy(alpha = 0.2f),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "🎯 ການຈັດປະເພດຄຸນນະພາບນໍ້າຕົວຈິງ (5 ປະເພດ 81/ລບ): $overallClass",
+                color = if (overallClass.contains("ເກີນ")) Rose300 else Emerald400,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        // 5 Class overview chips
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            items(classLabels.indices.toList()) { idx ->
+                val (cId, cShort) = classLabels[idx]
+                val passCount = rows.count { it.classPassed[idx] }
+                val allPass = passCount == rows.size
+                val isBest = overallClass == cId
+                Surface(
+                    color = if (allPass) Emerald500.copy(alpha = 0.16f) else Rose500.copy(alpha = 0.14f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)) {
+                        Text(
+                            text = if (isBest) "🎯 $cId" else cId,
+                            color = Slate100,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(text = cShort, color = Slate400, fontSize = 9.sp)
+                        Text(
+                            text = if (allPass) "✅ ຜ່ານ ($passCount/${rows.size})" else "❌ ຜ່ານ $passCount/${rows.size}",
+                            color = if (allPass) Emerald400 else Rose400,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
+        HorizontalDivider(color = Slate800)
+
+        Text(
+            text = "📋 ຕາຕະລາງປຽບທຽບຂໍ້ມູນທີ່ໄດ້ປ້ອນເຂົ້າ ກັບ 5 ປະເພດຄຸນນະພາບນໍ້າ (ປະເພດ 1 – 5):",
+            color = Cyan400,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        rows.forEach { r ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Slate900)
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${r.nameLao}: ${r.enteredValue} ${r.unit}".trim(),
+                        color = Slate100,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "🎯 ${r.bestClass}",
+                        color = if (r.bestClass.contains("ເກີນ")) Rose400 else Emerald400,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    for (i in 0 until 5) {
+                        val passed = r.classPassed[i]
+                        Text(
+                            text = "ປ.${i + 1}(${r.classLimits[i]})${if (passed) "✅" else "❌"}",
+                            color = if (passed) Emerald400 else Rose400,
+                            fontSize = 9.sp
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -356,52 +629,86 @@ private fun AddFacilityDialog(
             )
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text(if (isLao) "ຊື່ໂຮງງານ / ແຫຼ່ງກຳເນີດ" else "Facility Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = company,
-                    onValueChange = { company = it },
-                    label = { Text(if (isLao) "ບໍລິສັດເຈົ້າຂອງ" else "Company") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                item {
                     OutlinedTextField(
-                        value = volumeText,
-                        onValueChange = { volumeText = it },
-                        label = { Text("m³/day") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
-                    )
-                    OutlinedTextField(
-                        value = receivingWater,
-                        onValueChange = { receivingWater = it },
-                        label = { Text(if (isLao) "ແຫຼ່ງນ້ຳຮັບ" else "Receiving Water") },
-                        modifier = Modifier.weight(1f),
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text(if (isLao) "ຊື່ໂຮງງານ / ແຫຼ່ງກຳເນີດ" else "Facility Name") },
+                        modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                item {
                     OutlinedTextField(
-                        value = phText,
-                        onValueChange = { phText = it },
-                        label = { Text("pH") },
-                        modifier = Modifier.weight(1f),
+                        value = company,
+                        onValueChange = { company = it },
+                        label = { Text(if (isLao) "ບໍລິສັດເຈົ້າຂອງ" else "Company") },
+                        modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
-                    OutlinedTextField(
-                        value = bodText,
-                        onValueChange = { bodText = it },
-                        label = { Text("BOD (mg/L)") },
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = volumeText,
+                            onValueChange = { volumeText = it },
+                            label = { Text("m³/day") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = receivingWater,
+                            onValueChange = { receivingWater = it },
+                            label = { Text(if (isLao) "ແຫຼ່ງນ້ຳຮັບ" else "Receiving Water") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = phText,
+                            onValueChange = { phText = it },
+                            label = { Text("pH") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = bodText,
+                            onValueChange = { bodText = it },
+                            label = { Text("BOD (mg/L)") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = codText,
+                            onValueChange = { codText = it },
+                            label = { Text("COD (mg/L)") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = tssText,
+                            onValueChange = { tssText = it },
+                            label = { Text("TSS (mg/L)") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                }
+                item {
+                    Decree81ComparisonSection(
+                        ph = phText.toDoubleOrNull() ?: 7.5,
+                        bod = bodText.toDoubleOrNull() ?: 20.0,
+                        cod = codText.toDoubleOrNull() ?: 60.0,
+                        tss = tssText.toDoubleOrNull() ?: 30.0
                     )
                 }
             }
@@ -488,28 +795,49 @@ private fun FacilityDetailDialog(
             }
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(text = "ຂະແໜງການ: ${facility.sector}", color = Rose400, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                Text(text = "ເຈົ້າຂອງ: ${facility.companyName}", color = Slate200, fontSize = 13.sp)
-                Text(text = "ເລກທີໃບອະນຸຍາດ: ${facility.permitNumber}", color = Slate300, fontSize = 12.sp)
-                Text(text = "ລະບົບບຳບັດ: ${facility.treatmentSystem}", color = Slate400, fontSize = 12.sp)
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                item {
+                    Text(text = "ຂະແໜງການ: ${facility.sector}", color = Rose400, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "ເຈົ້າຂອງ: ${facility.companyName}", color = Slate200, fontSize = 13.sp)
+                    Text(text = "ເລກທີໃບອະນຸຍາດ: ${facility.permitNumber}", color = Slate300, fontSize = 12.sp)
+                    Text(text = "ລະບົບບຳບັດ: ${facility.treatmentSystem}", color = Slate400, fontSize = 12.sp)
+                }
 
-                HorizontalDivider(color = Slate800)
+                item {
+                    HorizontalDivider(color = Slate800)
+                }
 
-                Text(text = "ປະລິມານນ້ຳເປື້ອນ: %,.0f %s".format(facility.dischargeVolume, facility.dischargeVolumeUnit), color = Cyan400, fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                Text(text = "ແຫຼ່ງນ້ຳຮັບ: ${facility.receivingWaterBody}", color = Slate200, fontSize = 12.sp)
-                Text(text = "ກວດກາລ່າສຸດ: ${facility.lastInspectionDate}", color = Slate400, fontSize = 12.sp)
+                item {
+                    Text(text = "ປະລິມານນ້ຳເປື້ອນ: %,.0f %s".format(facility.dischargeVolume, facility.dischargeVolumeUnit), color = Cyan400, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text(text = "ແຫຼ່ງນ້ຳຮັບ: ${facility.receivingWaterBody}", color = Slate200, fontSize = 12.sp)
+                    Text(text = "ກວດກາລ່າສຸດ: ${facility.lastInspectionDate}", color = Slate400, fontSize = 12.sp)
+                }
 
-                HorizontalDivider(color = Slate800)
+                item {
+                    HorizontalDivider(color = Slate800)
+                }
 
-                Text(text = "ຄ່າວັດແທກຕົວຊີ້ວັດມາດຕະຖານ:", fontWeight = FontWeight.Bold, color = Slate100, fontSize = 13.sp)
-                Text(text = "• pH: ${facility.phValue} (ມາດຕະຖານ 6.0 – 9.0)", color = Slate300, fontSize = 12.sp)
-                Text(text = "• BOD: ${facility.bodValue} mg/L (ມາດຕະຖານ ≤ 30 mg/L)", color = Slate300, fontSize = 12.sp)
-                Text(text = "• COD: ${facility.codValue} mg/L (ມາດຕະຖານ ≤ 120 mg/L)", color = Slate300, fontSize = 12.sp)
-                Text(text = "• TSS: ${facility.tssValue} mg/L (ມາດຕະຖານ ≤ 50 mg/L)", color = Slate300, fontSize = 12.sp)
+                item {
+                    Text(text = "ຄ່າວັດແທກຕົວຊີ້ວັດມາດຕະຖານ:", fontWeight = FontWeight.Bold, color = Slate100, fontSize = 13.sp)
+                    Text(text = "• pH: ${facility.phValue} (ມາດຕະຖານ 6.0 – 9.0)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• BOD: ${facility.bodValue} mg/L (ມາດຕະຖານ ≤ 30 mg/L)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• COD: ${facility.codValue} mg/L (ມາດຕະຖານ ≤ 120 mg/L)", color = Slate300, fontSize = 12.sp)
+                    Text(text = "• TSS: ${facility.tssValue} mg/L (ມາດຕະຖານ ≤ 50 mg/L)", color = Slate300, fontSize = 12.sp)
+                }
+
+                item {
+                    Decree81ComparisonSection(
+                        ph = facility.phValue,
+                        bod = facility.bodValue,
+                        cod = facility.codValue,
+                        tss = facility.tssValue
+                    )
+                }
 
                 if (facility.notes.isNotBlank()) {
-                    Text(text = "ໝາຍເຫດ: ${facility.notes}", color = Slate400, fontSize = 11.sp)
+                    item {
+                        Text(text = "ໝາຍເຫດ: ${facility.notes}", color = Slate400, fontSize = 11.sp)
+                    }
                 }
             }
         },
@@ -532,3 +860,4 @@ private fun FacilityDetailDialog(
         }
     )
 }
+
