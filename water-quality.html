@@ -16926,6 +16926,22 @@
       });
 
       // 2. ສະແດງແຖວຕາຕະລາງສະເພາະໜ້າປັດຈຸບັນ (ບໍ່ໃຫ້ແຖວຍາວ) + ແຍກຫົວຂໍ້ຕາມ 2 ປະເພດຂໍ້ມູນຢ່າງຊັດເຈນ
+      const filteredCatTotals = {
+        COMPANY: { datasets: 0, stations: 0 },
+        GOV: { datasets: 0, stations: 0 }
+      };
+      filteredData.forEach(d => {
+        const c = getRecordDataCategory(d);
+        const stLen = Array.isArray(d.stations) ? d.stations.length : 1;
+        if (c === 'GOV') {
+          filteredCatTotals.GOV.datasets++;
+          filteredCatTotals.GOV.stations += stLen;
+        } else {
+          filteredCatTotals.COMPANY.datasets++;
+          filteredCatTotals.COMPANY.stations += stLen;
+        }
+      });
+
       let prevRenderedCategory = null;
       pagedData.forEach((item, indexInPage) => {
         const overallIndex = startIndex + indexInPage;
@@ -16938,9 +16954,8 @@
         // ສະແດງແຖບຫົວຂໍ້ຄັ້ນລະຫວ່າງ ປະເພດ 1 (ບໍລິສັດ/ກິດຈະການ) ແລະ ປະເພດ 2 (ອົງການຈັດຕັ້ງລັດ) ເພື່ອບໍ່ໃຫ້ຂໍ້ມູນປົນກັນ
         if (itemCat !== prevRenderedCategory) {
           prevRenderedCategory = itemCat;
-          const catDatasetTotal = filteredData.filter(d => getRecordDataCategory(d) === itemCat).length;
-          const catStationTotal = filteredData.filter(d => getRecordDataCategory(d) === itemCat)
-            .reduce((acc, d) => acc + (Array.isArray(d.stations) ? d.stations.length : 1), 0);
+          const catDatasetTotal = filteredCatTotals[itemCat]?.datasets || 0;
+          const catStationTotal = filteredCatTotals[itemCat]?.stations || 0;
           rowsHtml.push(`
             <tr class="${itemCat === 'GOV' ? 'bg-gradient-to-r from-blue-600/10 via-sky-500/10 to-blue-50 border-y-2 border-blue-300' : 'bg-gradient-to-r from-teal-600/10 via-emerald-500/10 to-teal-50 border-y-2 border-teal-300'} select-none">
               <td colspan="6" class="py-2.5 px-4">
@@ -17080,8 +17095,8 @@
 
       initApexChart(flatStationsForChart);
       const visible = id => { const el = document.getElementById(id); return !!(el && !el.classList.contains('hidden') && el.offsetParent !== null); };
-      if (visible('trendPanel')) renderTrend();
-      render12MonthTrendSection();
+      if (visible('trendPanel') || currentAppView === 'trend') renderTrend();
+      if (visible('twelveMonthCard') || currentAppView === 'stats12') render12MonthTrendSection();
       requestAnimationFrame(xlRefreshAll);
       // ລາຍການໂຕຊີ້ວັດ: ອັບເດດສະເພາະຕອນເປີດໜ້າຕັ້ງຄ່າ
       if (!skipSettingsNextRender && !document.getElementById('settingsModal')?.classList.contains('hidden')) renderSettingsList();
