@@ -8941,7 +8941,7 @@
             : calculateAutoQWI(st.customs || {});
           const qi = interpretQWI(rawQ);
           const uid = `st_${rIdx}_${sIdx}_${st.code || st.name || ''}`;
-          list.push({ uid, st, comp, qi, rawQ, province: st.province || r.province || 'ບໍ່ລະບຸ' });
+          list.push({ uid, st, comp, qi, rawQ, rIdx, sIdx, fbKey: r.fbKey || '', province: st.province || r.province || 'ບໍ່ລະບຸ' });
         });
       });
       return list;
@@ -9078,9 +9078,9 @@
                 <p class="text-xs text-indigo-100 mt-0.5">ລະບົບປະເມີນຄ່າດັດຊະນີຄຸນນະພາບນໍ້າ WQI ສະເລ່ຍແບບລວມສູນ ພ້ອມຟັງຊັນເລືອກຊຸດຂໍ້ມູນສະຖານີເພື່ອແປຜົນ ແລະ ທົດລອງຄິດໄລ່ (0 — 100)</p>
               </div>
             </div>
-            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-4 py-2.5 rounded-2xl border border-white/20 shrink-0">
+            <div onclick="openWqiKpiDetailModal('AVG')" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ" class="flex items-center gap-3 bg-white/10 hover:bg-white/20 transition cursor-pointer backdrop-blur-xs px-4 py-2.5 rounded-2xl border border-white/20 shrink-0">
               <div>
-                <p class="text-[10px] text-indigo-100 font-semibold uppercase">ດັດຊະນີ WQI ສະເລ່ຍລວມ</p>
+                <p class="text-[10px] text-indigo-100 font-semibold uppercase flex items-center gap-1">ດັດຊະນີ WQI ສະເລ່ຍລວມ <span class="text-[9px] text-sky-200 underline">ເບິ່ງລາຍລະອຽດ</span></p>
                 <div class="flex items-baseline gap-2 mt-0.5">
                   <span class="text-2xl md:text-3xl font-black font-mono text-white" id="kpiQwiAvg">${avgScore}</span>
                   <span class="text-xs text-indigo-200">/ 100</span>
@@ -9180,59 +9180,69 @@
                 </div>
               </div>
 
-              <!-- Summary KPI Box of SELECTED DATA -->
+              <!-- Summary KPI Box of SELECTED DATA (Clickable for Dedicated Details Modal) -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="bg-gradient-to-br from-indigo-50/80 via-white to-sky-50/50 p-3.5 rounded-xl border border-indigo-200 flex flex-col justify-between shadow-2xs">
+                <div onclick="openWqiKpiDetailModal('AVG')" role="button" tabindex="0" title="ກົດເພື່ອເປີດໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດ ດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ" class="group bg-gradient-to-br from-indigo-50/80 via-white to-sky-50/50 p-3.5 rounded-xl border border-indigo-200 hover:border-indigo-400 flex flex-col justify-between shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold text-[11px]">ດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ</span>
+                    <span class="text-slate-600 group-hover:text-indigo-800 font-bold text-[11px] transition-colors">ດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ</span>
                     <span class="text-xs">🌊</span>
                   </div>
                   <div class="my-1.5 flex items-baseline gap-1.5">
                     <span class="text-2xl md:text-3xl font-extrabold text-indigo-700">${avgScore}</span>
                     <span class="text-xs text-slate-400">/ 100</span>
                   </div>
-                  <div>
+                  <div class="flex items-center justify-between gap-1 pt-1 border-t border-indigo-100/80">
                     ${avgInterp
-                      ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${avgInterp.badgeClass}">${avgInterp.dot} ${avgInterp.text}</span>`
+                      ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${avgInterp.badgeClass}">${avgInterp.dot} ${avgInterp.text}</span>`
                       : `<span class="text-slate-400 text-[10px]">ຍັງບໍ່ມີຂໍ້ມູນ</span>`
                     }
+                    <span class="text-[10px] font-bold text-indigo-600 group-hover:translate-x-0.5 transition-transform">🔍 ລາຍລະອຽດ →</span>
                   </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-emerald-50/60 to-white p-3.5 rounded-xl border border-emerald-200 flex flex-col justify-between shadow-2xs">
+                <div onclick="openWqiKpiDetailModal('MAX')" role="button" tabindex="0" title="ກົດເພື່ອເປີດໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດ ຄະແນນສູງສຸດ (Max)" class="group bg-gradient-to-br from-emerald-50/60 to-white p-3.5 rounded-xl border border-emerald-200 hover:border-emerald-400 flex flex-col justify-between shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold text-[11px]">ຄະແນນສູງສຸດ (Max)</span>
+                    <span class="text-slate-600 group-hover:text-emerald-800 font-bold text-[11px] transition-colors">ຄະແນນສູງສຸດ (Max)</span>
                     <span class="text-xs">🟢</span>
                   </div>
                   <div class="my-1.5 flex items-baseline gap-1.5">
                     <span class="text-2xl md:text-3xl font-extrabold text-emerald-700">${maxScore}</span>
                     <span class="text-xs text-slate-400">/ 100</span>
                   </div>
-                  <span class="text-[10px] text-emerald-700 font-medium">ຈຸດທີ່ນ້ຳສະອາດທີ່ສຸດໃນຊຸດທີ່ເລືອກ</span>
+                  <div class="flex items-center justify-between gap-1 pt-1 border-t border-emerald-100/80">
+                    <span class="text-[10px] text-emerald-700 font-medium truncate">ຈຸດທີ່ນ້ຳສະອາດທີ່ສຸດໃນຊຸດທີ່ເລືອກ</span>
+                    <span class="text-[10px] font-bold text-emerald-700 shrink-0 group-hover:translate-x-0.5 transition-transform">🔍 ລາຍລະອຽດ →</span>
+                  </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-rose-50/60 to-white p-3.5 rounded-xl border border-rose-200 flex flex-col justify-between shadow-2xs">
+                <div onclick="openWqiKpiDetailModal('MIN')" role="button" tabindex="0" title="ກົດເພື່ອເປີດໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດ ຄະແນນຕ່ຳສຸດ (Min)" class="group bg-gradient-to-br from-rose-50/60 to-white p-3.5 rounded-xl border border-rose-200 hover:border-rose-400 flex flex-col justify-between shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold text-[11px]">ຄະແນນຕ່ຳສຸດ (Min)</span>
+                    <span class="text-slate-600 group-hover:text-rose-800 font-bold text-[11px] transition-colors">ຄະແນນຕ່ຳສຸດ (Min)</span>
                     <span class="text-xs">🔴</span>
                   </div>
                   <div class="my-1.5 flex items-baseline gap-1.5">
                     <span class="text-2xl md:text-3xl font-extrabold text-rose-700">${minScore}</span>
                     <span class="text-xs text-slate-400">/ 100</span>
                   </div>
-                  <span class="text-[10px] text-rose-700 font-medium">ຈຸດທີ່ຄວນເຝົ້າລະວັງໃນຊຸດທີ່ເລືອກ</span>
+                  <div class="flex items-center justify-between gap-1 pt-1 border-t border-rose-100/80">
+                    <span class="text-[10px] text-rose-700 font-medium truncate">ຈຸດທີ່ຄວນເຝົ້າລະວັງໃນຊຸດທີ່ເລືອກ</span>
+                    <span class="text-[10px] font-bold text-rose-700 shrink-0 group-hover:translate-x-0.5 transition-transform">🔍 ລາຍລະອຽດ →</span>
+                  </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-slate-50 to-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-2xs">
+                <div onclick="openWqiKpiDetailModal('SELECTED')" role="button" tabindex="0" title="ກົດເພື່ອເປີດໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດ ຈຳນວນສະຖານີທີ່ເລືອກແປຜົນ" class="group bg-gradient-to-br from-slate-50 to-white p-3.5 rounded-xl border border-slate-200 hover:border-indigo-400 flex flex-col justify-between shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold text-[11px]">ຈຳນວນສະຖານີທີ່ເລືອກແປຜົນ</span>
+                    <span class="text-slate-600 group-hover:text-slate-900 font-bold text-[11px] transition-colors">ຈຳນວນສະຖານີທີ່ເລືອກແປຜົນ</span>
                     <span class="text-xs">📍</span>
                   </div>
                   <div class="my-1.5 flex items-baseline gap-1.5">
                     <span class="text-2xl md:text-3xl font-extrabold text-slate-800">${totalSelected}</span>
                     <span class="text-xs text-slate-400">/ ${allStations.length} ຈຸດ</span>
                   </div>
-                  <span class="text-[10px] text-slate-500 font-medium">ຄອບຄຸມ ${allStations.length ? ((totalSelected / allStations.length) * 100).toFixed(0) : 0}% ຂອງທຸກສະຖານີ</span>
+                  <div class="flex items-center justify-between gap-1 pt-1 border-t border-slate-200/80">
+                    <span class="text-[10px] text-slate-500 font-medium truncate">ຄອບຄຸມ ${allStations.length ? ((totalSelected / allStations.length) * 100).toFixed(0) : 0}% ຂອງທຸກສະຖານີ</span>
+                    <span class="text-[10px] font-bold text-indigo-600 shrink-0 group-hover:translate-x-0.5 transition-transform">🔍 ລາຍລະອຽດ →</span>
+                  </div>
                 </div>
               </div>
 
@@ -9663,6 +9673,871 @@
       const modal = document.getElementById('qwiDetailModal');
       if (modal) modal.remove();
       document.body.style.overflow = '';
+    }
+
+    /* ==========================================================================
+       🪟 ໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດ 4 ຊ່ອງ KPI ຂອງ ດັດຊະນີ WQI ສະເລ່ຍ
+          (AVG / MAX / MIN / SELECTED Dedicated Detail Modal)
+       ========================================================================== */
+    let wqiKpiModalState = {
+      type: 'AVG', // 'AVG' | 'MAX' | 'MIN' | 'SELECTED'
+      search: '',
+      selectionFilter: 'ALL' // 'ALL' | 'SELECTED' | 'UNSELECTED'
+    };
+
+    function openWqiKpiDetailModal(type = 'AVG') {
+      wqiKpiModalState.type = type || 'AVG';
+      wqiKpiModalState.search = '';
+      wqiKpiModalState.selectionFilter = 'ALL';
+
+      const allStations = getAllQwiStationsData();
+      if (!qwiModalState.selectedIds || qwiModalState.selectedIds.size === 0) {
+        if (!qwiModalState._initializedSelection && allStations.length > 0) {
+          qwiModalState.selectedIds = new Set(allStations.map(s => s.uid));
+          qwiModalState._initializedSelection = true;
+        } else if (!qwiModalState.selectedIds) {
+          qwiModalState.selectedIds = new Set();
+        }
+      }
+
+      let modal = document.getElementById('wqiKpiDetailModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'wqiKpiDetailModal';
+        modal.className = 'fixed inset-0 z-[9999] bg-slate-900/65 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto';
+        modal.onclick = (e) => {
+          if (e.target === modal) closeWqiKpiDetailModal();
+        };
+        document.body.appendChild(modal);
+      }
+      document.body.style.overflow = 'hidden';
+      renderWqiKpiDetailModalContent();
+    }
+
+    function closeWqiKpiDetailModal() {
+      const modal = document.getElementById('wqiKpiDetailModal');
+      if (modal) modal.remove();
+      document.body.style.overflow = '';
+    }
+
+    function setWqiKpiModalType(type) {
+      wqiKpiModalState.type = type;
+      renderWqiKpiDetailModalContent();
+    }
+
+    function searchWqiKpiModal(val) {
+      wqiKpiModalState.search = val || '';
+      renderWqiKpiDetailModalContent();
+    }
+
+    function changeWqiKpiSelectionFilter(val) {
+      wqiKpiModalState.selectionFilter = val || 'ALL';
+      renderWqiKpiDetailModalContent();
+    }
+
+    function toggleWqiKpiStationSelect(uid, checked) {
+      if (!qwiModalState.selectedIds) qwiModalState.selectedIds = new Set();
+      if (checked) {
+        qwiModalState.selectedIds.add(uid);
+      } else {
+        qwiModalState.selectedIds.delete(uid);
+      }
+      renderQwiModalContent();
+      renderWqiKpiDetailModalContent();
+    }
+
+    function toggleWqiKpiCompanySelect(compName, checked) {
+      const allStations = getAllQwiStationsData();
+      if (!qwiModalState.selectedIds) qwiModalState.selectedIds = new Set();
+      allStations.forEach(item => {
+        if (item.comp === compName) {
+          if (checked) qwiModalState.selectedIds.add(item.uid);
+          else qwiModalState.selectedIds.delete(item.uid);
+        }
+      });
+      renderQwiModalContent();
+      renderWqiKpiDetailModalContent();
+    }
+
+    function toggleAllWqiKpiModalStations(checked) {
+      const allStations = getAllQwiStationsData();
+      if (!qwiModalState.selectedIds) qwiModalState.selectedIds = new Set();
+      allStations.forEach(item => {
+        if (checked) qwiModalState.selectedIds.add(item.uid);
+        else qwiModalState.selectedIds.delete(item.uid);
+      });
+      renderQwiModalContent();
+      renderWqiKpiDetailModalContent();
+    }
+
+    function loadStationFromKpiModalToSimulator(uid) {
+      closeWqiKpiDetailModal();
+      loadStationToQwiSimulator(uid);
+    }
+
+    function openStation81StandardFromKpiModal(fbKey, sIdx) {
+      if (!fbKey) return;
+      closeWqiKpiDetailModal();
+      if (typeof openStationNationalStandardComparison === 'function') {
+        openStationNationalStandardComparison(fbKey, sIdx);
+      }
+    }
+
+    function exportWqiKpiModalCsv() {
+      const allStations = getAllQwiStationsData();
+      const selectedStations = allStations.filter(s => qwiModalState.selectedIds && qwiModalState.selectedIds.has(s.uid));
+      const type = wqiKpiModalState.type;
+      let targetList = selectedStations;
+      if (type === 'MAX') {
+        targetList = [...selectedStations].sort((a, b) => ((b.qi?.score ?? -1) - (a.qi?.score ?? -1)));
+      } else if (type === 'MIN') {
+        targetList = [...selectedStations].sort((a, b) => ((a.qi?.score ?? 999) - (b.qi?.score ?? 999)));
+      } else if (type === 'SELECTED') {
+        targetList = allStations;
+      }
+
+      if (targetList.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'ແຈ້ງເຕືອນ', text: 'ບໍ່ມີຂໍ້ມູນສະຖານີສຳລັບສົ່ງອອກ' });
+        return;
+      }
+
+      let csv = '\uFEFFລ/ດ,ສະຖານະເລືອກແປຜົນ,ລະຫັດສະຖານີ,ຊື່ສະຖານີ,ຊື່ຂໍ້ມູນ/ບໍລິສັດ,ແຂວງ,ວັນທີເກັບ,pH,DO (mg/L),BOD (mg/L),COD (mg/L),Turbidity (NTU),TSS (mg/L),EC (µS/cm),Coliform (MPN/100mL),ຄະແນນ WQI,ລະດັບຄຸນນະພາບ\n';
+      targetList.forEach((s, idx) => {
+        const isSel = qwiModalState.selectedIds && qwiModalState.selectedIds.has(s.uid) ? 'ເລືອກແລ້ວ' : 'ບໍ່ໄດ້ເລືອກ';
+        const c = s.st.customs || {};
+        const qwi = (s.qi && typeof s.qi.score === 'number') ? s.qi.score : '-';
+        const label = s.qi ? s.qi.text : 'ບໍ່ມີຂໍ້ມູນ';
+        csv += `${idx + 1},"${isSel}","${s.st.code || ''}","${s.st.name || ''}","${s.comp || ''}","${s.province || ''}","${s.st.sampleDate || ''}","${c.ph ?? ''}","${c.do ?? ''}","${c.bod ?? ''}","${c.cod ?? ''}","${c.turbidity ?? ''}","${c.tss ?? ''}","${c.ec ?? ''}","${c.coliform ?? ''}",${qwi},"${label}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `WQI_${type}_Details_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderWqiKpiDetailModalContent() {
+      const modal = document.getElementById('wqiKpiDetailModal');
+      if (!modal) return;
+
+      const allStations = getAllQwiStationsData();
+      const q = (qwiModalState.search || '').toLowerCase().trim();
+      const filteredMainStations = allStations.filter(item => {
+        if (qwiModalState.company !== 'ALL' && item.comp !== qwiModalState.company) return false;
+        if (qwiModalState.province !== 'ALL' && item.province !== qwiModalState.province) return false;
+        if (qwiModalState.level !== 'ALL' && (!item.qi || item.qi.level !== qwiModalState.level)) return false;
+        if (q) {
+          const text = `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase();
+          if (!text.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const selectedStations = filteredMainStations.filter(s => qwiModalState.selectedIds && qwiModalState.selectedIds.has(s.uid));
+      const validSelected = selectedStations.filter(s => s.qi && typeof s.qi.score === 'number' && !isNaN(s.qi.score));
+      const scores = validSelected.map(s => s.qi.score);
+
+      const totalSelected = selectedStations.length;
+      const totalAll = allStations.length;
+      let avgScore = '-';
+      let maxScore = '-';
+      let minScore = '-';
+      let avgInterp = null;
+      let maxInterp = null;
+      let minInterp = null;
+
+      if (scores.length > 0) {
+        const sum = scores.reduce((a, b) => a + b, 0);
+        avgScore = +((sum / scores.length).toFixed(1));
+        maxScore = Math.max(...scores);
+        minScore = Math.min(...scores);
+        avgInterp = interpretQWI(avgScore);
+        maxInterp = interpretQWI(maxScore);
+        minInterp = interpretQWI(minScore);
+      }
+
+      const type = wqiKpiModalState.type || 'AVG';
+      const modalSearch = (wqiKpiModalState.search || '').toLowerCase().trim();
+
+      const headerThemes = {
+        AVG: {
+          gradient: 'from-indigo-900 via-indigo-700 to-sky-700',
+          icon: '🌊',
+          badge: 'ລາຍລະອຽດດັດຊະນີ WQI ສະເລ່ຍ',
+          title: 'ດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ (Average WQI Breakdown)',
+          subtitle: 'ສະແດງວິທີຄິດໄລ່ຄ່າສະເລ່ຍ, ຄ່າສະເລ່ຍແຍກຕາມຊຸດຂໍ້ມູນ/ແຂວງ ແລະ ຕາຕະລາງຄະແນນ WQI ຂອງທຸກສະຖານີທີ່ເລືອກ'
+        },
+        MAX: {
+          gradient: 'from-emerald-900 via-emerald-700 to-teal-700',
+          icon: '🟢',
+          badge: 'ລາຍລະອຽດຄະແນນສູງສຸດ (Max WQI)',
+          title: 'ຄະແນນສູງສຸດ (Max) — ຈຸດທີ່ນ້ຳສະອາດທີ່ສຸດໃນຊຸດທີ່ເລືອກ',
+          subtitle: 'ສະແດງຂໍ້ມູນລະອຽດຂອງສະຖານີທີ່ໄດ້ຄະແນນ WQI ສູງສຸດ ພ້ອມຄ່າພາຣາມິເຕີທັງໝົດ ແລະ ການຈັດອັນດັບຈາກສູງຫາຕ່ຳ'
+        },
+        MIN: {
+          gradient: 'from-rose-900 via-rose-700 to-orange-700',
+          icon: '🔴',
+          badge: 'ລາຍລະອຽດຄະແນນຕ່ຳສຸດ (Min WQI)',
+          title: 'ຄະແນນຕ່ຳສຸດ (Min) — ຈຸດທີ່ຄວນເຝົ້າລະວັງໃນຊຸດທີ່ເລືອກ',
+          subtitle: 'ສະແດງຂໍ້ມູນລະອຽດຂອງສະຖານີທີ່ມີຄ່າ WQI ຕ່ຳສຸດ, ພາຣາມິເຕີທີ່ເກີນມາດຕະຖານ ແລະ ລຳດັບຈຸດເຝົ້າລະວັງ'
+        },
+        SELECTED: {
+          gradient: 'from-slate-900 via-slate-800 to-indigo-900',
+          icon: '📍',
+          badge: 'ລາຍລະອຽດສະຖານີທີ່ເລືອກແປຜົນ',
+          title: 'ຈຳນວນສະຖານີທີ່ເລືອກແປຜົນ (Selected Stations Management)',
+          subtitle: 'ກວດສອບ ແລະ ຈັດການລາຍຊື່ສະຖານີທີ່ນຳມາຄິດໄລ່ແປຜົນ WQI ແຍກຕາມຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ ແລະ ແຂວງ'
+        }
+      };
+      const theme = headerThemes[type] || headerThemes.AVG;
+
+      // Helper for rendering 8 core parameters of a station
+      const renderParamGrid = (st) => {
+        const c = st.customs || {};
+        const params = [
+          { key: 'ph', label: 'pH', val: c.ph, unit: '', good: '6.5 - 8.5' },
+          { key: 'do', label: 'DO (ອົກຊີເຈນ)', val: c.do, unit: 'mg/L', good: '≥ 6.0' },
+          { key: 'bod', label: 'BOD', val: c.bod, unit: 'mg/L', good: '≤ 1.5 - 2.0' },
+          { key: 'cod', label: 'COD', val: c.cod, unit: 'mg/L', good: '≤ 5.0 - 10' },
+          { key: 'turbidity', label: 'ຄວາມขุ่น (Turbidity)', val: c.turbidity, unit: 'NTU', good: '≤ 5 - 25' },
+          { key: 'tss', label: 'TSS (ທາດแขวนลอย)', val: c.tss, unit: 'mg/L', good: '≤ 25 - 40' },
+          { key: 'ec', label: 'EC (ໄຟຟ້າຊັກນຳ)', val: c.ec, unit: 'µS/cm', good: '≤ 500' },
+          { key: 'coliform', label: 'Coliform', val: c.coliform, unit: 'MPN/100mL', good: '≤ 5000' }
+        ];
+        return `
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+            ${params.map(p => {
+              const hasVal = p.val !== undefined && p.val !== null && p.val !== '' && p.val !== '-';
+              return `
+                <div class="bg-white/90 rounded-lg p-2 border border-slate-200/80 shadow-2xs">
+                  <div class="flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+                    <span>${p.label}</span>
+                    <span class="text-[9px] text-slate-400">ເກນປົກກະຕິ: ${p.good}</span>
+                  </div>
+                  <div class="mt-0.5 font-mono font-extrabold text-sm ${hasVal ? 'text-slate-800' : 'text-slate-400'}">
+                    ${hasVal ? escAttr(p.val) : '-'} <span class="text-[10px] font-normal text-slate-500">${hasVal ? p.unit : ''}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      };
+
+      let bodyHtml = '';
+
+      if (type === 'AVG') {
+        // Group by company & province for average breakdown
+        const compMap = {};
+        const provMap = {};
+        validSelected.forEach(item => {
+          if (!compMap[item.comp]) compMap[item.comp] = { count: 0, sum: 0, min: 999, max: -1 };
+          compMap[item.comp].count++;
+          compMap[item.comp].sum += item.qi.score;
+          if (item.qi.score < compMap[item.comp].min) compMap[item.comp].min = item.qi.score;
+          if (item.qi.score > compMap[item.comp].max) compMap[item.comp].max = item.qi.score;
+
+          const pName = item.province || 'ບໍ່ລະບຸ';
+          if (!provMap[pName]) provMap[pName] = { count: 0, sum: 0 };
+          provMap[pName].count++;
+          provMap[pName].sum += item.qi.score;
+        });
+
+        const compRows = Object.entries(compMap).map(([name, d]) => {
+          const avg = +((d.sum / d.count).toFixed(1));
+          return { name, count: d.count, avg, min: d.min, max: d.max, qi: interpretQWI(avg) };
+        }).sort((a, b) => b.avg - a.avg);
+
+        const provRows = Object.entries(provMap).map(([name, d]) => {
+          const avg = +((d.sum / d.count).toFixed(1));
+          return { name, count: d.count, avg, qi: interpretQWI(avg) };
+        }).sort((a, b) => b.avg - a.avg);
+
+        const listForTable = [...selectedStations]
+          .filter(item => {
+            if (!modalSearch) return true;
+            return `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase().includes(modalSearch);
+          })
+          .sort((a, b) => ((b.qi?.score ?? -1) - (a.qi?.score ?? -1)));
+
+        const sumScores = scores.length > 0 ? scores.reduce((a, b) => a + b, 0).toFixed(1) : '0';
+
+        bodyHtml = `
+          <!-- Top Summary Banner -->
+          <div class="bg-gradient-to-r from-indigo-50 via-white to-sky-50 p-4 rounded-2xl border border-indigo-200 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-start sm:items-center gap-4">
+              <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white font-mono font-black text-2xl flex flex-col items-center justify-center shadow-md shrink-0">
+                <span>${avgScore}</span>
+                <span class="text-[9px] font-sans font-semibold text-indigo-200">/ 100</span>
+              </div>
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-sm font-extrabold text-slate-800">ຄ່າດັດຊະນີ WQI ສະເລ່ຍຂອງຂໍ້ມູນທີ່ເລືອກ:</span>
+                  ${avgInterp
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${avgInterp.badgeClass}">${avgInterp.dot} ${avgInterp.text}</span>`
+                    : `<span class="text-slate-400 text-xs">ຍັງບໍ່ມີຂໍ້ມູນ</span>`
+                  }
+                </div>
+                <p class="text-xs text-slate-600">${avgInterp ? avgInterp.desc : 'ກະລຸນາໝາຍເລືອກສະຖານີເພື່ອຄິດໄລ່ຄ່າສະເລ່ຍ'}</p>
+                <div class="flex flex-wrap items-center gap-3 text-[11px] text-indigo-900 bg-indigo-100/60 px-3 py-1 rounded-lg border border-indigo-200/70 w-fit">
+                  <span>🧮 <b>ສູດຄິດໄລ່:</b> ຜົນບວກຄະແນນ WQI (${sumScores}) ÷ ຈຳນວນສະຖານີທີ່ມີຄ່າ WQI (${scores.length} ຈຸດ) = <b>${avgScore}</b></span>
+                  <span>•</span>
+                  <span>ຊ່ວງຄະແນນ: <b>${minScore} — ${maxScore}</b></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Breakdown by Company & Province -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs">
+              <h4 class="font-bold text-slate-800 text-xs mb-2.5 flex items-center justify-between">
+                <span>🏢 ຄ່າສະເລ່ຍ WQI ແຍກຕາມຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${compRows.length} ຊຸດ)</span>
+                <span class="text-[10px] text-slate-400">ຈັດລຽງຈາກສູງຫາຕ່ຳ</span>
+              </h4>
+              <div class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                ${compRows.length === 0 ? `<div class="text-center py-6 text-slate-400">ບໍ່ມີຂໍ້ມູນ</div>` : compRows.map(c => `
+                  <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                      <div class="font-bold text-slate-800 truncate">${escAttr(c.name)}</div>
+                      <div class="text-[10px] text-slate-500 mt-0.5">ຈຳນວນ: <b>${c.count} ສະຖານີ</b> | ຕ່ຳສຸດ-ສູງສຸດ: <b>${c.min} — ${c.max}</b></div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="font-mono font-extrabold text-sm text-indigo-700">${c.avg}</span>
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${c.qi.badgeClass}">${c.qi.dot} ${c.qi.label}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs">
+              <h4 class="font-bold text-slate-800 text-xs mb-2.5 flex items-center justify-between">
+                <span>🗺️ ຄ່າສະເລ່ຍ WQI ແຍກຕາມແຂວງ (${provRows.length} ແຂວງ)</span>
+                <span class="text-[10px] text-slate-400">ຈັດລຽງຈາກສູງຫາຕ່ຳ</span>
+              </h4>
+              <div class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                ${provRows.length === 0 ? `<div class="text-center py-6 text-slate-400">ບໍ່ມີຂໍ້ມູນ</div>` : provRows.map(p => `
+                  <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                      <div class="font-bold text-slate-800 truncate">📍 ${escAttr(p.name)}</div>
+                      <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="bg-indigo-600 h-full rounded-full" style="width: ${Math.min(100, Math.max(5, p.avg))}%"></div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-500">${p.count} ຈຸດ</span>
+                      <span class="font-mono font-extrabold text-sm text-indigo-700">${p.avg}</span>
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${p.qi.badgeClass}">${p.qi.dot} ${p.qi.label}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Table of Selected Stations & Deviation from Average -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="font-bold text-slate-800 text-xs flex items-center gap-2">
+                <span>📋 ຕາຕະລາງລາຍລະອຽດຄະແນນ WQI ຂອງທຸກສະຖານີທີ່ເລືອກ (${listForTable.length} ສະຖານີ)</span>
+              </div>
+              <input type="text" value="${escAttr(wqiKpiModalState.search)}" oninput="searchWqiKpiModal(this.value)" placeholder="🔍 ຄົ້ນຫາສະຖານີໃນໜ້າຕ່າງນີ້..." class="border border-slate-300 rounded-lg px-2.5 py-1 bg-white text-xs w-56 outline-none focus:ring-2 focus:ring-indigo-400">
+            </div>
+            <div class="overflow-x-auto max-h-80">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead class="bg-slate-100 text-slate-600 uppercase sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-3 text-center w-12">ອັນດັບ</th>
+                    <th class="py-2.5 px-3">ລະຫັດ / ຊື່ສະຖານີ</th>
+                    <th class="py-2.5 px-3">ຊື່ຂໍ້ມູນ / ແຂວງ</th>
+                    <th class="py-2.5 px-2 text-center">pH</th>
+                    <th class="py-2.5 px-2 text-center">DO</th>
+                    <th class="py-2.5 px-2 text-center">BOD</th>
+                    <th class="py-2.5 px-2 text-center">COD</th>
+                    <th class="py-2.5 px-3 text-center">ຄະແນນ WQI</th>
+                    <th class="py-2.5 px-3 text-center">ທຽບຄ່າສະເລ່ຍ (${avgScore})</th>
+                    <th class="py-2.5 px-3">ລະດັບຄຸນນະພາບ</th>
+                    <th class="py-2.5 px-3 text-center">ຈັດການ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${listForTable.length === 0 ? `<tr><td colspan="11" class="py-8 text-center text-slate-400">ບໍ່ພົບສະຖານີທີ່ເລືອກ</td></tr>` : listForTable.map((item, idx) => {
+                    const c = item.st.customs || {};
+                    const score = (item.qi && typeof item.qi.score === 'number') ? item.qi.score : null;
+                    const diff = (score !== null && typeof avgScore === 'number') ? +((score - avgScore).toFixed(1)) : null;
+                    const diffHtml = diff === null ? '-' : diff > 0
+                      ? `<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">+${diff} (ສູງກວ່າສະເລ່ຍ)</span>`
+                      : diff < 0
+                        ? `<span class="text-rose-700 font-bold bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">${diff} (ຕ່ຳກວ່າສະເລ່ຍ)</span>`
+                        : `<span class="text-slate-600 font-bold">ເທົ່າຄ່າສະເລ່ຍ</span>`;
+                    return `
+                      <tr class="hover:bg-indigo-50/40">
+                        <td class="py-2 px-3 text-center font-mono font-bold text-slate-500">#${idx + 1}</td>
+                        <td class="py-2 px-3">
+                          <div class="font-bold text-slate-800">${escAttr(item.st.name || '-')}</div>
+                          <div class="text-[10px] font-mono text-indigo-600">${escAttr(item.st.code || '-')} ${item.st.sampleDate ? `• 📅 ${escAttr(item.st.sampleDate)}` : ''}</div>
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="font-medium text-slate-700 truncate max-w-[180px]">${escAttr(item.comp)}</div>
+                          <div class="text-[10px] text-slate-500">📍 ${escAttr(item.province)}</div>
+                        </td>
+                        <td class="py-2 px-2 text-center font-mono">${c.ph ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.do ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.bod ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.cod ?? '-'}</td>
+                        <td class="py-2 px-3 text-center font-mono font-extrabold text-sm text-indigo-700">${score ?? '-'}</td>
+                        <td class="py-2 px-3 text-center text-[10px]">${diffHtml}</td>
+                        <td class="py-2 px-3">
+                          ${item.qi ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.qi.badgeClass}">${item.qi.dot} ${item.qi.text}</span>` : '-'}
+                        </td>
+                        <td class="py-2 px-3 text-center">
+                          <button type="button" onclick="loadStationFromKpiModalToSimulator('${escAttr(item.uid)}')" class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[10px] border border-indigo-200 cursor-pointer">
+                            🧪 ທົດລອງ WQI
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else if (type === 'MAX') {
+        const maxStations = validSelected.filter(s => s.qi.score === maxScore);
+        const sortedDesc = [...validSelected]
+          .filter(item => {
+            if (!modalSearch) return true;
+            return `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase().includes(modalSearch);
+          })
+          .sort((a, b) => b.qi.score - a.qi.score);
+
+        bodyHtml = `
+          <!-- Spotlight Section for Highest WQI Station(s) -->
+          <div class="bg-gradient-to-br from-emerald-50 via-white to-teal-50/60 p-4 rounded-2xl border-2 border-emerald-300 shadow-xs space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">🏆</span>
+                <div>
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">ສະຖານີທີ່ມີຄະແນນສູງສຸດ (Max WQI = ${maxScore} / 100)</span>
+                  <h4 class="font-extrabold text-slate-800 text-sm mt-0.5">ພົບ ${maxStations.length} ສະຖານີ ທີ່ມີຄຸນນະພາບນ້ຳສູງສຸດໃນຊຸດຂໍ້ມູນທີ່ເລືອກ</h4>
+                </div>
+              </div>
+              ${maxInterp ? `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold border ${maxInterp.badgeClass}">${maxInterp.dot} ${maxInterp.text}</span>` : ''}
+            </div>
+
+            ${maxStations.length === 0 ? `<div class="text-center py-6 text-slate-400">ຍັງບໍ່ມີຂໍ້ມູນສະຖານີທີ່ເລືອກ</div>` : maxStations.map(item => `
+              <div class="bg-white/90 rounded-xl p-3.5 border border-emerald-200 shadow-2xs">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-emerald-100">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-mono font-bold text-xs">${escAttr(item.st.code || 'ST')}</span>
+                      <span class="font-extrabold text-slate-800 text-sm">${escAttr(item.st.name || 'ບໍ່ລະບຸຊື່ສະຖານີ')}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 mt-1 flex flex-wrap items-center gap-3">
+                      <span>🏢 <b>ຊື່ຂໍ້ມູນ:</b> ${escAttr(item.comp)}</span>
+                      <span>📍 <b>ແຂວງ:</b> ${escAttr(item.province)}</span>
+                      ${item.st.sampleDate ? `<span>📅 <b>ວັນທີເກັບຕົວຢ່າງ:</b> ${escAttr(item.st.sampleDate)}</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="text-right mr-2">
+                      <div class="text-[10px] text-emerald-700 font-bold">ຄະແນນ WQI ສູງສຸດ</div>
+                      <div class="text-2xl font-black font-mono text-emerald-700">${item.qi.score} <span class="text-xs font-normal text-slate-400">/ 100</span></div>
+                    </div>
+                    <button type="button" onclick="loadStationFromKpiModalToSimulator('${escAttr(item.uid)}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer shadow-2xs">
+                      🧪 ທົດລອງໃນ Simulator
+                    </button>
+                    ${item.fbKey ? `<button type="button" onclick="openStation81StandardFromKpiModal('${escAttr(item.fbKey)}', ${item.sIdx})" class="px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-bold text-xs cursor-pointer">⚖️ ທຽບໃສ່ມາດຕະຖານຄຸນນະພາບນໍ້າ ຕາມມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ</button>` : ''}
+                  </div>
+                </div>
+                ${renderParamGrid(item.st)}
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Ranked Table from Highest WQI -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="font-bold text-slate-800 text-xs">
+                🟢 ຕາຕະລາງຈັດອັນດັບສະຖານີຈາກຄະແນນສູງສຸດ ຫາ ຕ່ຳສຸດ (${sortedDesc.length} ສະຖານີ)
+              </div>
+              <input type="text" value="${escAttr(wqiKpiModalState.search)}" oninput="searchWqiKpiModal(this.value)" placeholder="🔍 ຄົ້ນຫາສະຖານີ..." class="border border-slate-300 rounded-lg px-2.5 py-1 bg-white text-xs w-56 outline-none focus:ring-2 focus:ring-emerald-400">
+            </div>
+            <div class="overflow-x-auto max-h-80">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead class="bg-slate-100 text-slate-600 uppercase sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-3 text-center w-14">ອັນດັບ</th>
+                    <th class="py-2.5 px-3">ລະຫັດ / ຊື່ສະຖານີ</th>
+                    <th class="py-2.5 px-3">ຊື່ຂໍ້ມູນ / ແຂວງ</th>
+                    <th class="py-2.5 px-2 text-center">pH</th>
+                    <th class="py-2.5 px-2 text-center">DO</th>
+                    <th class="py-2.5 px-2 text-center">BOD</th>
+                    <th class="py-2.5 px-2 text-center">COD</th>
+                    <th class="py-2.5 px-3 text-center">ຄະແນນ WQI</th>
+                    <th class="py-2.5 px-3 text-center">ຫ່າງຈາກຄ່າສູງສຸດ</th>
+                    <th class="py-2.5 px-3">ການແປຜົນ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${sortedDesc.map((item, idx) => {
+                    const c = item.st.customs || {};
+                    const isTop = item.qi.score === maxScore;
+                    const gap = typeof maxScore === 'number' ? +((item.qi.score - maxScore).toFixed(1)) : 0;
+                    return `
+                      <tr class="${isTop ? 'bg-emerald-50/70 font-semibold' : 'hover:bg-slate-50'}">
+                        <td class="py-2 px-3 text-center font-mono font-bold ${isTop ? 'text-emerald-700' : 'text-slate-500'}">
+                          ${isTop ? '🏆 #1' : `#${idx + 1}`}
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="font-bold text-slate-800">${escAttr(item.st.name || '-')}</div>
+                          <div class="text-[10px] font-mono text-emerald-700">${escAttr(item.st.code || '-')}</div>
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="text-slate-700 truncate max-w-[180px]">${escAttr(item.comp)}</div>
+                          <div class="text-[10px] text-slate-500">📍 ${escAttr(item.province)}</div>
+                        </td>
+                        <td class="py-2 px-2 text-center font-mono">${c.ph ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.do ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.bod ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.cod ?? '-'}</td>
+                        <td class="py-2 px-3 text-center font-mono font-extrabold text-sm text-emerald-700">${item.qi.score}</td>
+                        <td class="py-2 px-3 text-center font-mono text-[10px]">
+                          ${gap === 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">ສູງສຸດ (Max)</span>` : `<span class="text-slate-500">${gap} ຄະແນນ</span>`}
+                        </td>
+                        <td class="py-2 px-3">
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.qi.badgeClass}">${item.qi.dot} ${item.qi.text}</span>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else if (type === 'MIN') {
+        const minStations = validSelected.filter(s => s.qi.score === minScore);
+        const sortedAsc = [...validSelected]
+          .filter(item => {
+            if (!modalSearch) return true;
+            return `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase().includes(modalSearch);
+          })
+          .sort((a, b) => a.qi.score - b.qi.score);
+
+        bodyHtml = `
+          <!-- Spotlight Section for Lowest WQI Station(s) -->
+          <div class="bg-gradient-to-br from-rose-50 via-white to-orange-50/60 p-4 rounded-2xl border-2 border-rose-300 shadow-xs space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-xl shadow-xs">⚠️</span>
+                <div>
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">ສະຖານີທີ່ມີຄະແນນຕ່ຳສຸດ (Min WQI = ${minScore} / 100)</span>
+                  <h4 class="font-extrabold text-slate-800 text-sm mt-0.5">ພົບ ${minStations.length} ສະຖານີ ທີ່ມີຄະແນນ WQI ຕ່ຳສຸດ ແລະ ຄວນເຝົ້າລະວັງເປັນພິເສດ</h4>
+                </div>
+              </div>
+              ${minInterp ? `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold border ${minInterp.badgeClass}">${minInterp.dot} ${minInterp.text}</span>` : ''}
+            </div>
+
+            ${minStations.length === 0 ? `<div class="text-center py-6 text-slate-400">ຍັງບໍ່ມີຂໍ້ມູນສະຖານີທີ່ເລືອກ</div>` : minStations.map(item => {
+              const violations = typeof getStationAlertViolations === 'function' ? getStationAlertViolations(item.st) : [];
+              return `
+                <div class="bg-white/90 rounded-xl p-3.5 border border-rose-200 shadow-2xs">
+                  <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-rose-100">
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-rose-600 text-white font-mono font-bold text-xs">${escAttr(item.st.code || 'ST')}</span>
+                        <span class="font-extrabold text-slate-800 text-sm">${escAttr(item.st.name || 'ບໍ່ລະບຸຊື່ສະຖານີ')}</span>
+                      </div>
+                      <div class="text-[11px] text-slate-600 mt-1 flex flex-wrap items-center gap-3">
+                        <span>🏢 <b>ຊື່ຂໍ້ມູນ:</b> ${escAttr(item.comp)}</span>
+                        <span>📍 <b>ແຂວງ:</b> ${escAttr(item.province)}</span>
+                        ${item.st.sampleDate ? `<span>📅 <b>ວັນທີເກັບຕົວຢ່າງ:</b> ${escAttr(item.st.sampleDate)}</span>` : ''}
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="text-right mr-2">
+                        <div class="text-[10px] text-rose-700 font-bold">ຄະແນນ WQI ຕ່ຳສຸດ</div>
+                        <div class="text-2xl font-black font-mono text-rose-700">${item.qi.score} <span class="text-xs font-normal text-slate-400">/ 100</span></div>
+                      </div>
+                      <button type="button" onclick="loadStationFromKpiModalToSimulator('${escAttr(item.uid)}')" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer shadow-2xs">
+                        🧪 ທົດລອງປັບປຸງຄ່າໃນ Simulator
+                      </button>
+                      ${item.fbKey ? `<button type="button" onclick="openStation81StandardFromKpiModal('${escAttr(item.fbKey)}', ${item.sIdx})" class="px-3 py-1.5 rounded-lg bg-white border border-rose-300 text-rose-800 hover:bg-rose-50 font-bold text-xs cursor-pointer">⚖️ ທຽບໃສ່ມາດຕະຖານຄຸນນະພາບນໍ້າ ຕາມມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ</button>` : ''}
+                    </div>
+                  </div>
+                  ${violations.length > 0 ? `
+                    <div class="mt-2.5 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-[11px] text-rose-900 flex flex-wrap items-center gap-1.5">
+                      <span class="font-bold">🚨 ພາຣາມິເຕີທີ່ເກີນເກນເຝົ້າລະວັງ:</span>
+                      ${violations.map(v => `<span class="px-2 py-0.5 rounded-full bg-white border border-rose-300 text-rose-700 font-bold text-[10px]">${escAttr(v.label)}: ${escAttr(v.value)} (${escAttr(v.rule)})</span>`).join('')}
+                    </div>
+                  ` : ''}
+                  ${renderParamGrid(item.st)}
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Ranked Table from Lowest WQI (Priority Watchlist) -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="font-bold text-slate-800 text-xs">
+                🔴 ຕາຕະລາງຈັດລຳດັບສະຖານີຈາກຄະແນນຕ່ຳສຸດ ຫາ ສູງສຸດ (Priority Watchlist — ${sortedAsc.length} ສະຖານີ)
+              </div>
+              <input type="text" value="${escAttr(wqiKpiModalState.search)}" oninput="searchWqiKpiModal(this.value)" placeholder="🔍 ຄົ້ນຫາສະຖານີ..." class="border border-slate-300 rounded-lg px-2.5 py-1 bg-white text-xs w-56 outline-none focus:ring-2 focus:ring-rose-400">
+            </div>
+            <div class="overflow-x-auto max-h-80">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead class="bg-slate-100 text-slate-600 uppercase sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-3 text-center w-14">ລຳດັບເຝົ້າລະວັງ</th>
+                    <th class="py-2.5 px-3">ລະຫັດ / ຊື່ສະຖານີ</th>
+                    <th class="py-2.5 px-3">ຊື່ຂໍ້ມູນ / ແຂວງ</th>
+                    <th class="py-2.5 px-2 text-center">pH</th>
+                    <th class="py-2.5 px-2 text-center">DO</th>
+                    <th class="py-2.5 px-2 text-center">BOD</th>
+                    <th class="py-2.5 px-2 text-center">COD</th>
+                    <th class="py-2.5 px-3 text-center">ຄະແນນ WQI</th>
+                    <th class="py-2.5 px-3">ພາຣາມິເຕີເຝົ້າລະວັງ</th>
+                    <th class="py-2.5 px-3">ການແປຜົນ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${sortedAsc.map((item, idx) => {
+                    const c = item.st.customs || {};
+                    const isBottom = item.qi.score === minScore;
+                    const violations = typeof getStationAlertViolations === 'function' ? getStationAlertViolations(item.st) : [];
+                    return `
+                      <tr class="${isBottom ? 'bg-rose-50/70 font-semibold' : 'hover:bg-slate-50'}">
+                        <td class="py-2 px-3 text-center font-mono font-bold ${isBottom ? 'text-rose-700' : 'text-slate-500'}">
+                          ${isBottom ? '⚠️ #1' : `#${idx + 1}`}
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="font-bold text-slate-800">${escAttr(item.st.name || '-')}</div>
+                          <div class="text-[10px] font-mono text-rose-700">${escAttr(item.st.code || '-')}</div>
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="text-slate-700 truncate max-w-[180px]">${escAttr(item.comp)}</div>
+                          <div class="text-[10px] text-slate-500">📍 ${escAttr(item.province)}</div>
+                        </td>
+                        <td class="py-2 px-2 text-center font-mono">${c.ph ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.do ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.bod ?? '-'}</td>
+                        <td class="py-2 px-2 text-center font-mono">${c.cod ?? '-'}</td>
+                        <td class="py-2 px-3 text-center font-mono font-extrabold text-sm text-rose-700">${item.qi.score}</td>
+                        <td class="py-2 px-3">
+                          ${violations.length > 0
+                            ? `<div class="flex flex-wrap gap-1">${violations.map(v => `<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 text-[9.5px] font-bold">${escAttr(v.label)}: ${escAttr(v.value)}</span>`).join('')}</div>`
+                            : `<span class="text-emerald-600 text-[10px] font-medium">✓ ປົກກະຕິ</span>`
+                          }
+                        </td>
+                        <td class="py-2 px-3">
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.qi.badgeClass}">${item.qi.dot} ${item.qi.text}</span>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else if (type === 'SELECTED') {
+        const unselectedCount = Math.max(0, totalAll - totalSelected);
+        const coveragePct = totalAll > 0 ? ((totalSelected / totalAll) * 100).toFixed(1) : '0.0';
+
+        // Group allStations by company to show selection progress per company
+        const compGroup = {};
+        allStations.forEach(item => {
+          if (!compGroup[item.comp]) compGroup[item.comp] = { total: 0, selected: 0 };
+          compGroup[item.comp].total++;
+          if (qwiModalState.selectedIds && qwiModalState.selectedIds.has(item.uid)) {
+            compGroup[item.comp].selected++;
+          }
+        });
+        const compSummaryList = Object.entries(compGroup).map(([name, d]) => ({
+          name,
+          total: d.total,
+          selected: d.selected,
+          allChecked: d.total > 0 && d.selected === d.total
+        })).sort((a, b) => b.total - a.total);
+
+        const stationListForManage = allStations.filter(item => {
+          const isSel = qwiModalState.selectedIds && qwiModalState.selectedIds.has(item.uid);
+          if (wqiKpiModalState.selectionFilter === 'SELECTED' && !isSel) return false;
+          if (wqiKpiModalState.selectionFilter === 'UNSELECTED' && isSel) return false;
+          if (modalSearch) {
+            const s = `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase();
+            if (!s.includes(modalSearch)) return false;
+          }
+          return true;
+        });
+
+        bodyHtml = `
+          <!-- Overview Banner of Selected Stations -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div class="bg-indigo-50/90 p-3.5 rounded-xl border border-indigo-200">
+              <div class="text-[11px] font-bold text-indigo-800">✓ ສະຖານີທີ່ເລືອກແປຜົນແລ້ວ</div>
+              <div class="text-2xl font-black font-mono text-indigo-700 mt-1">${totalSelected} <span class="text-xs font-normal text-slate-500">ຈຸດ</span></div>
+              <div class="text-[10px] text-indigo-600 mt-0.5">ນຳມາຄິດໄລ່ຄ່າ WQI ສະເລ່ຍ</div>
+            </div>
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="text-[11px] font-bold text-slate-600">⬜ ສະຖານີທີ່ບໍ່ໄດ້ເລືອກ</div>
+              <div class="text-2xl font-black font-mono text-slate-700 mt-1">${unselectedCount} <span class="text-xs font-normal text-slate-400">ຈຸດ</span></div>
+              <div class="text-[10px] text-slate-500 mt-0.5">ຍົກເວັ້ນຈາກການຄິດໄລ່ຊົ່ວຄາວ</div>
+            </div>
+            <div class="bg-emerald-50/80 p-3.5 rounded-xl border border-emerald-200">
+              <div class="text-[11px] font-bold text-emerald-800">📊 ອັດຕາຄອບຄຸມຂໍ້ມູນທັງໝົດ</div>
+              <div class="text-2xl font-black font-mono text-emerald-700 mt-1">${coveragePct}%</div>
+              <div class="text-[10px] text-emerald-700 mt-0.5">ຈາກທັງໝົດ ${totalAll} ສະຖານີໃນລະບົບ</div>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+              <div class="text-[11px] font-bold text-slate-700">⚡ ຈັດການດ່ວນທັງລະບົບ</div>
+              <div class="flex items-center gap-2 mt-2">
+                <button type="button" onclick="toggleAllWqiKpiModalStations(true)" class="flex-1 py-1.5 px-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] cursor-pointer">
+                  ☑️ ເລືອກທັງໝົດ
+                </button>
+                <button type="button" onclick="toggleAllWqiKpiModalStations(false)" class="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] cursor-pointer border border-slate-300">
+                  ⬜ ຍົກເລີກທັງໝົດ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selection by Company / Dataset -->
+          <div class="bg-white rounded-xl border border-slate-200 p-3.5 shadow-2xs">
+            <h4 class="font-bold text-slate-800 text-xs mb-2.5 flex items-center justify-between">
+              <span>🏢 ເລືອກ/ຍົກເລີກສະຖານີ ແຍກຕາມຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${compSummaryList.length} ຊຸດຂໍ້ມູນ)</span>
+              <span class="text-[10px] text-slate-500">ກົດໝາຍຖືກເພື່ອເລືອກ ຫຼື ຍົກເລີກທັງຊຸດຂໍ້ມູນ</span>
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+              ${compSummaryList.map(c => `
+                <label class="flex items-center justify-between gap-2 p-2.5 rounded-lg border ${c.selected > 0 ? 'bg-indigo-50/40 border-indigo-200' : 'bg-slate-50 border-slate-200'} cursor-pointer hover:bg-indigo-50/70 transition">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" ${c.allChecked ? 'checked' : ''} onchange="toggleWqiKpiCompanySelect('${escAttr(c.name)}', this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                    <span class="font-bold text-slate-800 truncate text-xs">${escAttr(c.name)}</span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${c.selected === c.total ? 'bg-indigo-600 text-white' : c.selected > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-600'}">
+                    ${c.selected} / ${c.total} ຈຸດ
+                  </span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Interactive Station Selection Table -->
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 text-xs">📍 ລາຍຊື່ສະຖານີທັງໝົດ (${stationListForManage.length} ຈຸດ)</span>
+                <select onchange="changeWqiKpiSelectionFilter(this.value)" class="border border-slate-300 rounded-lg px-2 py-1 bg-white text-xs font-semibold text-slate-700">
+                  <option value="ALL" ${wqiKpiModalState.selectionFilter === 'ALL' ? 'selected' : ''}>ສະແດງທຸກສະຖານີ (${totalAll})</option>
+                  <option value="SELECTED" ${wqiKpiModalState.selectionFilter === 'SELECTED' ? 'selected' : ''}>✓ ສະເພາະສະຖານີທີ່ເລືອກ (${totalSelected})</option>
+                  <option value="UNSELECTED" ${wqiKpiModalState.selectionFilter === 'UNSELECTED' ? 'selected' : ''}>⬜ ສະເພາະສະຖານີທີ່ບໍ່ໄດ້ເລືອກ (${unselectedCount})</option>
+                </select>
+              </div>
+              <input type="text" value="${escAttr(wqiKpiModalState.search)}" oninput="searchWqiKpiModal(this.value)" placeholder="🔍 ຄົ້ນຫາລະຫັດ, ຊື່ສະຖານີ, ບໍລິສັດ..." class="border border-slate-300 rounded-lg px-2.5 py-1 bg-white text-xs w-60 outline-none focus:ring-2 focus:ring-indigo-400">
+            </div>
+            <div class="overflow-x-auto max-h-80">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead class="bg-slate-100 text-slate-600 uppercase sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-3 text-center w-16">ເລືອກ</th>
+                    <th class="py-2.5 px-3">ລະຫັດ / ຊື່ສະຖານີ</th>
+                    <th class="py-2.5 px-3">ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</th>
+                    <th class="py-2.5 px-3">ແຂວງ</th>
+                    <th class="py-2.5 px-3 text-center">ວັນທີເກັບ</th>
+                    <th class="py-2.5 px-3 text-center">ຄະແນນ WQI</th>
+                    <th class="py-2.5 px-3">ການແປຜົນ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${stationListForManage.map(item => {
+                    const isChecked = qwiModalState.selectedIds && qwiModalState.selectedIds.has(item.uid);
+                    return `
+                      <tr class="${isChecked ? 'bg-indigo-50/30' : 'opacity-65 bg-slate-50/50'} hover:bg-indigo-50/60 transition">
+                        <td class="py-2 px-3 text-center">
+                          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleWqiKpiStationSelect('${escAttr(item.uid)}', this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                        </td>
+                        <td class="py-2 px-3">
+                          <div class="font-bold text-slate-800">${escAttr(item.st.name || '-')}</div>
+                          <div class="text-[10px] font-mono text-indigo-600">${escAttr(item.st.code || '-')}</div>
+                        </td>
+                        <td class="py-2 px-3 font-medium text-slate-700">${escAttr(item.comp)}</td>
+                        <td class="py-2 px-3 text-slate-600">📍 ${escAttr(item.province)}</td>
+                        <td class="py-2 px-3 text-center font-mono text-slate-500">${escAttr(item.st.sampleDate || '-')}</td>
+                        <td class="py-2 px-3 text-center font-mono font-extrabold text-sm text-indigo-700">${item.qi?.score ?? '-'}</td>
+                        <td class="py-2 px-3">
+                          ${item.qi ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.qi.badgeClass}">${item.qi.dot} ${item.qi.text}</span>` : '-'}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      modal.innerHTML = `
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden animate-fadeIn">
+          <!-- Modal Header -->
+          <div class="px-6 py-4 bg-gradient-to-r ${theme.gradient} text-white flex items-center justify-between gap-4 shrink-0">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner ring-1 ring-white/25 shrink-0">
+                ${theme.icon}
+              </div>
+              <div class="min-w-0">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/20 text-white border border-white/25">
+                  ${theme.badge}
+                </span>
+                <h3 class="font-extrabold text-base sm:text-lg mt-1 truncate">${theme.title}</h3>
+                <p class="text-[11px] text-white/85 truncate">${theme.subtitle}</p>
+              </div>
+            </div>
+            <button type="button" onclick="closeWqiKpiDetailModal()" class="w-9 h-9 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center text-lg font-bold transition cursor-pointer shrink-0" title="ປິດໜ້າຕ່າງ">
+              ✕
+            </button>
+          </div>
+
+          <!-- Switcher Bar for the 4 KPI Cards inside the Modal -->
+          <div class="px-5 py-2.5 bg-slate-100 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" onclick="setWqiKpiModalType('AVG')" class="px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1.5 ${type === 'AVG' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200'}">
+                <span>🌊</span> ດັດຊະນີ WQI ສະເລ່ຍ (${avgScore})
+              </button>
+              <button type="button" onclick="setWqiKpiModalType('MAX')" class="px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1.5 ${type === 'MAX' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-emerald-50 border border-slate-200'}">
+                <span>🟢</span> ຄະແນນສູງສຸດ Max (${maxScore})
+              </button>
+              <button type="button" onclick="setWqiKpiModalType('MIN')" class="px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1.5 ${type === 'MIN' ? 'bg-rose-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-rose-50 border border-slate-200'}">
+                <span>🔴</span> ຄະແນນຕ່ຳສຸດ Min (${minScore})
+              </button>
+              <button type="button" onclick="setWqiKpiModalType('SELECTED')" class="px-3 py-1.5 rounded-xl font-bold transition cursor-pointer flex items-center gap-1.5 ${type === 'SELECTED' ? 'bg-slate-800 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'}">
+                <span>📍</span> ຈຳນວນສະຖານີທີ່ເລືອກ (${totalSelected}/${totalAll})
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="exportWqiKpiModalCsv()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 border border-indigo-200 font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs">
+                📥 ສົ່ງອອກ CSV
+              </button>
+              <button type="button" onclick="closeWqiKpiDetailModal()" class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition cursor-pointer">
+                ປິດໜ້າຕ່າງ
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-4 sm:p-5 overflow-y-auto space-y-4 text-xs text-slate-700 grow bg-slate-50/50">
+            ${bodyHtml}
+          </div>
+        </div>
+      `;
     }
 
     /* ==========================================================================
