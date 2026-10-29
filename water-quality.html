@@ -370,11 +370,19 @@
 
         <!-- Group 2: ຖານຂໍ້ມູນ & ລາຍງານ -->
         <div>
-          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">📁 ຖານຂໍ້ມູນ & ບັນທຶກ</p>
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">📁 ຖານຂໍ້ມູນ & ບັນທຶກ (ແຍກ 2 ປະເພດ)</p>
           <nav class="space-y-1">
-            <button type="button" data-nav-view="records" onclick="setAppView('records')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer">
+            <button type="button" data-nav-view="records" onclick="selectDataCategoryAndOpenRecords('ALL')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer">
               <span class="text-base">📝</span>
-              <span class="flex-1 truncate">ຟອມບັນທຶກ & ຖານຂໍ້ມູນ</span>
+              <span class="flex-1 truncate">ຟອມບັນທຶກ & ຖານຂໍ້ມູນລວມ</span>
+            </button>
+            <button type="button" id="sbNavCatCompany" onclick="selectDataCategoryAndOpenRecords('COMPANY')" class="w-full text-left pl-5 pr-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-[11px] font-semibold text-indigo-200 hover:text-white hover:bg-indigo-900/50 border border-transparent hover:border-indigo-500/40 transition-all cursor-pointer" title="ເບິ່ງ ແລະ ຈັດການສະເພາະຂໍ້ມູນບໍລິສັດ ຫຼື ກິດຈະການ">
+              <span class="flex items-center gap-1.5 truncate"><span>🏢</span> <span class="truncate">1. ຂໍ້ມູນສະເພາະບໍລິສັດ/ກິດຈະການ</span></span>
+              <span id="sidebarCatCompanyCount" class="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/25 text-indigo-200 border border-indigo-400/30 shrink-0">0</span>
+            </button>
+            <button type="button" id="sbNavCatGov" onclick="selectDataCategoryAndOpenRecords('GOV')" class="w-full text-left pl-5 pr-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-[11px] font-semibold text-sky-200 hover:text-white hover:bg-sky-900/50 border border-transparent hover:border-sky-500/40 transition-all cursor-pointer" title="ເບິ່ງ ແລະ ຈັດການສະເພາະຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ">
+              <span class="flex items-center gap-1.5 truncate"><span>🏛️</span> <span class="truncate">2. ຂໍ້ມູນອົງການຈັດຕັ້ງລັດ</span></span>
+              <span id="sidebarCatGovCount" class="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-sky-500/25 text-sky-200 border border-sky-400/30 shrink-0">0</span>
             </button>
             <button type="button" onclick="openAnnualReport(); if(window.innerWidth<1024)closeSidebarMobile();" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer">
               <span class="text-base">📑</span>
@@ -441,6 +449,74 @@
 
       <!-- Main Body Content Workspace -->
       <main class="flex-1 p-4 sm:p-6 lg:p-7 space-y-6">
+
+        <!-- 🗂️ ແຖບແຍກ ແລະ ຈັດຂໍ້ມູນຄຸນນະພາບນໍ້າ ເປັນ 2 ປະເພດຫຼັກ (Global 2-Category Data Switcher) -->
+        <div id="globalDataCategoryBanner" class="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs space-y-3">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-sky-600 text-white text-sm font-bold shadow-xs shrink-0">🗂️</span>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-xs sm:text-sm font-black text-slate-800">ການແຍກ ແລະ ຈັດຂໍ້ມູນຄຸນນະພາບນໍ້າ ເປັນ 2 ປະເພດຫຼັກ</h3>
+                  <span id="globalActiveCatBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">ສະແດງທັງ 2 ປະເພດ (ແຍກໝວດໝູ່)</span>
+                </div>
+                <p class="text-[11px] text-slate-500">ເລືອກປະເພດຂໍ້ມູນເພື່ອກອງເບິ່ງສະເພາະໝວດໝູ່ ໂດຍບໍ່ໃຫ້ຂໍ້ມູນປະປົນກັນ ແລະ ສາມາດຊອກຫາໄດ້ງ່າຍ</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 self-start md:self-auto">
+              <button type="button" onclick="setAppView('records')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex items-center gap-1 cursor-pointer">
+                <span>📋</span> <span>ໄປທີ່ຖານຂໍ້ມູນ & ຟອມບັນທຶກ</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+            <!-- Tab 0: All (Separated into 2 sections) -->
+            <button type="button" id="globalCatBtn_ALL" onclick="setActiveDataCategoryFilter('ALL')" class="text-left p-3 rounded-xl border-2 border-slate-800 bg-slate-900 text-white shadow-sm transition-all flex items-center justify-between gap-3 cursor-pointer">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-sm">🗂️</span>
+                  <span class="text-xs font-black truncate">ທັງໝົດ (ແຍກ 2 ປະເພດຊັດເຈນ)</span>
+                </div>
+                <p class="text-[10.5px] opacity-80 mt-0.5 truncate">ສະແດງຄົບທັງ 2 ປະເພດ ໂດຍຈັດແຍກໝວດໝູ່ບໍ່ໃຫ້ປົນກັນ</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span id="globalCatCount_ALL" class="text-lg font-black font-mono block leading-none">0</span>
+                <span id="globalCatStCount_ALL" class="text-[10px] opacity-75 font-mono">0 ສະຖານີ</span>
+              </div>
+            </button>
+
+            <!-- Tab 1: 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ -->
+            <button type="button" id="globalCatBtn_COMPANY" onclick="setActiveDataCategoryFilter('COMPANY')" class="text-left p-3 rounded-xl border-2 border-indigo-200/90 bg-gradient-to-br from-indigo-50/60 via-white to-violet-50/40 hover:border-indigo-400 text-slate-800 shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-indigo-600 text-white text-[10px] font-black shrink-0">1</span>
+                  <span class="text-xs font-black text-indigo-950 truncate">🏢 ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</span>
+                </div>
+                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">ໂຄງການ, ບໍລິສັດ, ໂຮງງານ, ບໍ່ແຮ່, ເຂື່ອນໄຟຟ້າ ແລະ ກິດຈະການ</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span id="globalCatCount_COMPANY" class="text-lg font-black font-mono text-indigo-700 block leading-none">0</span>
+                <span id="globalCatStCount_COMPANY" class="text-[10px] text-indigo-600 font-semibold font-mono">0 ສະຖານີ</span>
+              </div>
+            </button>
+
+            <!-- Tab 2: 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ -->
+            <button type="button" id="globalCatBtn_GOV" onclick="setActiveDataCategoryFilter('GOV')" class="text-left p-3 rounded-xl border-2 border-sky-200/90 bg-gradient-to-br from-sky-50/60 via-white to-blue-50/40 hover:border-sky-400 text-slate-800 shadow-2xs transition-all flex items-center justify-between gap-3 cursor-pointer">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-sky-600 text-white text-[10px] font-black shrink-0">2</span>
+                  <span class="text-xs font-black text-sky-950 truncate">🏛️ ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</span>
+                </div>
+                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">ກະຊວງ, ກົມ, ພະແນກ ຊສ, ຫ້ອງການ, ສະຖາບັນ ແລະ ໂຄງການລັດ</p>
+              </div>
+              <div class="text-right shrink-0">
+                <span id="globalCatCount_GOV" class="text-lg font-black font-mono text-sky-700 block leading-none">0</span>
+                <span id="globalCatStCount_GOV" class="text-[10px] text-sky-600 font-semibold font-mono">0 ສະຖານີ</span>
+              </div>
+            </button>
+          </div>
+        </div>
 
         <!-- KPI Metric Dashboard Cards -->
         <div id="kpiDashboardGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -799,6 +875,87 @@
         </div>
       </div>
 
+      <!-- 📂 ຫ້ອງແຍກໝວດໝູ່ຖານຂໍ້ມູນ 2 ປະເພດ (ບໍລິສັດ/ກິດຈະການ vs ອົງການຈັດຕັ້ງລັດ) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Category 1 Card: 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ -->
+        <div id="recCatCard_COMPANY" class="bg-gradient-to-br from-indigo-50/90 via-white to-violet-50/50 rounded-2xl border-2 border-indigo-200/90 p-4 shadow-xs hover:shadow-md transition-all flex flex-col justify-between gap-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center text-xl font-black shadow-md shadow-indigo-500/20 shrink-0">
+                🏢
+              </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[10px] font-black">ປະເພດທີ 1</span>
+                  <h3 class="text-sm sm:text-base font-black text-indigo-950 truncate">1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+                  ຈັດເກັບຂໍ້ມູນຜົນກວດວັດຄຸນນະພາບນໍ້າຂອງບໍລິສັດ, ໂຄງການລົງທຶນ, ໂຮງງານອຸດສາຫະກຳ, ບໍ່ແຮ່, ເຂື່ອນໄຟຟ້າ ແລະ ກິດຈະການຕ່າງໆ ແຍກສະເພາະບໍ່ໃຫ້ປົນກັບຂໍ້ມູນພາກລັດ
+                </p>
+              </div>
+            </div>
+            <div class="text-right shrink-0 bg-white px-3 py-1.5 rounded-xl border border-indigo-200 shadow-2xs">
+              <span id="recCatDatasets_COMPANY" class="text-xl font-black text-indigo-700 font-mono block leading-tight">0</span>
+              <span class="text-[10px] font-bold text-slate-500">ຊຸດຂໍ້ມູນ</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-indigo-100/80 text-xs">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 font-bold text-[11px]">📍 <span id="recCatStations_COMPANY" class="font-mono">0</span> ສະຖານີ</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px]">✅ ປົກກະຕິ <span id="recCatNormal_COMPANY" class="font-mono">0</span></span>
+              <span class="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-[11px]">🚨 ເກີນເກນ <span id="recCatAlert_COMPANY" class="font-mono">0</span></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="startNewEntryForCategory('COMPANY')" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-300 font-bold text-[11px] transition cursor-pointer">
+                ➕ ປ້ອນຂໍ້ມູນບໍລິສັດ
+              </button>
+              <button type="button" id="recCatFilterBtn_COMPANY" onclick="setActiveDataCategoryFilter('COMPANY')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] shadow-xs transition cursor-pointer">
+                🔍 ເບິ່ງສະເພາະປະເພດ 1
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category 2 Card: 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ -->
+        <div id="recCatCard_GOV" class="bg-gradient-to-br from-sky-50/90 via-white to-blue-50/50 rounded-2xl border-2 border-sky-200/90 p-4 shadow-xs hover:shadow-md transition-all flex flex-col justify-between gap-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-600 to-blue-700 text-white flex items-center justify-center text-xl font-black shadow-md shadow-sky-500/20 shrink-0">
+                🏛️
+              </div>
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-md bg-sky-600 text-white text-[10px] font-black">ປະເພດທີ 2</span>
+                  <h3 class="text-sm sm:text-base font-black text-sky-950 truncate">2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+                  ຈັດເກັບຂໍ້ມູນຜົນກວດວັດຄຸນນະພາບນໍ້າຈາກກະຊວງ, ກົມຊັບພະຍາກອນນໍ້າ, ພະແນກ ຊສ ແຂວງ, ຫ້ອງການ, ສະຖາບັນຄົ້ນຄວ້າ ແລະ ອົງການຈັດຕັ້ງລັດ ແຍກສະເພາະບໍ່ໃຫ້ປົນກັນ
+                </p>
+              </div>
+            </div>
+            <div class="text-right shrink-0 bg-white px-3 py-1.5 rounded-xl border border-sky-200 shadow-2xs">
+              <span id="recCatDatasets_GOV" class="text-xl font-black text-sky-700 font-mono block leading-tight">0</span>
+              <span class="text-[10px] font-bold text-slate-500">ຊຸດຂໍ້ມູນ</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-sky-100/80 text-xs">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 font-bold text-[11px]">📍 <span id="recCatStations_GOV" class="font-mono">0</span> ສະຖານີ</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px]">✅ ປົກກະຕິ <span id="recCatNormal_GOV" class="font-mono">0</span></span>
+              <span class="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-[11px]">🚨 ເກີນເກນ <span id="recCatAlert_GOV" class="font-mono">0</span></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="startNewEntryForCategory('GOV')" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 font-bold text-[11px] transition cursor-pointer">
+                ➕ ປ້ອນຂໍ້ມູນພາກລັດ
+              </button>
+              <button type="button" id="recCatFilterBtn_GOV" onclick="setActiveDataCategoryFilter('GOV')" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] shadow-xs transition cursor-pointer">
+                🔍 ເບິ່ງສະເພາະປະເພດ 2
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Main Layout: Form (Left) & Master Database Table (Right) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
@@ -833,11 +990,44 @@
                 </span>
                 <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-100/60 px-2 py-0.5 rounded-full">ຫົວຂໍ້ຊຸດຂໍ້ມູນ</span>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>🏢</span> ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ <span class="text-rose-500">*</span>
+
+              <!-- 🗂️ ເລືອກປະເພດຂໍ້ມູນ (ແຍກ 2 ປະເພດ ເພື່ອບໍ່ໃຫ້ປົນກັນ) -->
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-slate-700 flex items-center justify-between">
+                  <span class="flex items-center gap-1"><span>🗂️</span> <span>ເລືອກປະເພດການຈັດເກັບຂໍ້ມູນ (2 ປະເພດ)</span> <span class="text-rose-500">*</span></span>
+                  <span id="formCategoryActivePill" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-300">ປະເພດທີ 1: ບໍລິສັດ/ກິດຈະການ</span>
                 </label>
-                <input type="text" id="companyName" autocomplete="off" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white font-semibold text-slate-800 transition" placeholder="ລະບຸຊື່ຂໍ້ມູນ / ຊື່ບໍລິສັດ / ຫົວຂໍ້ຫຼັກ...">
+                <input type="hidden" id="formDataCategory" value="COMPANY">
+                <div class="grid grid-cols-1 gap-2">
+                  <button type="button" id="formCatBtn_COMPANY" onclick="setFormDataCategory('COMPANY')" class="w-full text-left p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/90 text-indigo-950 transition-all flex items-center justify-between gap-2 cursor-pointer shadow-2xs">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-black truncate">🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</div>
+                        <div class="text-[10px] text-indigo-700 truncate">ສຳລັບບໍລິສັດ, ໂຄງການ, ໂຮງງານ, ບໍ່ແຮ່, ເຂື່ອນໄຟຟ້າ...</div>
+                      </div>
+                    </div>
+                    <span id="formCatCheck_COMPANY" class="text-xs font-black text-indigo-700 shrink-0">● ເລືອກຢູ່</span>
+                  </button>
+
+                  <button type="button" id="formCatBtn_GOV" onclick="setFormDataCategory('GOV')" class="w-full text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-sky-50/50 text-slate-700 transition-all flex items-center justify-between gap-2 cursor-pointer">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="w-6 h-6 rounded-lg bg-sky-600 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-bold truncate">🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</div>
+                        <div class="text-[10px] text-slate-500 truncate">ສຳລັບກະຊວງ, ກົມ, ພະແນກ ຊສ, ຫ້ອງການ, ສະຖາບັນພາກລັດ...</div>
+                      </div>
+                    </div>
+                    <span id="formCatCheck_GOV" class="text-[10.5px] font-semibold text-slate-400 shrink-0">○ ກົດເລືອກ</span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label id="companyNameLabel" class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                  <span>🏢</span> ຊື່ບໍລິສັດ / ໂຄງການ / ກິດຈະການ <span class="text-rose-500">*</span>
+                </label>
+                <input type="text" id="companyName" autocomplete="off" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white font-semibold text-slate-800 transition" placeholder="ລະບຸຊື່ບໍລິສັດ / ໂຄງການ / ກິດຈະການ...">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
@@ -1125,7 +1315,14 @@
             <div class="bg-gradient-to-r from-slate-50 via-white to-slate-50 p-3 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-wrap items-center gap-2.5">
               <div class="relative flex-1 min-w-[180px]">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">🔍</span>
-                <input type="text" id="searchInput" autocomplete="off" oninput="render()" placeholder="ຄົ້ນຫາ ຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ, ລະຫັດ ຫຼື ສະຖານທີ່..." class="w-full border border-slate-200 pl-8 pr-3 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white transition">
+                <input type="text" id="searchInput" autocomplete="off" oninput="render()" placeholder="ຄົ້ນຫາ ຊື່ບໍລິສັດ, ອົງການລັດ, ລະຫັດ ຫຼື ສະຖານທີ່..." class="w-full border border-slate-200 pl-8 pr-3 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white transition">
+              </div>
+              <div class="w-full sm:w-auto sm:min-w-[235px]">
+                <select id="categoryTableFilter" onchange="setActiveDataCategoryFilter(this.value)" class="w-full border-2 border-indigo-200 px-3 py-2 rounded-xl text-xs outline-none bg-indigo-50/40 font-bold text-indigo-950 transition cursor-pointer" title="ແຍກ ແລະ ກອງຂໍ້ມູນຕາມ 2 ປະເພດຫຼັກ">
+                  <option value="ALL">🗂️ ທັງ 2 ປະເພດ (ແຍກໝວດໝູ່ຊັດເຈນ)</option>
+                  <option value="COMPANY">🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
+                  <option value="GOV">🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
+                </select>
               </div>
               <div class="w-full sm:w-auto sm:min-w-[210px]">
                 <select id="datasetFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ">
@@ -12899,12 +13096,333 @@
     }
     const datasetKey = title => normTitle(parseCompanyTitle(title).company);
 
-    function findDatasetByTitle(title) {
+    /* ==========================================================================
+       🗂️ ລະບົບແຍກ ແລະ ຈັດຂໍ້ມູນຄຸນນະພາບນໍ້າ ເປັນ 2 ປະເພດຫຼັກ (COMPANY vs GOV)
+       1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ ('COMPANY')
+       2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ ('GOV')
+       ========================================================================== */
+    let activeDataCategoryFilter = 'ALL'; // 'ALL' | 'COMPANY' | 'GOV'
+
+    function getRecordDataCategory(item) {
+      if (!item || typeof item !== 'object') return 'COMPANY';
+      const explicit = String(item.dataCategory || '').toUpperCase().trim();
+      if (explicit === 'COMPANY' || explicit === 'GOV') return explicit;
+
+      const rawTitle = String(item.companyName || item.name || '').trim();
+      const lower = rawTitle.toLowerCase();
+
+      // ຄຳສັບບົ່ງບອກວ່າເປັນຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ
+      const companyRx = /(ບໍລິສັດ|ໂຄງການ|ເຂື່ອນ|ບໍ່ແຮ່|ໂຮງງານ|ກິດຈະການ|ຟາມ|ນິຄົມ|ໄຟຟ້າ|ຂຸດຄົ້ນ|ປຸງແຕ່ງ|company|co\.,|ltd|mining|power|hydropower|plant|factory|concession|project)/i;
+      // ຄຳສັບບົ່ງບອກວ່າເປັນຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ
+      const govRx = /(ກະຊວງ|ກົມ|ພະແນກ|ສະຖາບັນ|ຫ້ອງການ|ສູນ|ອົງການ|ຄະນະກຳມະການ|ທາງການ|ພາກລັດ|ແຫ່ງຊາດ|ສວສ|ກສວ|ພສວ|mrc|monre|nreri|dwr|doe|pcd|ministry|department)/i;
+
+      if (companyRx.test(lower) && !govRx.test(lower)) return 'COMPANY';
+      if (govRx.test(lower) && !companyRx.test(lower)) return 'GOV';
+      if (govRx.test(lower) && /^(ກະຊວງ|ກົມ|ພະແນກ|ສະຖາບັນ|ຫ້ອງການ|ສູນ|ອົງການ)/.test(rawTitle)) return 'GOV';
+      return 'COMPANY';
+    }
+
+    function getRecordCategoryMeta(cat) {
+      const c = (cat === 'GOV') ? 'GOV' : 'COMPANY';
+      if (c === 'GOV') {
+        return {
+          key: 'GOV',
+          num: '2',
+          icon: '🏛️',
+          shortLabel: '2. ອົງການຈັດຕັ້ງລັດ',
+          fullLabel: '2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ',
+          desc: 'ຂໍ້ມູນຕິດຕາມກວດກາຈາກກະຊວງ, ກົມ, ສະຖາບັນ, ພະແນກ ຫຼື ອົງການຈັດຕັ້ງລັດ',
+          badgeClass: 'bg-sky-100 text-sky-900 border-sky-300',
+          pillClass: 'bg-sky-600 text-white',
+          headerBg: 'from-sky-700 via-blue-700 to-cyan-700',
+          rowTint: 'bg-sky-50/40'
+        };
+      }
+      return {
+        key: 'COMPANY',
+        num: '1',
+        icon: '🏢',
+        shortLabel: '1. ບໍລິສັດ/ກິດຈະການ',
+        fullLabel: '1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ',
+        desc: 'ຂໍ້ມູນຕິດຕາມຄຸນນະພາບນໍ້າຂອງບໍລິສັດ, ໂຄງການ, ໂຮງງານ, ບໍ່ແຮ່, ເຂື່ອນໄຟຟ້າ ແລະ ກິດຈະການຕ່າງໆ',
+        badgeClass: 'bg-indigo-100 text-indigo-900 border-indigo-300',
+        pillClass: 'bg-indigo-600 text-white',
+        headerBg: 'from-indigo-700 via-indigo-600 to-violet-700',
+        rowTint: 'bg-indigo-50/40'
+      };
+    }
+
+    function getFormDataCategory() {
+      const el = document.getElementById('formDataCategory');
+      const val = el ? String(el.value || '').toUpperCase().trim() : 'COMPANY';
+      return (val === 'GOV') ? 'GOV' : 'COMPANY';
+    }
+
+    function setFormDataCategory(cat) {
+      const norm = (cat === 'GOV') ? 'GOV' : 'COMPANY';
+      const input = document.getElementById('formDataCategory');
+      if (input) input.value = norm;
+
+      const btnComp = document.getElementById('formCatBtn_COMPANY');
+      const btnGov = document.getElementById('formCatBtn_GOV');
+      const chkComp = document.getElementById('formCatCheck_COMPANY');
+      const chkGov = document.getElementById('formCatCheck_GOV');
+      const lbl = document.getElementById('companyNameLabel');
+      const cnameInput = document.getElementById('companyName');
+
+      if (btnComp && btnGov) {
+        if (norm === 'COMPANY') {
+          btnComp.className = 'flex items-start gap-2.5 p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/90 text-left transition cursor-pointer shadow-xs';
+          btnGov.className = 'flex items-start gap-2.5 p-2.5 rounded-xl border-2 border-slate-200 bg-white hover:bg-sky-50/50 text-left transition cursor-pointer';
+          if (chkComp) chkComp.innerText = '● ເລືອກຢູ່';
+          if (chkGov) chkGov.innerText = '○ ກົດເລືອກ';
+        } else {
+          btnComp.className = 'flex items-start gap-2.5 p-2.5 rounded-xl border-2 border-slate-200 bg-white hover:bg-indigo-50/50 text-left transition cursor-pointer';
+          btnGov.className = 'flex items-start gap-2.5 p-2.5 rounded-xl border-2 border-sky-600 bg-sky-50/90 text-left transition cursor-pointer shadow-xs';
+          if (chkComp) chkComp.innerText = '○ ກົດເລືອກ';
+          if (chkGov) chkGov.innerText = '● ເລືອກຢູ່';
+        }
+      }
+
+      if (lbl) {
+        lbl.innerHTML = norm === 'GOV'
+          ? '🏛️ ຊື່ພາກສ່ວນອົງການຈັດຕັ້ງລັດ / ຫົວຂໍ້ການຕິດຕາມ *'
+          : '🏢 ຊື່ບໍລິສັດ / ກິດຈະການ / ຫົວຂໍ້ຫຼັກ *';
+      }
+      if (cnameInput) {
+        cnameInput.placeholder = norm === 'GOV'
+          ? 'ເຊັ່ນ: ກົມຄວບຄຸມມົນລະພິດ / ພະແນກ ສວສ ແຂວງ...'
+          : 'ເຊັ່ນ: ບໍລິສັດ ໄຟຟ້ານ້ຳງື່ມ 2 ຈຳກັດ / ໂຄງການ...';
+      }
+    }
+
+    function startNewEntryForCategory(cat) {
+      const norm = (cat === 'GOV') ? 'GOV' : 'COMPANY';
+      setFormDataCategory(norm);
+      setActiveDataCategoryFilter(norm);
+      if (typeof setAppView === 'function') {
+        setAppView('records');
+      }
+      if (window.innerWidth < 1024 && typeof closeSidebarMobile === 'function') {
+        closeSidebarMobile();
+      }
+      setTimeout(() => {
+        if (typeof scrollToFormTop === 'function') scrollToFormTop();
+        const cname = document.getElementById('companyName');
+        if (cname) cname.focus();
+      }, 150);
+    }
+
+    function setActiveDataCategoryFilter(cat) {
+      const norm = (cat === 'COMPANY' || cat === 'GOV') ? cat : 'ALL';
+      activeDataCategoryFilter = norm;
+      tableCurrentPage = 1;
+
+      const sel = document.getElementById('categoryTableFilter');
+      if (sel && sel.value !== norm) sel.value = norm;
+
+      updateDataCategorySummaryUI();
+      render();
+    }
+
+    function selectDataCategoryAndOpenRecords(cat) {
+      const norm = (cat === 'COMPANY' || cat === 'GOV') ? cat : 'ALL';
+      if (norm === 'COMPANY' || norm === 'GOV') {
+        setFormDataCategory(norm);
+      }
+      setActiveDataCategoryFilter(norm);
+      if (typeof setAppView === 'function') {
+        setAppView('records');
+      }
+      if (window.innerWidth < 1024 && typeof closeSidebarMobile === 'function') {
+        closeSidebarMobile();
+      }
+      setTimeout(() => {
+        const tbl = document.getElementById('section-records');
+        if (tbl) tbl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    function quickSwitchRecordCategory(fbKey) {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+        return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະຜູ້ດູແລລະບົບ ຫຼື ພະນັກງານ ເທົ່ານັ້ນທີ່ສາມາດປ່ຽນປະເພດຂໍ້ມູນໄດ້' });
+      }
+      const item = waterData.find(d => d.fbKey === fbKey);
+      if (!item) return;
+      const curCat = getRecordDataCategory(item);
+      const nextCat = curCat === 'COMPANY' ? 'GOV' : 'COMPANY';
+      const curMeta = getRecordCategoryMeta(curCat);
+      const nextMeta = getRecordCategoryMeta(nextCat);
+      const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+
+      Swal.fire({
+        icon: 'question',
+        title: '🗂️ ປ່ຽນປະເພດການຈັດໝວດຂໍ້ມູນ?',
+        html: `
+          <div class="text-left text-xs space-y-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div><b>ຊື່ຊຸດຂໍ້ມູນ:</b> <span class="text-slate-800 font-bold">${escAttr(title)}</span></div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-slate-500">ຈາກເດີມ:</span>
+              <span class="px-2 py-0.5 rounded-md font-bold border ${curMeta.badgeClass}">${curMeta.icon} ${curMeta.fullLabel}</span>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-slate-500">ຍ້າຍໄປເປັນ:</span>
+              <span class="px-2 py-0.5 rounded-md font-bold border ${nextMeta.badgeClass}">${nextMeta.icon} ${nextMeta.fullLabel}</span>
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: `✅ ຍ້າຍໄປ ${nextMeta.shortLabel}`,
+        cancelButtonText: 'ຍົກເລີກ',
+        confirmButtonColor: nextCat === 'GOV' ? '#0284c7' : '#4f46e5'
+      }).then(res => {
+        if (!res.isConfirmed) return;
+        const editor = currentUserName || 'Admin';
+        db.ref(`water_records/${fbKey}`).update({
+          dataCategory: nextCat,
+          lastUpdated: new Date().toLocaleString('lo-LA'),
+          lastUpdatedBy: editor
+        }).then(() => {
+          db.ref('activity_logs').push({
+            action: 'CHANGE_CATEGORY',
+            itemCode: `${title} -> ${nextMeta.fullLabel}`,
+            performedBy: editor,
+            timestamp: new Date().toLocaleString('lo-LA'),
+            userRole: currentUserRole
+          });
+          render();
+          Swal.fire({ icon: 'success', title: 'ຍ້າຍປະເພດຂໍ້ມູນສຳເລັດ!', text: `ຈັດເຂົ້າໃນ "${nextMeta.fullLabel}" ແລ້ວ`, timer: 1600, showConfirmButton: false });
+        });
+      });
+    }
+
+    function updateDataCategorySummaryUI() {
+      let compDatasets = 0, compStations = 0, compNormal = 0, compAlert = 0;
+      let govDatasets = 0, govStations = 0, govNormal = 0, govAlert = 0;
+
+      waterData.forEach(item => {
+        const cat = getRecordDataCategory(item);
+        const sts = stationsOf(item);
+        let nNorm = 0, nAl = 0;
+        sts.forEach(st => {
+          if (st && st.status && st.status.isAlert) nAl++;
+          else nNorm++;
+        });
+        if (cat === 'GOV') {
+          govDatasets++;
+          govStations += sts.length;
+          govNormal += nNorm;
+          govAlert += nAl;
+        } else {
+          compDatasets++;
+          compStations += sts.length;
+          compNormal += nNorm;
+          compAlert += nAl;
+        }
+      });
+
+      const totalDatasets = compDatasets + govDatasets;
+      const totalStations = compStations + govStations;
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+
+      // 1. ອັບເດດຕົວເລກຢູ່ແຖບເມນູຊ້າຍມື (Sidebar)
+      setTxt('sidebarCatCompanyCount', compDatasets);
+      setTxt('sidebarCatGovCount', govDatasets);
+
+      const sbComp = document.getElementById('sbNavCatCompany');
+      const sbGov = document.getElementById('sbNavCatGov');
+      if (sbComp && sbGov) {
+        const isCompActive = currentAppView === 'records' && activeDataCategoryFilter === 'COMPANY';
+        const isGovActive = currentAppView === 'records' && activeDataCategoryFilter === 'GOV';
+        sbComp.className = isCompActive
+          ? 'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left text-xs font-bold bg-indigo-600 text-white border border-indigo-400 shadow-sm transition cursor-pointer'
+          : 'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left text-xs font-semibold text-indigo-200 hover:bg-indigo-950/60 hover:text-white border border-indigo-500/20 transition cursor-pointer';
+        sbGov.className = isGovActive
+          ? 'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left text-xs font-bold bg-sky-600 text-white border border-sky-400 shadow-sm transition cursor-pointer'
+          : 'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left text-xs font-semibold text-sky-200 hover:bg-sky-950/60 hover:text-white border border-sky-500/20 transition cursor-pointer';
+      }
+
+      // 2. ອັບເດດຕົວເລກຢູ່ແຖບ Global Top Banner
+      setTxt('globalCatCount_ALL', `${totalDatasets} ຊຸດ`);
+      setTxt('globalCatStCount_ALL', `${totalStations} ສະຖານີ`);
+      setTxt('globalCatCount_COMPANY', `${compDatasets} ຊຸດ`);
+      setTxt('globalCatStCount_COMPANY', `${compStations} ສະຖານີ`);
+      setTxt('globalCatCount_GOV', `${govDatasets} ຊຸດ`);
+      setTxt('globalCatStCount_GOV', `${govStations} ສະຖານີ`);
+
+      const gAll = document.getElementById('globalCatBtn_ALL');
+      const gComp = document.getElementById('globalCatBtn_COMPANY');
+      const gGov = document.getElementById('globalCatBtn_GOV');
+      if (gAll && gComp && gGov) {
+        gAll.className = activeDataCategoryFilter === 'ALL'
+          ? 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-slate-800 bg-slate-900 text-white text-left transition cursor-pointer shadow-xs'
+          : 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-left transition cursor-pointer';
+        gComp.className = activeDataCategoryFilter === 'COMPANY'
+          ? 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-600 text-white text-left transition cursor-pointer shadow-sm'
+          : 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-indigo-200 bg-indigo-50/60 hover:bg-indigo-100/70 text-indigo-950 text-left transition cursor-pointer';
+        gGov.className = activeDataCategoryFilter === 'GOV'
+          ? 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-sky-600 bg-sky-600 text-white text-left transition cursor-pointer shadow-sm'
+          : 'flex items-center justify-between gap-2.5 p-2.5 rounded-xl border-2 border-sky-200 bg-sky-50/60 hover:bg-sky-100/70 text-sky-950 text-left transition cursor-pointer';
+      }
+
+      // 3. ອັບເດດຕົວເລກຢູ່ກ່ອງ 2 ປະເພດໃນໜ້າ ບັນທຶກ & ຕາຕະລາງຂໍ້ມູນ
+      setTxt('recCatDatasets_COMPANY', compDatasets);
+      setTxt('recCatStations_COMPANY', compStations);
+      setTxt('recCatNormal_COMPANY', compNormal);
+      setTxt('recCatAlert_COMPANY', compAlert);
+
+      setTxt('recCatDatasets_GOV', govDatasets);
+      setTxt('recCatStations_GOV', govStations);
+      setTxt('recCatNormal_GOV', govNormal);
+      setTxt('recCatAlert_GOV', govAlert);
+
+      const cardComp = document.getElementById('recCatCard_COMPANY');
+      const cardGov = document.getElementById('recCatCard_GOV');
+      const filterBtnComp = document.getElementById('recCatFilterBtn_COMPANY');
+      const filterBtnGov = document.getElementById('recCatFilterBtn_GOV');
+
+      if (cardComp && cardGov) {
+        cardComp.className = activeDataCategoryFilter === 'COMPANY'
+          ? 'rounded-2xl border-2 border-indigo-600 bg-gradient-to-br from-indigo-50/90 via-white to-violet-50/60 p-4 shadow-md ring-2 ring-indigo-500/20 transition flex flex-col justify-between gap-3'
+          : 'rounded-2xl border-2 border-indigo-200/90 bg-gradient-to-br from-indigo-50/60 via-white to-violet-50/40 p-4 shadow-2xs hover:shadow-md transition flex flex-col justify-between gap-3';
+        cardGov.className = activeDataCategoryFilter === 'GOV'
+          ? 'rounded-2xl border-2 border-sky-600 bg-gradient-to-br from-sky-50/90 via-white to-cyan-50/60 p-4 shadow-md ring-2 ring-sky-500/20 transition flex flex-col justify-between gap-3'
+          : 'rounded-2xl border-2 border-sky-200/90 bg-gradient-to-br from-sky-50/60 via-white to-cyan-50/40 p-4 shadow-2xs hover:shadow-md transition flex flex-col justify-between gap-3';
+      }
+
+      if (filterBtnComp) {
+        filterBtnComp.innerHTML = activeDataCategoryFilter === 'COMPANY'
+          ? '<span>✅</span> <span>ກຳລັງສະແດງສະເພາະຂໍ້ມູນບໍລິສັດ/ກິດຈະການ (ກົດເບິ່ງທັງໝົດ)</span>'
+          : '<span>🔍</span> <span>ສະແດງສະເພາະຂໍ້ມູນບໍລິສັດ/ກິດຈະການ</span>';
+        filterBtnComp.onclick = () => setActiveDataCategoryFilter(activeDataCategoryFilter === 'COMPANY' ? 'ALL' : 'COMPANY');
+      }
+      if (filterBtnGov) {
+        filterBtnGov.innerHTML = activeDataCategoryFilter === 'GOV'
+          ? '<span>✅</span> <span>ກຳລັງສະແດງສະເພາະຂໍ້ມູນອົງການຈັດຕັ້ງລັດ (ກົດເບິ່ງທັງໝົດ)</span>'
+          : '<span>🔍</span> <span>ສະແດງສະເພາະຂໍ້ມູນອົງການຈັດຕັ້ງລັດ</span>';
+        filterBtnGov.onclick = () => setActiveDataCategoryFilter(activeDataCategoryFilter === 'GOV' ? 'ALL' : 'GOV');
+      }
+
+      const sel = document.getElementById('categoryTableFilter');
+      if (sel) {
+        const optAll = sel.querySelector('option[value="ALL"]');
+        const optComp = sel.querySelector('option[value="COMPANY"]');
+        const optGov = sel.querySelector('option[value="GOV"]');
+        if (optAll) optAll.textContent = `🗂️ ທຸກປະເພດຂໍ້ມູນ (ລວມ ${totalDatasets} ຊຸດ)`;
+        if (optComp) optComp.textContent = `🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compDatasets} ຊຸດ)`;
+        if (optGov) optGov.textContent = `🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govDatasets} ຊຸດ)`;
+        if (sel.value !== activeDataCategoryFilter) sel.value = activeDataCategoryFilter;
+      }
+    }
+
+    function findDatasetByTitle(title, dataCategory = '') {
       const n = datasetKey(title);
       if (!n) return null;
-      // ບໍລິສັດດຽວກັນ (ເຖິງຊື່ໂຄງການ/ໄຕມາດຕ່າງກັນ) → ຊຸດດຽວກັນ; ຖ້າມີຫຼາຍຊຸດ ໃຊ້ຊຸດທີ່ສ້າງກ່ອນ
+      const catFilter = (dataCategory === 'COMPANY' || dataCategory === 'GOV') ? dataCategory : '';
+      // ບໍລິສັດດຽວກັນ ແລະ ຢູ່ໃນປະເພດດຽວກັນ → ຊຸດດຽວກັນ (ປ້ອງກັນບໍ່ໃຫ້ຂໍ້ມູນບໍລິສັດ ແລະ ຂໍ້ມູນອົງການຈັດຕັ້ງລັດ ປົນກັນ)
       return waterData
-        .filter(d => datasetKey(d.companyName || d.name) === n)
+        .filter(d => datasetKey(d.companyName || d.name) === n && (!catFilter || getRecordDataCategory(d) === catFilter))
         .sort((a, b) => (a.id || 0) - (b.id || 0))[0] || null;
     }
 
@@ -12954,9 +13472,10 @@
     }
 
     // ບັນທຶກເຂົ້າຊຸດເດີມ (merge) ຫຼື ສ້າງຊຸດໃໝ່ (new)
-    function saveToDataset({ title, stations, projectLocation = '', date, recorder, mode, source = '', govVerification = null, otherVerification = null }) {
+    function saveToDataset({ title, stations, projectLocation = '', date, recorder, mode, source = '', govVerification = null, otherVerification = null, dataCategory = '' }) {
       const now = new Date().toLocaleString('lo-LA');
-      const target = mode === 'merge' ? findDatasetByTitle(title) : null;
+      const finalCategory = (dataCategory === 'COMPANY' || dataCategory === 'GOV') ? dataCategory : getFormDataCategory();
+      const target = mode === 'merge' ? findDatasetByTitle(title, finalCategory) : null;
       const parsed = parseCompanyTitle(title);
       // ສະຖານີທີ່ຍັງບໍ່ມີກຸ່ມ → ໃຊ້ຊື່ໂຄງການຈາກຫົວຂໍ້ ເປັນກຸ່ມຕາຕະລາງ
       stations = stations.map(st => ({
@@ -12970,6 +13489,7 @@
         const newRecordPayload = {
           id: Date.now() + Math.floor(Math.random() * 1000),
           companyName: title,
+          dataCategory: finalCategory,
           projectLocation,
           date: date || now,
           recordedBy: recorder,
@@ -12982,8 +13502,8 @@
           newRecordPayload.otherVerification = otherVerification;
         }
         return db.ref('water_records').push(newRecordPayload).then(ref => {
-          db.ref('activity_logs').push({ action: 'CREATE', itemCode: `${title} (${stations.length} ສະຖານີ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
-          return { type: 'new', title, added: stations.length, updated: 0, fbKey: ref.key };
+          db.ref('activity_logs').push({ action: 'CREATE', itemCode: `[${finalCategory === 'GOV' ? 'ອົງການລັດ' : 'ບໍລິສັດ'}] ${title} (${stations.length} ສະຖານີ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
+          return { type: 'new', title, added: stations.length, updated: 0, fbKey: ref.key, dataCategory: finalCategory };
         });
       }
 
@@ -13001,6 +13521,7 @@
           rec.companyName = rec.companyName || title;
         }
         rec.stations = r.stations;
+        if (!rec.dataCategory) rec.dataCategory = finalCategory;
         if (!rec.projectLocation && projectLocation) rec.projectLocation = projectLocation;
         if (govVerification && (govVerification.agency || govVerification.docNo || govVerification.date)) {
           rec.govVerification = govVerification;
@@ -13016,18 +13537,20 @@
       }).then(({ committed }) => {
         if (!committed || !result) throw new Error('ລວມຂໍ້ມູນບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່');
         db.ref('activity_logs').push({ action: 'MERGE', itemCode: `${target.companyName || title} (+${result.added} ໃໝ່, ${result.updated} ອັບເດດ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
-        return { type: 'merge', title: parsed.company || target.companyName || title, added: result.added, updated: result.updated, fbKey: target.fbKey };
+        return { type: 'merge', title: parsed.company || target.companyName || title, added: result.added, updated: result.updated, fbKey: target.fbKey, dataCategory: finalCategory };
       });
     }
 
     // ກ່ອງຖາມ: ມີຊຸດຊື່ນີ້ແລ້ວ → ລວມ ຫຼື ສ້າງໃໝ່?
-    function askMergeOrNew(title, count) {
-      const target = findDatasetByTitle(title);
+    function askMergeOrNew(title, count, dataCategory = '') {
+      const cat = (dataCategory === 'COMPANY' || dataCategory === 'GOV') ? dataCategory : getFormDataCategory();
+      const target = findDatasetByTitle(title, cat);
       if (!target) return Promise.resolve('new');
+      const catMeta = getRecordCategoryMeta(cat);
       return Swal.fire({
         icon: 'question',
         title: '🔗 ມີຊຸດຂໍ້ມູນນີ້ຢູ່ແລ້ວ',
-        html: `ມີ <b>"${escAttr(target.companyName || target.name)}"</b> ຢູ່ໃນລະບົບແລ້ວ (${stationsOf(target).length} ສະຖານີ).<br><br>
+        html: `ມີ <b>"${escAttr(target.companyName || target.name)}"</b> ຢູ່ໃນໝວດ <b>${catMeta.icon} ${catMeta.fullLabel}</b> ແລ້ວ (${stationsOf(target).length} ສະຖານີ).<br><br>
                ຈະເອົາ <b>${count}</b> ສະຖານີໃໝ່ນີ້ <b>ລວມເຂົ້າຊຸດເດີມ</b> ບໍ່?<br>
                <span class="text-xs text-slate-500">ສະຖານີທີ່ລະຫັດ ແລະ ພິກັດຄືກັນ ຈະຖືກອັບເດດຄ່າ, ສະຖານີອື່ນຈະຖືກເພີ່ມຕໍ່ທ້າຍ</span>`,
         showDenyButton: true,
@@ -14092,7 +14615,8 @@
       if (!box || !input) return;
       const prev = document.getElementById(`excelBlockMode_${bi}`)?.value;
       const merged = document.getElementById('excelMergeAll')?.checked;
-      const target = findDatasetByTitle(merged ? (document.getElementById('excelUnifiedTitle')?.value || input.value) : input.value);
+      const excelCat = document.getElementById('excelDataCategory')?.value || getFormDataCategory();
+      const target = findDatasetByTitle(merged ? (document.getElementById('excelUnifiedTitle')?.value || input.value) : input.value, excelCat);
       if (target) {
         // ຄາດຄະເນຜົນ: ຈະເພີ່ມໃໝ່ຈັກແຖວ / ອັບເດດ (ຂຽນທັບ) ຈັກແຖວ
         const blk = excelPreviewBlocks[bi];
@@ -14201,6 +14725,7 @@
       }).join('');
 
       const skippedAll = blocks.flatMap(b => b.skipped);
+      const defaultExcelCat = getFormDataCategory();
       const html = `
         <div class="text-left text-xs space-y-3">
           <div class="bg-slate-50 border rounded-lg p-2 leading-relaxed">
@@ -14209,6 +14734,14 @@
             ພົບ <b>${good.length}</b> ຕາຕະລາງ · ນຳເຂົ້າໄດ້ <b class="text-emerald-700">${totalSt}</b> ສະຖານີ
             ${totalSkip ? ` · ⚠️ ຂ້າມ <b class="text-rose-600">${totalSkip}</b> ແຖວ` : ''}
             <br><span class="text-indigo-700">ຕາຕະລາງທີ່ <b>ຫົວຂໍ້ຄືກັບຊຸດທີ່ມີຢູ່ແລ້ວ</b> ຈະຖືກລວມເຂົ້າຊຸດເດີມ · ຕາຕະລາງທີ່ຫົວຂໍ້ຊ້ຳກັນໃນໄຟລ໌ຈະລວມເປັນຊຸດດຽວ</span>
+          </div>
+
+          <div class="border-2 border-indigo-200 bg-indigo-50/60 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2">
+            <span class="font-bold text-indigo-950 text-xs">🗂️ ຈັດເຂົ້າປະເພດຂໍ້ມູນ (ແຍກ 2 ປະເພດ):</span>
+            <select id="excelDataCategory" onchange="for (let k = 0; k < ${good.length}; k++) updateExcelBlockTarget(k)" class="border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
+              <option value="COMPANY" ${defaultExcelCat === 'COMPANY' ? 'selected' : ''}>🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
+              <option value="GOV" ${defaultExcelCat === 'GOV' ? 'selected' : ''}>🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
+            </select>
           </div>
 
           ${good.length > 1 ? `
@@ -14259,6 +14792,7 @@
         cancelButtonColor: '#64748b',
         didOpen: () => { window.__excelOverwriteOk = false; if (good.length > 1) toggleExcelMergeAll(good.length); good.forEach((_, bi) => updateExcelBlockTarget(bi)); },
         preConfirm: () => {
+          const excelCategory = document.getElementById('excelDataCategory')?.value || getFormDataCategory();
           const chosen = good.map((b, bi) => ({
             block: b,
             use: multi ? document.getElementById(`excelBlockUse_${bi}`).checked : true,
@@ -14280,7 +14814,7 @@
           if (chosen.some(x => !x.title)) { Swal.showValidationMessage('ກະລຸນາລະບຸຊື່ຊຸດຂໍ້ມູນໃຫ້ຄົບ'); return false; }
           const recorder = currentUserName || document.getElementById('recorderName').value.trim();
           if (!recorder) { Swal.showValidationMessage('ກະລຸນາພິມຊື່ຜູ້ບັນທຶກໃນຟອມກ່ອນ'); return false; }
-          const risky = chosen.filter((x, k) => x.mode === 'merge' && !x.blockDate && x.block.missingDate && findDatasetByTitle(x.title));
+          const risky = chosen.filter((x, k) => x.mode === 'merge' && !x.blockDate && x.block.missingDate && findDatasetByTitle(x.title, excelCategory));
           if (risky.length && !window.__excelOverwriteOk) {
             window.__excelOverwriteOk = true;
             Swal.showValidationMessage(`⚠️ ${risky.length} ຕາຕະລາງ ບໍ່ມີວັນທີ ແລະ ຈະຂຽນທັບຂໍ້ມູນເດີມ. ເລືອກເດືອນກ່ອນ — ຫຼື ກົດບັນທຶກອີກເທື່ອ ຖ້າຕັ້ງໃຈອັບເດດຄ່າເກົ່າແທ້`);
@@ -14288,7 +14822,7 @@
           }
           window.__excelOverwriteOk = false;
           const addCanons = [...document.querySelectorAll('.excelUnkChk')].filter(c => c.checked).map(c => c.dataset.canon);
-          return { chosen, addCanons, recorder };
+          return { chosen, addCanons, recorder, dataCategory: excelCategory };
         }
       }).then(result => {
         if (!result.isConfirmed) return;
@@ -14297,9 +14831,10 @@
     }
 
     const safeInfoKey = k => String(k).replace(/[.#$\[\]\/]/g, '_').slice(0, 120);
-    function applyExcelImport({ chosen, addCanons = [], recorder }, unknownMap) {
+    function applyExcelImport({ chosen, addCanons = [], recorder, dataCategory = '' }, unknownMap) {
       const addUnknown = addCanons.length > 0;
       let configChanged = false;
+      const finalCategory = (dataCategory === 'COMPANY' || dataCategory === 'GOV') ? dataCategory : getFormDataCategory();
 
       // ໂຕຊີ້ວັດທີ່ມີໃນ master ແຕ່ບໍ່ໄດ້ເປີດໃຊ້ → ເປີດໃຊ້
       // ໂຕຊີ້ວັດທີ່ມາຈາກ Excel → ສະແດງໃນຕາຕະລາງ/ແຜນທີ່/ກຣາຟ ແຕ່ບໍ່ເພີ່ມຊ່ອງປ້ອນໃນຟອມ (ເປີດເອງໄດ້ໃນ ⚙️ ຕັ້ງຄ່າ)
@@ -14377,7 +14912,8 @@
             mode: g.mode,
             source: ' · ຈາກ Excel',
             govVerification,
-            otherVerification
+            otherVerification,
+            dataCategory: finalCategory
           }));
         }
         return results;
@@ -14524,6 +15060,7 @@
       const companyName = document.getElementById('companyName').value.trim();
       const projectLocation = document.getElementById('projectLocation').value.trim();
       const recorderName = currentUserName || document.getElementById('recorderName').value.trim();
+      const dataCategory = getFormDataCategory();
 
       const govCertAgency = document.getElementById('govCertAgency')?.value.trim() || '';
       const govCertDate = document.getElementById('govCertDate')?.value.trim() || '';
@@ -14540,7 +15077,7 @@
       if (!recorderName) return Swal.fire({ icon: 'warning', title: 'ກະລຸນາລະບຸຊື່ຜູ້ບັນທຶກ!' });
       if (tempStations.length === 0) return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເພີ່ມຢ່າງນ້ອຍ 1 ສະຖານີ!' });
 
-      const mode = await askMergeOrNew(companyName, tempStations.length);
+      const mode = await askMergeOrNew(companyName, tempStations.length, dataCategory);
       if (!mode) return;
 
       const inputDatetime = document.getElementById('customDatetime').value;
@@ -14556,7 +15093,8 @@
           recorder: recorderName,
           mode,
           govVerification,
-          otherVerification
+          otherVerification,
+          dataCategory
         });
         tempStations = [];
         document.getElementById('companyName').value = '';
@@ -14566,6 +15104,7 @@
           if (el) el.value = '';
         });
         document.getElementById('waterForm').reset();
+        setFormDataCategory(dataCategory);
         renderTempList();
         applyRecorderLock();
         Swal.fire({
@@ -14663,6 +15202,11 @@
           recAlBadge.innerText = '✅ ປົກກະຕິທັງໝົດ';
         }
       }
+
+      // 🌟 ອັບເດດຕົວເລກສະຫຼຸບ 2 ປະເພດຂໍ້ມູນ (1. ບໍລິສັດ/ກິດຈະການ vs 2. ອົງການຈັດຕັ້ງລັດ)
+      if (typeof updateDataCategorySummaryUI === 'function') {
+        updateDataCategorySummaryUI();
+      }
     }
 
     // Assigns a consistent colored badge style per organization/company name,
@@ -14687,14 +15231,24 @@
       return ORG_BADGE_PALETTE[hash % ORG_BADGE_PALETTE.length];
     }
 
-    function renderOrgBadge(orgName) {
+    function renderOrgBadge(orgName, item = null) {
       const label = orgName || 'ບໍ່ລະບຸບໍລິສັດ';
       const style = getOrgBadgeStyle(label);
+      const cat = item ? getRecordDataCategory(item) : null;
+      const catMeta = cat ? getRecordCategoryMeta(cat) : null;
       return `
-        <span class="inline-flex items-center gap-1.5 ${style.bg} ${style.text} text-xs font-bold px-2.5 py-1 rounded-full border border-white/50">
-          <span class="w-1.5 h-1.5 rounded-full ${style.dot}"></span>
-          🏢 ${label}
-        </span>
+        <div class="inline-flex flex-wrap items-center gap-1.5">
+          ${catMeta ? `
+            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md border ${catMeta.badgeClass}" title="${escAttr(catMeta.fullLabel)}">
+              <span>${catMeta.icon}</span>
+              <span>${catMeta.shortLabel}</span>
+            </span>
+          ` : ''}
+          <span class="inline-flex items-center gap-1.5 ${style.bg} ${style.text} text-xs font-bold px-2.5 py-1 rounded-full border border-white/50">
+            <span class="w-1.5 h-1.5 rounded-full ${style.dot}"></span>
+            ${catMeta ? catMeta.icon : '🏢'} ${label}
+          </span>
+        </div>
       `;
     }
 
@@ -14783,17 +15337,29 @@
       const cSel = document.getElementById('mapCompanySel');
       const sSel = document.getElementById('mapStationSel');
       if (!cSel || !sSel) return;
-      if (mapCompany && !waterData.some(d => d.fbKey === mapCompany)) mapCompany = '';
+      const mapEligibleData = waterData.filter(d => activeDataCategoryFilter === 'ALL' || getRecordDataCategory(d) === activeDataCategoryFilter);
+      if (mapCompany && !mapEligibleData.some(d => d.fbKey === mapCompany)) mapCompany = '';
 
-      const cHtml = `<option value="">🏢 ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${waterData.length})</option>` + waterData.map(d => {
+      const compList = mapEligibleData.filter(d => getRecordDataCategory(d) === 'COMPANY');
+      const govList = mapEligibleData.filter(d => getRecordDataCategory(d) === 'GOV');
+      const renderMapDsOpt = d => {
         const sts = stationsOf(d);
         const n = sts.filter(hasLL).length;
-        return `<option value="${d.fbKey}" ${n ? '' : 'disabled'}>${escAttr(d.companyName || d.name || 'ບໍ່ລະບຸ')} (${n ? n + ' ຈຸດ' : 'ບໍ່ມີພິກັດ'})</option>`;
-      }).join('');
+        const icon = getRecordDataCategory(d) === 'GOV' ? '🏛️' : '🏢';
+        return `<option value="${d.fbKey}" ${n ? '' : 'disabled'}>${icon} ${escAttr(d.companyName || d.name || 'ບໍ່ລະບຸ')} (${n ? n + ' ຈຸດ' : 'ບໍ່ມີພິກັດ'})</option>`;
+      };
+
+      let cHtml = `<option value="">🗂️ ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${mapEligibleData.length})</option>`;
+      if (compList.length > 0) {
+        cHtml += `<optgroup label="🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compList.length})">${compList.map(renderMapDsOpt).join('')}</optgroup>`;
+      }
+      if (govList.length > 0) {
+        cHtml += `<optgroup label="🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govList.length})">${govList.map(renderMapDsOpt).join('')}</optgroup>`;
+      }
       if (cSel.dataset.last !== cHtml) { cSel.innerHTML = cHtml; cSel.dataset.last = cHtml; }
       cSel.value = mapCompany;
 
-      const ds = waterData.find(d => d.fbKey === mapCompany);
+      const ds = mapEligibleData.find(d => d.fbKey === mapCompany);
       const canViewMapAlerts = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF';
 
       const formatStationOpt = (st, i, item) => {
@@ -14830,7 +15396,7 @@
         sSel.disabled = false;
       } else {
         const allGroups = [];
-        waterData.forEach(item => {
+        mapEligibleData.forEach(item => {
           const rows = stationsOf(item).map((st, i) => ({ st, i, item })).filter(x => hasLL(x.st));
           if (rows.length > 0) allGroups.push({ item, rows });
         });
@@ -14838,7 +15404,8 @@
         sHtml = `<option value="">📍 ທຸກຈຸດພິກັດທົ່ວປະເທດ (ທັງໝົດ ${totalPoints} ຈຸດ)</option>`;
         allGroups.forEach(grp => {
           const cName = grp.item.companyName || grp.item.name || 'ບໍ່ລະບຸ';
-          sHtml += `<optgroup label="🏢 ${escAttr(cName)} (${grp.rows.length} ຈຸດ)">`;
+          const catIcon = getRecordDataCategory(grp.item) === 'GOV' ? '🏛️ [ອົງການລັດ]' : '🏢 [ບໍລິສັດ/ກິດຈະການ]';
+          sHtml += `<optgroup label="${catIcon} ${escAttr(cName)} (${grp.rows.length} ຈຸດ)">`;
           sHtml += grp.rows.map(x => formatStationOpt(x.st, x.i, x.item)).join('');
           sHtml += `</optgroup>`;
         });
@@ -14855,7 +15422,7 @@
 
       const ySel = document.getElementById('mapYearSel');
       if (ySel) {
-        const years = [...new Set(waterData.flatMap(rec => stationsOf(rec).map(st => rowYear(st, rec)).filter(Boolean)))].sort((a, b) => b - a);
+        const years = [...new Set(mapEligibleData.flatMap(rec => stationsOf(rec).map(st => rowYear(st, rec)).filter(Boolean)))].sort((a, b) => b - a);
         const yHtml = '<option value="ALL">📅 ທຸກປີ (All Years)</option>' + years.map(yy => `<option value="${yy}">📅 ປີ ${yy}</option>`).join('');
         if (ySel.dataset.last !== yHtml) { ySel.innerHTML = yHtml; ySel.dataset.last = yHtml; }
         ySel.value = mapYear;
@@ -15911,20 +16478,41 @@
     }
 
     function updateTableDropdownFilters() {
-      // 1. Dataset (ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ) Dropdown
+      // 0. Category Filter Dropdown
+      const catSel = document.getElementById('categoryTableFilter');
+      if (catSel && catSel.value !== activeDataCategoryFilter) {
+        catSel.value = activeDataCategoryFilter;
+      }
+
+      // 1. Dataset (ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ) Dropdown — ແຍກເປັນ 2 ກຸ່ມຊັດເຈນ
       const dSel = document.getElementById('datasetFilter');
       if (dSel) {
         const curD = dSel.value || 'ALL';
-        const items = waterData.map(d => {
+        const eligible = waterData.filter(d => activeDataCategoryFilter === 'ALL' || getRecordDataCategory(d) === activeDataCategoryFilter);
+        const mapItem = d => {
           const name = d.companyName || d.name || 'ບໍ່ລະບຸ';
           const stCount = (d.stations || [d]).length;
-          return { key: d.fbKey, name, count: stCount };
-        }).sort((a, b) => a.name.localeCompare(b.name));
+          const cat = getRecordDataCategory(d);
+          return { key: d.fbKey, name, count: stCount, cat };
+        };
+        const compItems = eligible.filter(d => getRecordDataCategory(d) === 'COMPANY').map(mapItem).sort((a, b) => a.name.localeCompare(b.name));
+        const govItems = eligible.filter(d => getRecordDataCategory(d) === 'GOV').map(mapItem).sort((a, b) => a.name.localeCompare(b.name));
 
-        let dHtml = `<option value="ALL">🏢 ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${items.length})</option>`;
-        items.forEach(it => {
-          dHtml += `<option value="${escAttr(it.key)}">${escAttr(it.name)} (${it.count} ສະຖານີ)</option>`;
-        });
+        let dHtml = `<option value="ALL">🏢 ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${eligible.length})</option>`;
+        if (compItems.length > 0) {
+          dHtml += `<optgroup label="🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compItems.length})">`;
+          compItems.forEach(it => {
+            dHtml += `<option value="${escAttr(it.key)}">🏢 ${escAttr(it.name)} (${it.count} ສະຖານີ)</option>`;
+          });
+          dHtml += `</optgroup>`;
+        }
+        if (govItems.length > 0) {
+          dHtml += `<optgroup label="🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govItems.length})">`;
+          govItems.forEach(it => {
+            dHtml += `<option value="${escAttr(it.key)}">🏛️ ${escAttr(it.name)} (${it.count} ສະຖານີ)</option>`;
+          });
+          dHtml += `</optgroup>`;
+        }
         if (dSel.dataset.lastHtml !== dHtml) {
           dSel.innerHTML = dHtml;
           dSel.dataset.lastHtml = dHtml;
@@ -15963,12 +16551,15 @@
       const statusVal = document.getElementById('statusFilter')?.value || 'ALL';
       const datasetVal = document.getElementById('datasetFilter')?.value || 'ALL';
       const yearVal = document.getElementById('yearTableFilter')?.value || 'ALL';
+      const categoryVal = activeDataCategoryFilter || 'ALL';
 
       const filteredData = waterData.filter(item => {
         const company = (item.companyName || item.name || '').toLowerCase();
         const recorder = (item.recordedBy || '').toLowerCase();
         const stations = item.stations || [item];
-        
+        const recCat = getRecordDataCategory(item);
+
+        const matchCategory = categoryVal === 'ALL' || recCat === categoryVal;
         const matchDataset = datasetVal === 'ALL' || item.fbKey === datasetVal;
         const matchYear = yearVal === 'ALL' || stations.some(st => String(rowYear(st, item) || '') === yearVal);
 
@@ -15980,7 +16571,13 @@
           return (statusVal === 'NORMAL' && !isAlert) || (statusVal === 'ALERT' && isAlert);
         });
 
-        return matchDataset && matchYear && matchSearch && matchStatus;
+        return matchCategory && matchDataset && matchYear && matchSearch && matchStatus;
+      }).sort((a, b) => {
+        // ຈັດກຸ່ມໃຫ້ 1. ຂໍ້ມູນສະເພາະບໍລິສັດ/ກິດຈະການ ('COMPANY') ຂຶ້ນກ່ອນ ແລະ 2. ຂໍ້ມູນອົງການຈັດຕັ້ງລັດ ('GOV') ຕາມຫຼັງ ເພື່ອບໍ່ໃຫ້ປົນກັນ
+        const catA = getRecordDataCategory(a) === 'COMPANY' ? 0 : 1;
+        const catB = getRecordDataCategory(b) === 'COMPANY' ? 0 : 1;
+        if (catA !== catB) return catA - catB;
+        return 0;
       });
 
       updateKPIs(filteredData);
@@ -16000,7 +16597,7 @@
       document.getElementById('tableHeader').innerHTML = `
         <th class="p-3 text-center w-14 text-slate-700 font-bold">🔍 ເລືອກ</th>
         <th class="p-3 text-center w-12 text-slate-500 font-bold">ລຳດັບ</th>
-        <th class="p-3 text-slate-700 font-bold">ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</th>
+        <th class="p-3 text-slate-700 font-bold">ປະເພດຂໍ້ມູນ &amp; ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</th>
         <th class="p-3 text-center text-slate-700 font-bold">ຈຳນວນສະຖານີ</th>
         <th class="p-3 text-slate-700 font-bold">ເວລາທີ່ບັນທຶກ</th>
         <th class="p-3 text-center text-slate-700 font-bold no-print">ຈັດການ</th>
@@ -16011,7 +16608,7 @@
       const rowsHtml = [];
 
       // ຄົ້ນຫາ/ກອງໃໝ່ → ປັບໜ້າກັບມາໜ້າ 1
-      const filterKey = `${searchKeyword}|${statusVal}|${datasetVal}|${yearVal}`;
+      const filterKey = `${categoryVal}|${searchKeyword}|${statusVal}|${datasetVal}|${yearVal}`;
       if (filterKey !== lastFilterKey) { tableCurrentPage = 1; lastFilterKey = filterKey; }
 
       // ຄຳນວນການແບ່ງໜ້າ (Pagination)
@@ -16025,16 +16622,28 @@
       const endIndex = tablePageSize === 'ALL' ? totalRecords : Math.min(startIndex + pageSize, totalRecords);
       const pagedData = filteredData.slice(startIndex, endIndex);
 
-      // ອັບເດດ ⚡ Dropdown ເລື່ອນຫາຂໍ້ມູນດ່ວນ
+      // ອັບເດດ ⚡ Dropdown ເລື່ອນຫາຂໍ້ມູນດ່ວນ (ແຍກເປັນ 2 ກຸ່ມ <optgroup>)
       const quickScrollDropdown = document.getElementById('tableQuickScrollDropdown');
       if (quickScrollDropdown) {
         let optHtml = `<option value="">⚡ ເລື່ອນຫາຂໍ້ມູນ: ເລືອກຈາກ ${filteredData.length} ຊຸດ...</option>`;
+        const compEntries = [];
+        const govEntries = [];
         filteredData.forEach((it, idx) => {
           const title = it.companyName || it.name || 'ບໍ່ລະບຸຊື່';
           const stCount = (it.stations || [it]).length;
           const pageNum = tablePageSize === 'ALL' ? 1 : Math.floor(idx / pageSize) + 1;
-          optHtml += `<option value="${escAttr(it.fbKey)}">[${idx + 1}] ${escAttr(title)} (${stCount} ສະຖານີ${totalPages > 1 && tablePageSize !== 'ALL' ? ` · ໜ້າ ${pageNum}` : ''})</option>`;
+          const cat = getRecordDataCategory(it);
+          const icon = cat === 'GOV' ? '🏛️' : '🏢';
+          const opt = `<option value="${escAttr(it.fbKey)}">[${idx + 1}] ${icon} ${escAttr(title)} (${stCount} ສະຖານີ${totalPages > 1 && tablePageSize !== 'ALL' ? ` · ໜ້າ ${pageNum}` : ''})</option>`;
+          if (cat === 'GOV') govEntries.push(opt);
+          else compEntries.push(opt);
         });
+        if (compEntries.length > 0) {
+          optHtml += `<optgroup label="🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compEntries.length})">${compEntries.join('')}</optgroup>`;
+        }
+        if (govEntries.length > 0) {
+          optHtml += `<optgroup label="🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govEntries.length})">${govEntries.join('')}</optgroup>`;
+        }
         quickScrollDropdown.innerHTML = optHtml;
       }
 
@@ -16316,12 +16925,42 @@
         });
       });
 
-      // 2. ສະແດງແຖວຕາຕະລາງສະເພາະໜ້າປັດຈຸບັນ (ບໍ່ໃຫ້ແຖວຍາວ)
+      // 2. ສະແດງແຖວຕາຕະລາງສະເພາະໜ້າປັດຈຸບັນ (ບໍ່ໃຫ້ແຖວຍາວ) + ແຍກຫົວຂໍ້ຕາມ 2 ປະເພດຂໍ້ມູນຢ່າງຊັດເຈນ
+      let prevRenderedCategory = null;
       pagedData.forEach((item, indexInPage) => {
         const overallIndex = startIndex + indexInPage;
         const company = item.companyName || item.name || 'ບໍ່ລະບຸບໍລິສັດ';
         const stations = item.stations || [item];
         const isExpanded = expandedRows[item.fbKey] || false;
+        const itemCat = getRecordDataCategory(item);
+        const catMeta = getRecordCategoryMeta(item);
+
+        // ສະແດງແຖບຫົວຂໍ້ຄັ້ນລະຫວ່າງ ປະເພດ 1 (ບໍລິສັດ/ກິດຈະການ) ແລະ ປະເພດ 2 (ອົງການຈັດຕັ້ງລັດ) ເພື່ອບໍ່ໃຫ້ຂໍ້ມູນປົນກັນ
+        if (itemCat !== prevRenderedCategory) {
+          prevRenderedCategory = itemCat;
+          const catDatasetTotal = filteredData.filter(d => getRecordDataCategory(d) === itemCat).length;
+          const catStationTotal = filteredData.filter(d => getRecordDataCategory(d) === itemCat)
+            .reduce((acc, d) => acc + (Array.isArray(d.stations) ? d.stations.length : 1), 0);
+          rowsHtml.push(`
+            <tr class="${itemCat === 'GOV' ? 'bg-gradient-to-r from-blue-600/10 via-sky-500/10 to-blue-50 border-y-2 border-blue-300' : 'bg-gradient-to-r from-teal-600/10 via-emerald-500/10 to-teal-50 border-y-2 border-teal-300'} select-none">
+              <td colspan="6" class="py-2.5 px-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-lg ${itemCat === 'GOV' ? 'bg-blue-600 text-white' : 'bg-teal-600 text-white'} flex items-center justify-center text-sm font-black shadow-2xs">${catMeta.icon}</span>
+                    <div>
+                      <span class="text-xs sm:text-sm font-black ${itemCat === 'GOV' ? 'text-blue-950' : 'text-teal-950'}">${catMeta.title}</span>
+                      <span class="hidden sm:inline-block ml-2 text-[10.5px] font-semibold ${itemCat === 'GOV' ? 'text-blue-700' : 'text-teal-700'}">(${itemCat === 'GOV' ? 'ຂໍ້ມູນຈາກພະແນກ, ກົມ, ສະຖາບັນ ຫຼື ໜ່ວຍງານລັດ' : 'ຂໍ້ມູນຈາກບໍລິສັດ, ໂຮງງານ, ໂຄງການ ຫຼື ກິດຈະການ'})</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${itemCat === 'GOV' ? 'bg-blue-600 text-white' : 'bg-teal-600 text-white'} shadow-2xs">📦 ${catDatasetTotal} ຊຸດຂໍ້ມູນ</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white ${itemCat === 'GOV' ? 'text-blue-800 border border-blue-200' : 'text-teal-800 border border-teal-200'}">📍 ${catStationTotal} ສະຖານີ</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `);
+        }
 
         rowsHtml.push(`
           <tr id="row_${item.fbKey}" class="group ${isExpanded ? 'bg-indigo-50/40 border-indigo-200' : 'bg-white hover:bg-slate-50/90'} font-semibold border-b border-slate-200/90 transition-all duration-150 cursor-pointer select-none" onclick="openDatasetDetailModal('${item.fbKey}')"
@@ -16334,9 +16973,9 @@
               ${canDelete ? '<span class="drag-handle ml-1 text-slate-400 hover:text-slate-600 cursor-grab" title="ລາກໄປວາງໃສ່ຊຸດອື່ນເພື່ອລວມ">⠿</span>' : ''}
             </td>
             <td class="py-2.5 px-3 text-center font-bold text-slate-400 group-hover:text-slate-600">${overallIndex + 1}</td>
-            <td class="py-2.5 px-3 max-w-[260px]">
+            <td class="py-2.5 px-3 max-w-[280px]">
               <div class="flex flex-col gap-0.5 min-w-0">
-                <div class="truncate">${renderOrgBadge(company)}</div>
+                <div class="truncate">${renderOrgBadge(company, item)}</div>
                 ${item.projectLocation ? `<span class="text-[11px] text-slate-500 truncate flex items-center gap-1 font-normal" title="${escAttr(item.projectLocation)}"><span class="text-rose-500">📍</span> ${escAttr(item.projectLocation)}</span>` : ''}
               </div>
             </td>
@@ -16376,6 +17015,9 @@
                   <span>👁️ ລາຍລະອຽດ</span>
                 </button>
                 ${canDelete ? `
+                  <button type="button" onclick="quickSwitchRecordCategory('${item.fbKey}')" class="inline-flex items-center gap-1 bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 font-bold text-xs px-2 py-1.5 rounded-lg border border-slate-200 hover:border-indigo-300 shadow-2xs transition cursor-pointer" title="ປ່ຽນປະເພດຂໍ້ມູນ (1. ບໍລິສັດ/ກິດຈະການ ⇄ 2. ອົງການຈັດຕັ້ງລັດ)">
+                    <span>⇄</span>
+                  </button>
                   <button data-name="${escAttr(company)}" onclick="deleteItem('${item.fbKey}', this.dataset.name)" class="inline-flex items-center gap-1 bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs px-2 py-1.5 rounded-lg border border-slate-200 hover:border-rose-300 shadow-2xs transition" title="ລົບຊຸດຂໍ້ມູນນີ້">
                     <span>🗑️</span>
                   </button>
@@ -16542,16 +17184,25 @@
       if (!isOpen) {
         return `
           <button onclick="openMasterEdit('${item.fbKey}')" class="w-full bg-white hover:bg-indigo-50 text-indigo-700 font-bold text-[11px] px-3 py-2 rounded-xl border border-indigo-200 shadow-2xs transition flex items-center justify-center gap-1.5">
-            <span>✏️</span> ແກ້ໄຂຂໍ້ມູນຫຼັກ (ຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ / ທີ່ຕັ້ງ / ຜູ້ບັນທຶກ / ການຢັ້ງຢືນ)
+            <span>✏️</span> ແກ້ໄຂຂໍ້ມູນຫຼັກ (ປະເພດຂໍ້ມູນ / ຊື່ຂໍ້ມູນ / ທີ່ຕັ້ງ / ຜູ້ບັນທຶກ / ການຢັ້ງຢືນ)
           </button>
           ${renderMergeIntoControl(item)}`;
       }
       const p = `editm_${item.fbKey}_`;
       const gov = item.govVerification || {};
       const oth = item.otherVerification || {};
+      const curCat = getRecordDataCategory(item);
       return `
         <div class="bg-white border border-indigo-200 rounded-xl p-3.5 space-y-3">
           <p class="text-[11px] font-bold text-indigo-800">✏️ ແກ້ໄຂຂໍ້ມູນຫຼັກຂອງຊຸດຂໍ້ມູນນີ້</p>
+          <!-- 🗂️ ເລືອກປະເພດຂໍ້ມູນ (1. ບໍລິສັດ/ກິດຈະການ ຫຼື 2. ອົງການຈັດຕັ້ງລັດ) -->
+          <div class="p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/50">
+            <label class="block text-[11px] font-bold text-indigo-900 mb-1.5">🗂️ ປະເພດຂໍ້ມູນ (ແຍກເພື່ອບໍ່ໃຫ້ຂໍ້ມູນປະປົນກັນ)</label>
+            <select id="${p}dataCategory" class="w-full px-3 py-2 rounded-xl border border-indigo-300 bg-white text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="COMPANY" ${curCat === 'COMPANY' ? 'selected' : ''}>🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
+              <option value="GOV" ${curCat === 'GOV' ? 'selected' : ''}>🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
+            </select>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             ${editInput(p + 'company', '🏢 ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ', item.companyName || item.name || '')}
             ${editInput(p + 'location', '📍 ຈຸດພິກັດ / ທີ່ຕັ້ງ ຂອງໂຄງການ', item.projectLocation || '')}
@@ -16707,8 +17358,10 @@
       const otherOrg = get('otherOrg');
       const otherDate = get('otherDate');
       const otherDoc = get('otherDoc');
+      const dataCategory = get('dataCategory') === 'GOV' ? 'GOV' : 'COMPANY';
 
       db.ref(`water_records/${fbKey}`).update({
+        dataCategory,
         companyName,
         projectLocation: get('location'),
         recordedBy,
@@ -17004,18 +17657,28 @@
       const hasGovCert = Boolean(gov.agency || gov.docNo || gov.date);
       const hasOtherCert = Boolean(oth.org || oth.docNo || oth.date);
 
-      // 1. ຫ້ອງສະແດງຂໍ້ມູນຫຼັກ & ຜູ້ບັນທຶກ (ສະແດງຜູ້ບັນທຶກຢ່າງຊັດເຈນໃນໜ້າຕ່າງສະເພາະນີ້)
+      // 1. ຫ້ອງສະແດງຂໍ້ມູນຫຼັກ & ຜູ້ບັນທຶກ (ສະແດງຜູ້ບັນທຶກ ແລະ ປະເພດຂໍ້ມູນຢ່າງຊັດເຈນໃນໜ້າຕ່າງສະເພາະນີ້)
+      const catMeta = getRecordCategoryMeta(item);
       const masterCardHtml = `
         <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3.5">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <span class="text-base font-bold text-slate-800">📋 ຂໍ້ມູນຫຼັກຂອງຊຸດຂໍ້ມູນ</span>
+              <span class="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-extrabold ${catMeta.badgeClass} shadow-2xs">
+                <span>${catMeta.icon}</span>
+                <span>${catMeta.fullLabel}</span>
+              </span>
               <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60">ID: ${escAttr(item.fbKey)}</span>
             </div>
             ${canDelete ? `
-              <button onclick="openMasterEdit('${item.fbKey}')" class="text-xs px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition flex items-center gap-1 cursor-pointer">
-                ✏️ ແກ້ໄຂຂໍ້ມູນຫຼັກ
-              </button>
+              <div class="flex items-center gap-1.5">
+                <button onclick="quickSwitchRecordCategory('${item.fbKey}')" class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 font-bold border border-slate-200 hover:border-indigo-200 transition flex items-center gap-1 cursor-pointer" title="ຍ້າຍປະເພດຂໍ້ມູນລະຫວ່າງ 1. ບໍລິສັດ/ກິດຈະການ ⇄ 2. ອົງການຈັດຕັ້ງລັດ">
+                  ⇄ ຍ້າຍປະເພດຂໍ້ມູນ
+                </button>
+                <button onclick="openMasterEdit('${item.fbKey}')" class="text-xs px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition flex items-center gap-1 cursor-pointer">
+                  ✏️ ແກ້ໄຂຂໍ້ມູນຫຼັກ
+                </button>
+              </div>
             ` : ''}
           </div>
 
