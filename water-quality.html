@@ -8927,6 +8927,13 @@
       level: 'ALL',
       search: '',
       selectedIds: null, // Set of uid string
+      simCompany: 'ALL',
+      simProvince: 'ALL',
+      simLoadMode: 'STATION', // 'STATION' | 'DATASET_AVG' | 'DATASET_MIN' | 'DATASET_MAX' | 'CUSTOM_SET'
+      simStationUid: '',
+      simCustomSetIds: null, // Set of uid strings for custom user-selected dataset in Simulator
+      simSearch: '',
+      simSourceLabel: 'ຄ່າເລີ່ມຕົ້ນທົດລອງ (Default Simulation)',
       simValues: { ph: 7.2, do: 6.5, bod: 2.5, cod: 12.0, turbidity: 8.0, coliform: 250, tss: 15.0, ec: 180 }
     };
 
@@ -9057,6 +9064,36 @@
       } else {
         interpretationNarrative = `ຂໍ້ມູນທີ່ເລືອກ ${totalSelected} ສະຖານີ ຍັງບໍ່ມີຄ່າດັດຊະນີ WQI ທີ່ສົມບູນ.`;
       }
+
+      // Prepare Simulator custom dataset & station selection pool
+      if (!qwiModalState.simCustomSetIds) {
+        qwiModalState.simCustomSetIds = new Set(allStations.map(s => s.uid));
+      }
+      const simQ = (qwiModalState.simSearch || '').toLowerCase().trim();
+      const simPoolStations = allStations.filter(item => {
+        if (qwiModalState.simCompany && qwiModalState.simCompany !== 'ALL' && item.comp !== qwiModalState.simCompany) return false;
+        if (qwiModalState.simProvince && qwiModalState.simProvince !== 'ALL' && item.province !== qwiModalState.simProvince) return false;
+        return true;
+      });
+      const simSearchFilteredPool = simPoolStations.filter(item => {
+        if (!simQ) return true;
+        return `${item.st.code || ''} ${item.st.name || ''} ${item.comp || ''} ${item.province || ''}`.toLowerCase().includes(simQ);
+      });
+      const simGroupedMap = {};
+      simPoolStations.forEach(s => {
+        if (!simGroupedMap[s.comp]) simGroupedMap[s.comp] = [];
+        simGroupedMap[s.comp].push(s);
+      });
+      const simCompanyOptionsHtml = companies.map(c => {
+        const cnt = allStations.filter(s => s.comp === c).length;
+        return `<option value="${escAttr(c)}" ${qwiModalState.simCompany === c ? 'selected' : ''}>🏢 ${escAttr(c)} (${cnt} ສະຖານີ)</option>`;
+      }).join('');
+      const simStationOptgroupsHtml = Object.entries(simGroupedMap).map(([compName, stList]) => `
+        <optgroup label="🏢 ຊຸດຂໍ້ມູນ: ${escAttr(compName)} (${stList.length} ສະຖານີ)">
+          ${stList.map(s => `<option value="${escAttr(s.uid)}" ${qwiModalState.simStationUid === s.uid ? 'selected' : ''}>📍 ${escAttr(s.st.code || s.st.name)} — ${escAttr(s.st.name || '')} (WQI: ${s.qi?.score ?? '-'})</option>`).join('')}
+        </optgroup>
+      `).join('');
+      const simCustomCheckedInPool = simPoolStations.filter(s => qwiModalState.simCustomSetIds.has(s.uid));
 
       const contentHtml = `
         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 w-full flex flex-col overflow-hidden">
@@ -9366,77 +9403,332 @@
             ` : `
               <!-- 🧪 WQI Simulator & Custom Parameter Calculator -->
               <div class="space-y-4">
-                <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200">
-                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200 space-y-3">
+                  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
                     <div>
                       <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
                         <span>🧪</span> ທົດລອງປ້ອນຄ່າພາຣາມິເຕີເພື່ອຄິດໄລ່ ແລະ ແປຜົນ WQI ທັນທີ (Interactive Simulator)
                       </h4>
-                      <p class="text-[11px] text-slate-500">ປ້ອນຄ່າ ຫຼື ເລືອກດຶງຄ່າຈາກສະຖານີຕົວຈິງ ເພື່ອວິເຄາະສູດຄິດໄລ່ ແລະ ການແປຄຸນນະພາບນ້ຳ</p>
+                      <p class="text-[11px] text-slate-500">ເລືອກຊຸດຂໍ້ມູນດ້ວຍຕົນເອງ ຫຼື ເລືອກດຶງຄ່າຈາກສະຖານີຕົວຈິງ ເພື່ອສະແດງການແປຜົນ ແລະ ວິເຄາະສູດຄິດໄລ່ WQI</p>
                     </div>
-                    <div class="flex items-center gap-2">
-                      <select id="simStationPicker" onchange="loadSelectedStationToSimulator(this.value)" class="text-xs border border-indigo-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold text-slate-700 outline-none">
-                        <option value="">📥 ເລືອກດຶງຄ່າຈາກສະຖານີຕົວຈິງ...</option>
-                        ${allStations.map(s => `<option value="${s.uid}">${escAttr(s.st.code || s.st.name)} - ${escAttr(s.comp)}</option>`).join('')}
-                      </select>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <button type="button" onclick="applySimulatorDatasetPreset('DATASET_AVG')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] transition shadow-2xs cursor-pointer flex items-center gap-1" title="ດຶງຄ່າສະເລ່ຍຂອງຊຸດຂໍ້ມູນທີ່ເລືອກມາແປຜົນ">
+                        📊 ດຶງຄ່າສະເລ່ຍຊຸດຂໍ້ມູນທີ່ເລືອກ
+                      </button>
+                      <button type="button" onclick="applySimulatorDatasetPreset('DATASET_MIN')" class="px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition shadow-2xs cursor-pointer flex items-center gap-1" title="ດຶງຄ່າຈາກສະຖານີທີ່ມີຄະແນນຕ່ຳສຸດ (Min WQI) ໃນຊຸດຂໍ້ມູນທີ່ເລືອກ">
+                        🔴 ດຶງຄ່າຕ່ຳສຸດ (Min WQI)
+                      </button>
+                      <button type="button" onclick="applySimulatorDatasetPreset('DATASET_MAX')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-2xs cursor-pointer flex items-center gap-1" title="ດຶງຄ່າຈາກສະຖານີທີ່ມີຄະແນນສູງສຸດ (Max WQI) ໃນຊຸດຂໍ້ມູນທີ່ເລືອກ">
+                        🟢 ດຶງຄ່າສູງສຸດ (Max WQI)
+                      </button>
                     </div>
+                  </div>
+
+                  <!-- 🗂️ ຊ່ອງເລືອກຊຸດຂໍ້ມູນ ແລະ ດຶງຄ່າສະຖານີຕົວຈິງດ້ວຍຕົນເອງ (Self-Service Dataset & Station Selector) -->
+                  <div class="bg-white p-3.5 rounded-xl border border-indigo-200 shadow-2xs space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                      <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">🗂️</span>
+                        <span class="font-extrabold text-slate-800 text-xs">ຊ່ອງເລືອກດຶງຄ່າສະຖານີຕົວຈິງ ແລະ ເລືອກຊຸດຂໍ້ມູນດ້ວຍຕົນເອງ ເພື່ອສະແດງການແປຜົນ:</span>
+                      </div>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-800 font-bold text-[11px]">
+                        📌 ກຳລັງແປຜົນ: <span id="simActiveSourceBadge" class="text-indigo-950">${escAttr(qwiModalState.simSourceLabel || 'ຄ່າເລີ່ມຕົ້ນທົດລອງ')}</span>
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                      <!-- 1. Select Dataset / Company -->
+                      <div>
+                        <label class="block text-[10.5px] font-bold text-slate-600 mb-1">1️⃣ ເລືອກຊຸດຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ:</label>
+                        <select id="simDatasetCompanySelect" onchange="changeSimDatasetCompany(this.value)" class="w-full text-xs border border-indigo-300 rounded-lg px-2.5 py-1.5 bg-white font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-400">
+                          <option value="ALL" ${qwiModalState.simCompany === 'ALL' ? 'selected' : ''}>🏢 ທຸກຊຸດຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${allStations.length} ສະຖານີ)</option>
+                          ${simCompanyOptionsHtml}
+                        </select>
+                      </div>
+
+                      <!-- 2. Select Province -->
+                      <div>
+                        <label class="block text-[10.5px] font-bold text-slate-600 mb-1">2️⃣ ກອງຕາມແຂວງ (ຖ້າມີ):</label>
+                        <select id="simDatasetProvinceSelect" onchange="changeSimDatasetProvince(this.value)" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-400">
+                          <option value="ALL" ${qwiModalState.simProvince === 'ALL' ? 'selected' : ''}>🗺️ ທຸກແຂວງ (${provinces.length})</option>
+                          ${provinces.map(p => `<option value="${escAttr(p)}" ${qwiModalState.simProvince === p ? 'selected' : ''}>📍 ${escAttr(p)}</option>`).join('')}
+                        </select>
+                      </div>
+
+                      <!-- 3. Select Dataset Evaluation Mode -->
+                      <div>
+                        <label class="block text-[10.5px] font-bold text-slate-600 mb-1">3️⃣ ຮູບແບບການດຶງຊຸດຂໍ້ມູນມາແປຜົນ:</label>
+                        <select id="simLoadModeSelect" onchange="changeSimLoadMode(this.value)" class="w-full text-xs border border-indigo-300 rounded-lg px-2.5 py-1.5 bg-indigo-50/50 font-bold text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-400">
+                          <option value="STATION" ${qwiModalState.simLoadMode === 'STATION' ? 'selected' : ''}>📍 ເລືອກລາຍສະຖານີຕົວຈິງ (Single Station)</option>
+                          <option value="DATASET_AVG" ${qwiModalState.simLoadMode === 'DATASET_AVG' ? 'selected' : ''}>📊 ຄ່າສະເລ່ຍຂອງຊຸດຂໍ້ມູນທີ່ເລືອກ (Dataset Avg)</option>
+                          <option value="DATASET_MIN" ${qwiModalState.simLoadMode === 'DATASET_MIN' ? 'selected' : ''}>🔴 ຄ່າຕ່ຳສຸດໃນຊຸດຂໍ້ມູນທີ່ເລືອກ (Dataset Min WQI)</option>
+                          <option value="DATASET_MAX" ${qwiModalState.simLoadMode === 'DATASET_MAX' ? 'selected' : ''}>🟢 ຄ່າສູງສຸດໃນຊຸດຂໍ້ມູນທີ່ເລືອກ (Dataset Max WQI)</option>
+                          <option value="CUSTOM_SET" ${qwiModalState.simLoadMode === 'CUSTOM_SET' ? 'selected' : ''}>☑️ ເລືອກ/ໝາຍຊຸດຂໍ້ມູນສະຖານີດ້ວຍຕົນເອງ (${simCustomCheckedInPool.length} ຈຸດ)</option>
+                        </select>
+                      </div>
+
+                      <!-- 4. Pick Real Station or Dataset Summary -->
+                      <div>
+                        <label class="block text-[10.5px] font-bold text-slate-600 mb-1">4️⃣ ເລືອກດຶງຄ່າຈາກສະຖານີຕົວຈິງ (${simPoolStations.length} ຈຸດ):</label>
+                        <select id="simStationPicker" onchange="loadSelectedStationToSimulator(this.value)" class="w-full text-xs border border-indigo-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-400">
+                          <option value="">📥 ເລືອກສະຖານີ ຫຼື ຊຸດຂໍ້ມູນເພື່ອດຶງຄ່າ...</option>
+                          <optgroup label="⚡ ດຶງຄ່າລວມຈາກຊຸດຂໍ້ມູນທີ່ເລືອກ (${simPoolStations.length} ສະຖານີ)">
+                            <option value="__DATASET_AVG__" ${qwiModalState.simLoadMode === 'DATASET_AVG' ? 'selected' : ''}>📊 ດຶງຄ່າສະເລ່ຍທຸກສະຖານີໃນຊຸດຂໍ້ມູນທີ່ເລືອກ (${simPoolStations.length} ຈຸດ)</option>
+                            <option value="__DATASET_MIN__" ${qwiModalState.simLoadMode === 'DATASET_MIN' ? 'selected' : ''}>🔴 ດຶງຄ່າສະຖານີຄະແນນຕ່ຳສຸດ (Min WQI) ໃນຊຸດຂໍ້ມູນນີ້</option>
+                            <option value="__DATASET_MAX__" ${qwiModalState.simLoadMode === 'DATASET_MAX' ? 'selected' : ''}>🟢 ດຶງຄ່າສະຖານີຄະແນນສູງສຸດ (Max WQI) ໃນຊຸດຂໍ້ມູນນີ້</option>
+                          </optgroup>
+                          ${simStationOptgroupsHtml}
+                        </select>
+                      </div>
+                    </div>
+
+                    ${qwiModalState.simLoadMode === 'CUSTOM_SET' ? `
+                      <!-- Custom Multi-Station Checklist inside Simulator -->
+                      <div class="p-3 rounded-xl bg-slate-50 border border-indigo-200 space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                          <div class="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                            <span>☑️</span> ໝາຍເລືອກສະຖານີທີ່ຕ້ອງການນຳມາລວມເປັນຊຸດຂໍ້ມູນເພື່ອແປຜົນ WQI (ເລືອກແລ້ວ ${simCustomCheckedInPool.length} / ${simPoolStations.length} ສະຖານີ):
+                          </div>
+                          <div class="flex flex-wrap items-center gap-1.5">
+                            <input type="text" value="${escAttr(qwiModalState.simSearch || '')}" oninput="searchSimulatorCustomStations(this.value)" placeholder="🔍 ຄົ້ນຫາສະຖານີ..." class="border border-slate-300 rounded-lg px-2 py-1 bg-white text-[11px] w-44 outline-none focus:ring-2 focus:ring-indigo-400">
+                            <button type="button" onclick="toggleAllSimCustomStations(true)" class="px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10.5px] cursor-pointer">☑️ ເລືອກທັງໝົດໃນຊຸດນີ້</button>
+                            <button type="button" onclick="toggleAllSimCustomStations(false)" class="px-2 py-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-[10.5px] cursor-pointer">⬜ ຍົກເລີກທັງໝົດ</button>
+                          </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 max-h-44 overflow-y-auto pr-1">
+                          ${simSearchFilteredPool.length === 0 ? `<div class="col-span-3 text-center py-4 text-slate-400">ບໍ່ພົບສະຖານີໃນຊຸດຂໍ້ມູນນີ້</div>` : simSearchFilteredPool.map(s => {
+                            const isChk = qwiModalState.simCustomSetIds && qwiModalState.simCustomSetIds.has(s.uid);
+                            return `
+                              <label class="flex items-center justify-between gap-2 p-2 rounded-lg border ${isChk ? 'bg-indigo-50/80 border-indigo-300 text-indigo-950' : 'bg-white border-slate-200 text-slate-600'} cursor-pointer hover:border-indigo-400 transition text-[11px]">
+                                <div class="flex items-center gap-2 min-w-0">
+                                  <input type="checkbox" ${isChk ? 'checked' : ''} onchange="toggleSimCustomStation('${escAttr(s.uid)}', this.checked)" class="w-3.5 h-3.5 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer shrink-0">
+                                  <div class="truncate">
+                                    <div class="font-bold truncate">${escAttr(s.st.code || '')} ${escAttr(s.st.name || '')}</div>
+                                    <div class="text-[9.5px] text-slate-500 truncate">🏢 ${escAttr(s.comp)} • 📍 ${escAttr(s.province)}</div>
+                                  </div>
+                                </div>
+                                <span class="font-mono font-bold text-[10.5px] px-1.5 py-0.5 rounded ${s.qi ? s.qi.badgeClass : 'bg-slate-100 text-slate-500'} shrink-0">${s.qi?.score ?? '-'}</span>
+                              </label>
+                            `;
+                          }).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
                   </div>
 
                   <!-- Simulator Inputs -->
                   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">pH (ຄວາມເປັນກົດ-ດ່າງ):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">pH (ຄວາມເປັນກົດ-ດ່າງ) <span class="text-indigo-600">[w=3]</span>:</label>
                       <input type="number" step="0.1" id="sim_ph" value="${qwiModalState.simValues.ph}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: 6.5 — 8.5</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: 6.5 — 8.5 (ເໝາະສົມສຸດ 7.2)</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">DO (ອົກຊີເຈນລະລາຍ mg/L):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">DO (ອົກຊີເຈນລະລາຍ mg/L) <span class="text-indigo-600">[w=4]</span>:</label>
                       <input type="number" step="0.1" id="sim_do" value="${qwiModalState.simValues.do}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≥ 6.0 mg/L</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≥ 6.0 mg/L (ຕ່ຳສຸດ &lt; 2.0)</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">BOD (mg/L):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">BOD (mg/L) <span class="text-indigo-600">[w=4]</span>:</label>
                       <input type="number" step="0.1" id="sim_bod" value="${qwiModalState.simValues.bod}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 1.5 mg/L</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 1.5 mg/L (ເຝົ້າລະວັງ &gt; 6.0)</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">COD (mg/L):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">COD (mg/L) <span class="text-indigo-600">[w=3]</span>:</label>
                       <input type="number" step="0.1" id="sim_cod" value="${qwiModalState.simValues.cod}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 5.0 mg/L</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 5.0 mg/L (ເຝົ້າລະວັງ &gt; 40)</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">Turbidity (ຄວາມຂຸ່ນ NTU):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">Turbidity (ຄວາມຂຸ່ນ NTU) <span class="text-indigo-600">[w=2]</span>:</label>
                       <input type="number" step="0.1" id="sim_turbidity" value="${qwiModalState.simValues.turbidity}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 20 NTU</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 5 — 20 NTU</span>
                     </div>
 
                     <div>
                       <label class="block text-[11px] font-bold text-slate-700 mb-1">Fecal Coliform (MPN/100ml):</label>
                       <input type="number" step="1" id="sim_coliform" value="${qwiModalState.simValues.coliform}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 1000 MPN</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 1000 — 5000 MPN</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">TSS (ສານແຂວນລອຍ mg/L):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">TSS (ສານແຂວນລອຍ mg/L) <span class="text-slate-400">[w=2*]</span>:</label>
                       <input type="number" step="0.1" id="sim_tss" value="${qwiModalState.simValues.tss}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 25 mg/L</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 25 mg/L (*ໃຊ້ແທນເມື່ອບໍ່ມີຄວາມຂຸ່ນ)</span>
                     </div>
 
                     <div>
-                      <label class="block text-[11px] font-bold text-slate-700 mb-1">EC (ການນຳໄຟຟ້າ µS/cm):</label>
+                      <label class="block text-[11px] font-bold text-slate-700 mb-1">EC (ການນຳໄຟຟ້າ µS/cm) <span class="text-indigo-600">[w=1.5]</span>:</label>
                       <input type="number" step="1" id="sim_ec" value="${qwiModalState.simValues.ec}" oninput="calcSimulatorLive()" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-400">
-                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 500 µS/cm</span>
+                      <span class="text-[9.5px] text-slate-400">ມາດຕະຖານ: ≤ 250 — 500 µS/cm</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Simulation Result Card -->
+                <!-- Simulation Result Card & Live Step-by-Step Formula Breakdown -->
                 <div id="simulatorResultBox" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
                   <!-- Live calculation inserted via calcSimulatorLive -->
+                </div>
+
+                <!-- 📘 ຫ້ອງແນະນຳສູດຄິດໄລ່ ທີ່ໃຊ້ໃນການແປຜົນ ຄະແນນຕ່ຳສຸດ (Min WQI) ແລະ WQI ສະເລ່ຍ -->
+                <div class="bg-gradient-to-br from-rose-50/70 via-white to-indigo-50/50 p-4 sm:p-5 rounded-2xl border-2 border-rose-200/90 shadow-xs space-y-4">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-rose-200/70">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-lg font-extrabold shadow-xs shrink-0">
+                        📐
+                      </div>
+                      <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300">ຄູ່ມືແນະນຳສູດຄິດໄລ່ມາດຕະຖານ (Formula Reference Guide)</span>
+                        <h4 class="font-extrabold text-slate-800 text-sm sm:text-base mt-0.5">
+                          ຫ້ອງແນະນຳສູດຄິດໄລ່ ທີ່ໃຊ້ໃນການແປຜົນ ຄະແນນຕ່ຳສຸດ (Min WQI) ແລະ ດັດຊະນີ WQI
+                        </h4>
+                      </div>
+                    </div>
+                    <span class="text-[11px] font-bold text-rose-700 bg-white px-3 py-1 rounded-lg border border-rose-200 self-start sm:self-auto">
+                      🎯 ຊ່ວຍໃຫ້ຜູ້ນຳໃຊ້ກວດສອບ ແລະ ນຳໃຊ້ສູດຄິດໄລ່ຢ່າງຖືກຕ້ອງ
+                    </span>
+                  </div>
+
+                  <!-- 3 Core Formula Cards -->
+                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                    <!-- Formula 1: Station WQI -->
+                    <div class="bg-white p-3.5 rounded-xl border border-indigo-200 shadow-2xs space-y-2">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-indigo-900">1️⃣ ສູດຄິດໄລ່ WQI ຂອງແຕ່ລະສະຖານີ</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold">Weighted WQI</span>
+                      </div>
+                      <div class="p-2.5 rounded-lg bg-slate-900 text-white font-mono text-center text-xs sm:text-sm font-bold tracking-wide">
+                        WQI = Σ(qᵢ × wᵢ) ÷ Σwᵢ
+                      </div>
+                      <ul class="text-[11px] text-slate-600 space-y-1 leading-relaxed">
+                        <li>• <b>qᵢ (Sub-index):</b> ຄະແນນຍ່ອຍຂອງພາຣາມິເຕີທີ <i>i</i> (ມີຄ່າ 10 ເຖິງ 100 ຄະແນນ ຕາມເກນມາດຕະຖານ)</li>
+                        <li>• <b>wᵢ (Weight):</b> ຄ່ານ້ຳໜັກຄວາມສຳຄັນຂອງພາຣາມິເຕີ (DO=4, BOD=4, pH=3, COD=3, Turbidity/TSS=2, EC=1.5)</li>
+                        <li>• <b>Σwᵢ:</b> ຜົນບວກນ້ຳໜັກທັງໝົດຂອງພາຣາມິເຕີທີ່ມີຄ່າວັດແທກ (ສູງສຸດ = <b>17.5</b>)</li>
+                      </ul>
+                    </div>
+
+                    <!-- Formula 2: Min WQI across stations -->
+                    <div class="bg-white p-3.5 rounded-xl border-2 border-rose-300 shadow-2xs space-y-2">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-rose-900">2️⃣ ສູດຄິດໄລ່ຄະແນນຕ່ຳສຸດ (Min WQI)</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">Minimum Operator</span>
+                      </div>
+                      <div class="p-2.5 rounded-lg bg-rose-950 text-rose-100 font-mono text-center text-xs sm:text-sm font-bold tracking-wide">
+                        Min WQI = min(WQI₁, WQI₂, ..., WQIₙ)
+                      </div>
+                      <ul class="text-[11px] text-slate-600 space-y-1 leading-relaxed">
+                        <li>• <b>ຄວາມໝາຍ:</b> ຄັດເລືອກເອົາຄ່າ WQI ທີ່ຕ່ຳທີ່ສຸດຈາກຊຸດຂໍ້ມູນສະຖານີທີ່ເລືອກແປຜົນທັງໝົດ (<i>n</i> ສະຖານີ)</li>
+                        <li>• <b>ສູດຊອກຫາໂຕຊີ້ວັດวิกฤต (Limiting Factor):</b> <code class="bg-rose-50 text-rose-800 px-1 rounded font-bold">q_min = min(q_pH, q_DO, q_BOD, q_COD, ...)</code></li>
+                        <li>• <b>ການນຳໃຊ້:</b> ພາຣາມິເຕີໃດທີ່ມີຄ່າ <b>qᵢ ຕ່ຳສຸດ (q_min)</b> ແມ່ນຕົວການຫຼັກທີ່ດຶງຄະແນນ WQI ລວມໃຫ້ຕ່ຳລົງ ຕ້ອງໄດ້ຮັບການບຳບັດກ່ອນ</li>
+                      </ul>
+                    </div>
+
+                    <!-- Formula 3: Interpretation & Risk Action -->
+                    <div class="bg-white p-3.5 rounded-xl border border-amber-200 shadow-2xs space-y-2">
+                      <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-amber-900">3️⃣ ເງື່ອນໄຂການແປຜົນຄະແນນຕ່ຳສຸດ (Min WQI)</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-bold">Evaluation Rule</span>
+                      </div>
+                      <div class="p-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-950 font-semibold space-y-1">
+                        <div>🔴 <b>Min WQI &lt; 31:</b> ເສື່ອມໂຊມຮຸນແຮງ (ວິກິດ - ຫ້າມນຳໃຊ້ໂດຍກົງ)</div>
+                        <div>🟠 <b>Min WQI 31 — 50:</b> ບໍ່ດີ / ຕ່ຳ (ເຝົ້າລະວັງພິເສດ - ຕ້ອງບຳບັດ)</div>
+                        <div>🟡 <b>Min WQI 51 — 70:</b> ປານກາງ (ໃຊ້ໃນອຸດສາຫະກຳ/ກະສິກຳບາງສ່ວນ)</div>
+                        <div>🟢 <b>Min WQI ≥ 71:</b> ດີ — ດີຫຼາຍ (ປອດໄພຕໍ່ລະບົບນິເວດ)</div>
+                      </div>
+                      <p class="text-[10.5px] text-slate-600 leading-relaxed">
+                        💡 <b>ຫຼັກການສຳຄັນ:</b> ເຖິງແມ່ນວ່າ <b>WQI ສະເລ່ຍ</b> ຈະຢູ່ໃນເກນດີ, ແຕ່ຖ້າ <b>ຄະແນນຕ່ຳສຸດ (Min WQI) ≤ 50</b> ຜູ້ນຳໃຊ້ຕ້ອງກວດສອບສະຖານີດັ່ງກ່າວທັນທີ ເພາະມີຈຸດປ່ອຍມົນລະພິດເฉพาะຈຸດ.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Sub-Index (q_i) Scoring Criteria Reference Table -->
+                  <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+                    <div class="px-4 py-2.5 bg-slate-100 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                      <span class="font-bold text-slate-800 text-xs">📊 ຕາຕະລາງເກນການໃຫ້ຄະແນນຍ່ອຍ (Sub-Index qᵢ: 0 — 100) ແລະ ນ້ຳໜັກ (wᵢ) ຂອງແຕ່ລະພາຣາມິເຕີ</span>
+                      <span class="text-[10px] text-slate-500">ໃຊ້ສຳລັບແທນຄ່າໃນສູດ WQI = Σ(qᵢ × wᵢ) / Σwᵢ</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                      <table class="w-full text-left border-collapse text-[11px]">
+                        <thead class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                          <tr>
+                            <th class="py-2 px-3">ພາຣາມິເຕີ (Parameter)</th>
+                            <th class="py-2 px-2 text-center">ນ້ຳໜັກ (wᵢ)</th>
+                            <th class="py-2 px-2 text-center text-emerald-700">ດີຫຼາຍ (qᵢ = 100)</th>
+                            <th class="py-2 px-2 text-center text-sky-700">ດີ (qᵢ = 85 — 90)</th>
+                            <th class="py-2 px-2 text-center text-amber-700">ປານກາງ (qᵢ = 70 — 75)</th>
+                            <th class="py-2 px-2 text-center text-orange-700">ຕ່ຳ/ເຝົ້າລະວັງ (qᵢ = 50 — 55)</th>
+                            <th class="py-2 px-2 text-center text-rose-700">ວິກິດ/ຄະແນນຕ່ຳສຸດ (qᵢ = 10 — 35)</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">DO (ອົກຊີເຈນລະລາຍ, mg/L)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">4.0</td>
+                            <td class="py-2 px-2 text-center font-mono">≥ 7.0 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">6.0 — 6.9 <span class="text-[9.5px] text-sky-600">(90)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">5.0 — 5.9 <span class="text-[9.5px] text-amber-600">(75)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">4.0 — 4.9 <span class="text-[9.5px] text-orange-600">(55)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">2.0–3.9 (35) | &lt; 2.0 (15)</td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">BOD (mg/L)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">4.0</td>
+                            <td class="py-2 px-2 text-center font-mono">≤ 1.5 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">1.6 — 2.5 <span class="text-[9.5px] text-sky-600">(90)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">2.6 — 4.0 <span class="text-[9.5px] text-amber-600">(75)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">4.1 — 6.0 <span class="text-[9.5px] text-orange-600">(55)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">6.1–10 (35) | &gt; 10 (15)</td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">pH (ຄວາມເປັນກົດ-ດ່າງ)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">3.0</td>
+                            <td class="py-2 px-2 text-center font-mono" colspan="5">
+                              ສູດຕໍ່ເນື່ອງ: <code class="bg-indigo-50 text-indigo-800 px-1.5 py-0.5 rounded font-bold">q_pH = max(10, min(100, 100 - |pH - 7.2| × 35))</code> (ເໝາະສົມສຸດທີ່ pH = 7.2 ໄດ້ 100 ຄະແນນ; ຖ້າ pH &lt; 5.0 ຫຼື &gt; 9.5 ຄະແນນຈະຫຼຸດລົງຕ່ຳສຸດ 10)
+                            </td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">COD (mg/L)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">3.0</td>
+                            <td class="py-2 px-2 text-center font-mono">≤ 5.0 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">5.1 — 10 <span class="text-[9.5px] text-sky-600">(90)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">10.1 — 20 <span class="text-[9.5px] text-amber-600">(75)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">20.1 — 40 <span class="text-[9.5px] text-orange-600">(55)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">40.1–80 (35) | &gt; 80 (15)</td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">Turbidity (ຄວາມຂຸ່ນ, NTU)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">2.0</td>
+                            <td class="py-2 px-2 text-center font-mono">≤ 5.0 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">5.1 — 15 <span class="text-[9.5px] text-sky-600">(85)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">15.1 — 30 <span class="text-[9.5px] text-amber-600">(70)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">30.1 — 50 <span class="text-[9.5px] text-orange-600">(50)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">&gt; 50 NTU (25)</td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">TSS (ສານແຂວນລອຍ, mg/L) <span class="text-[9.5px] font-normal text-slate-400">(ໃຊ້ເມື່ອບໍ່ມີຄວາມຂຸ່ນ)</span></td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-slate-500">2.0*</td>
+                            <td class="py-2 px-2 text-center font-mono">≤ 25 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">26 — 50 <span class="text-[9.5px] text-sky-600">(80)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">51 — 100 <span class="text-[9.5px] text-amber-600">(60)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">101 — 200 <span class="text-[9.5px] text-orange-600">(40)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">&gt; 200 mg/L (20)</td>
+                          </tr>
+                          <tr class="hover:bg-slate-50/80">
+                            <td class="py-2 px-3 font-bold text-slate-800">EC (ການນຳໄຟຟ້າ, µS/cm)</td>
+                            <td class="py-2 px-2 text-center font-mono font-bold text-indigo-700">1.5</td>
+                            <td class="py-2 px-2 text-center font-mono">≤ 250 <span class="text-[9.5px] text-emerald-600">(100)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">251 — 500 <span class="text-[9.5px] text-sky-600">(90)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">501 — 1000 <span class="text-[9.5px] text-amber-600">(75)</span></td>
+                            <td class="py-2 px-2 text-center font-mono">1001 — 1500 <span class="text-[9.5px] text-orange-600">(55)</span></td>
+                            <td class="py-2 px-2 text-center font-mono text-rose-700 font-semibold">&gt; 1500 µS/cm (35)</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             `}
@@ -9576,28 +9868,183 @@
       URL.revokeObjectURL(url);
     }
 
+    function getSimulatorPoolStations() {
+      const allStations = getAllQwiStationsData();
+      return allStations.filter(item => {
+        if (qwiModalState.simCompany && qwiModalState.simCompany !== 'ALL' && item.comp !== qwiModalState.simCompany) return false;
+        if (qwiModalState.simProvince && qwiModalState.simProvince !== 'ALL' && item.province !== qwiModalState.simProvince) return false;
+        return true;
+      });
+    }
+
+    function computeAverageCustomsFromStations(stationList) {
+      const keys = ['ph', 'do', 'bod', 'cod', 'turbidity', 'coliform', 'tss', 'ec'];
+      const defaults = { ph: 7.2, do: 6.5, bod: 2.5, cod: 12.0, turbidity: 8.0, coliform: 250, tss: 15.0, ec: 180 };
+      const sums = {};
+      const counts = {};
+      keys.forEach(k => { sums[k] = 0; counts[k] = 0; });
+
+      stationList.forEach(item => {
+        const c = item.st?.customs || {};
+        keys.forEach(k => {
+          const v = parseFloat(c[k]);
+          if (!isNaN(v)) {
+            sums[k] += v;
+            counts[k]++;
+          }
+        });
+      });
+
+      const res = {};
+      keys.forEach(k => {
+        if (counts[k] > 0) {
+          const avg = sums[k] / counts[k];
+          res[k] = (k === 'coliform' || k === 'ec') ? Math.round(avg) : +(avg.toFixed(1));
+        } else {
+          res[k] = defaults[k];
+        }
+      });
+      return res;
+    }
+
+    function changeSimDatasetCompany(val) {
+      qwiModalState.simCompany = val || 'ALL';
+      qwiModalState.simStationUid = '';
+      const pool = getSimulatorPoolStations();
+      if (qwiModalState.simLoadMode === 'STATION' && pool.length > 0) {
+        qwiModalState.simLoadMode = 'DATASET_AVG';
+      }
+      applySimulatorDatasetPreset(qwiModalState.simLoadMode || 'DATASET_AVG', true);
+    }
+
+    function changeSimDatasetProvince(val) {
+      qwiModalState.simProvince = val || 'ALL';
+      qwiModalState.simStationUid = '';
+      applySimulatorDatasetPreset(qwiModalState.simLoadMode || 'DATASET_AVG', true);
+    }
+
+    function changeSimLoadMode(mode) {
+      qwiModalState.simLoadMode = mode || 'STATION';
+      if (mode === 'STATION') {
+        const pool = getSimulatorPoolStations();
+        if (pool.length > 0) {
+          loadStationToQwiSimulator(pool[0].uid);
+          return;
+        }
+      }
+      applySimulatorDatasetPreset(mode, false);
+    }
+
+    function applySimulatorDatasetPreset(mode, silentToast = false) {
+      qwiModalState.simLoadMode = mode || 'DATASET_AVG';
+      const pool = getSimulatorPoolStations();
+      const datasetTitle = qwiModalState.simCompany === 'ALL'
+        ? `ທຸກຊຸດຂໍ້ມູນ${qwiModalState.simProvince !== 'ALL' ? ` (${qwiModalState.simProvince})` : ''}`
+        : `${qwiModalState.simCompany}${qwiModalState.simProvince !== 'ALL' ? ` (${qwiModalState.simProvince})` : ''}`;
+
+      if (pool.length === 0) {
+        qwiModalState.simSourceLabel = `ບໍ່ພົບສະຖານີໃນຊຸດຂໍ້ມູນ: ${datasetTitle}`;
+        renderQwiModalContent();
+        return;
+      }
+
+      if (mode === 'DATASET_AVG') {
+        qwiModalState.simStationUid = '';
+        qwiModalState.simValues = computeAverageCustomsFromStations(pool);
+        qwiModalState.simSourceLabel = `📊 ຄ່າສະເລ່ຍຊຸດຂໍ້ມູນ: ${datasetTitle} (${pool.length} ສະຖານີ)`;
+      } else if (mode === 'DATASET_MIN') {
+        const valid = pool.filter(s => s.qi && typeof s.qi.score === 'number' && !isNaN(s.qi.score));
+        const target = valid.length > 0 ? [...valid].sort((a, b) => a.qi.score - b.qi.score)[0] : pool[0];
+        qwiModalState.simStationUid = target.uid;
+        qwiModalState.simValues = computeAverageCustomsFromStations([target]);
+        qwiModalState.simSourceLabel = `🔴 ຄ່າຕ່ຳສຸດ (Min WQI = ${target.qi?.score ?? '-'}): ${target.st.code || ''} ${target.st.name || ''} (${target.comp})`;
+      } else if (mode === 'DATASET_MAX') {
+        const valid = pool.filter(s => s.qi && typeof s.qi.score === 'number' && !isNaN(s.qi.score));
+        const target = valid.length > 0 ? [...valid].sort((a, b) => b.qi.score - a.qi.score)[0] : pool[0];
+        qwiModalState.simStationUid = target.uid;
+        qwiModalState.simValues = computeAverageCustomsFromStations([target]);
+        qwiModalState.simSourceLabel = `🟢 ຄ່າສູງສຸດ (Max WQI = ${target.qi?.score ?? '-'}): ${target.st.code || ''} ${target.st.name || ''} (${target.comp})`;
+      } else if (mode === 'CUSTOM_SET') {
+        if (!qwiModalState.simCustomSetIds) {
+          qwiModalState.simCustomSetIds = new Set(pool.map(s => s.uid));
+        }
+        const checkedList = pool.filter(s => qwiModalState.simCustomSetIds.has(s.uid));
+        if (checkedList.length > 0) {
+          qwiModalState.simValues = computeAverageCustomsFromStations(checkedList);
+          qwiModalState.simSourceLabel = `☑️ ຊຸດຂໍ້ມູນທີ່ເລືອກເອງ: ${datasetTitle} (ເລືອກ ${checkedList.length}/${pool.length} ສະຖານີ)`;
+        } else {
+          qwiModalState.simSourceLabel = `☑️ ຊຸດຂໍ້ມູນທີ່ເລືອກເອງ: ກະລຸນາໝາຍເລືອກຢ່າງໜ້ອຍ 1 ສະຖານີ`;
+        }
+      }
+
+      qwiModalState.activeTab = 'sim';
+      renderQwiModalContent();
+
+      if (!silentToast) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: qwiModalState.simSourceLabel,
+          showConfirmButton: false,
+          timer: 2200
+        });
+      }
+    }
+
+    function searchSimulatorCustomStations(val) {
+      qwiModalState.simSearch = val || '';
+      renderQwiModalContent();
+    }
+
+    function toggleSimCustomStation(uid, checked) {
+      if (!qwiModalState.simCustomSetIds) qwiModalState.simCustomSetIds = new Set();
+      if (checked) qwiModalState.simCustomSetIds.add(uid);
+      else qwiModalState.simCustomSetIds.delete(uid);
+      applySimulatorDatasetPreset('CUSTOM_SET', true);
+    }
+
+    function toggleAllSimCustomStations(checked) {
+      const pool = getSimulatorPoolStations();
+      if (!qwiModalState.simCustomSetIds) qwiModalState.simCustomSetIds = new Set();
+      pool.forEach(s => {
+        if (checked) qwiModalState.simCustomSetIds.add(s.uid);
+        else qwiModalState.simCustomSetIds.delete(s.uid);
+      });
+      applySimulatorDatasetPreset('CUSTOM_SET', false);
+    }
+
     function loadStationToQwiSimulator(uid) {
       const allStations = getAllQwiStationsData();
       const match = allStations.find(s => s.uid === uid);
       if (!match) return;
-      const c = match.st.customs || {};
-      qwiModalState.simValues = {
-        ph: parseFloat(c.ph || 7.2),
-        do: parseFloat(c.do || 6.5),
-        bod: parseFloat(c.bod || 2.5),
-        cod: parseFloat(c.cod || 12.0),
-        turbidity: parseFloat(c.turbidity || 8.0),
-        coliform: parseFloat(c.coliform || 250),
-        tss: parseFloat(c.tss || 15.0),
-        ec: parseFloat(c.ec || 180)
-      };
+      qwiModalState.simLoadMode = 'STATION';
+      qwiModalState.simStationUid = uid;
+      qwiModalState.simValues = computeAverageCustomsFromStations([match]);
+      qwiModalState.simSourceLabel = `📍 ສະຖານີ: ${match.st.code || ''} ${match.st.name || ''} — ${match.comp} (WQI: ${match.qi?.score ?? '-'})`;
       qwiModalState.activeTab = 'sim';
       renderQwiModalContent();
     }
 
-    function loadSelectedStationToSimulator(uid) {
-      if (!uid) return;
-      loadStationToQwiSimulator(uid);
+    function loadSelectedStationToSimulator(val) {
+      if (!val) return;
+      if (val === '__DATASET_AVG__') {
+        applySimulatorDatasetPreset('DATASET_AVG');
+        return;
+      }
+      if (val === '__DATASET_MIN__') {
+        applySimulatorDatasetPreset('DATASET_MIN');
+        return;
+      }
+      if (val === '__DATASET_MAX__') {
+        applySimulatorDatasetPreset('DATASET_MAX');
+        return;
+      }
+      loadStationToQwiSimulator(val);
+    }
+
+    function loadMinWqiStationToSimulator() {
+      applySimulatorDatasetPreset('DATASET_MIN');
     }
 
     function calcSimulatorLive() {
@@ -9611,22 +10058,67 @@
       const ecEl = document.getElementById('sim_ec');
 
       if (!phEl) return;
-      const ph = parseFloat(phEl.value) || 7.2;
-      const doVal = parseFloat(doEl.value) || 6.5;
-      const bod = parseFloat(bodEl.value) || 2.5;
-      const cod = parseFloat(codEl.value) || 12.0;
-      const turb = parseFloat(turbEl.value) || 8.0;
-      const coli = parseFloat(coliEl.value) || 250;
-      const tss = parseFloat(tssEl.value) || 15.0;
-      const ec = parseFloat(ecEl.value) || 180;
+      const ph = parseFloat(phEl.value);
+      const doVal = parseFloat(doEl.value);
+      const bod = parseFloat(bodEl.value);
+      const cod = parseFloat(codEl.value);
+      const turb = parseFloat(turbEl.value);
+      const coli = parseFloat(coliEl.value);
+      const tss = parseFloat(tssEl.value);
+      const ec = parseFloat(ecEl.value);
+
+      const safePh = !isNaN(ph) ? ph : 7.2;
+      const safeDo = !isNaN(doVal) ? doVal : 6.5;
+      const safeBod = !isNaN(bod) ? bod : 2.5;
+      const safeCod = !isNaN(cod) ? cod : 12.0;
+      const safeTurb = !isNaN(turb) ? turb : 8.0;
+      const safeColi = !isNaN(coli) ? coli : 250;
+      const safeTss = !isNaN(tss) ? tss : 15.0;
+      const safeEc = !isNaN(ec) ? ec : 180;
 
       // Update state
-      qwiModalState.simValues = { ph, do: doVal, bod, cod, turbidity: turb, coliform: coli, tss, ec };
+      qwiModalState.simValues = { ph: safePh, do: safeDo, bod: safeBod, cod: safeCod, turbidity: safeTurb, coliform: safeColi, tss: safeTss, ec: safeEc };
+
+      // Calculate detailed sub-indices (q_i) and weights (w_i) matching calculateAutoQWI
+      const qPh = +(Math.max(10, Math.min(100, 100 - Math.abs(safePh - 7.2) * 35)).toFixed(1));
+      const qDo = safeDo >= 7 ? 100 : (safeDo >= 6 ? 90 : (safeDo >= 5 ? 75 : (safeDo >= 4 ? 55 : (safeDo >= 2 ? 35 : 15))));
+      const qBod = safeBod <= 1.5 ? 100 : (safeBod <= 2.5 ? 90 : (safeBod <= 4 ? 75 : (safeBod <= 6 ? 55 : (safeBod <= 10 ? 35 : 15))));
+      const qCod = safeCod <= 5 ? 100 : (safeCod <= 10 ? 90 : (safeCod <= 20 ? 75 : (safeCod <= 40 ? 55 : (safeCod <= 80 ? 35 : 15))));
+      const qTurb = safeTurb <= 5 ? 100 : (safeTurb <= 15 ? 85 : (safeTurb <= 30 ? 70 : (safeTurb <= 50 ? 50 : 25)));
+      const qEc = safeEc <= 250 ? 100 : (safeEc <= 500 ? 90 : (safeEc <= 1000 ? 75 : (safeEc <= 1500 ? 55 : 35)));
+
+      const breakdownRows = [
+        { name: 'DO (ອົກຊີເຈນລະລາຍ)', val: `${safeDo} mg/L`, q: qDo, w: 4.0, rule: safeDo >= 7 ? '≥ 7.0 (ດີຫຼາຍ)' : safeDo >= 6 ? '6.0–6.9 (ດີ)' : safeDo >= 5 ? '5.0–5.9 (ປານກາງ)' : safeDo >= 4 ? '4.0–4.9 (ຕ່ຳ)' : '< 4.0 (ວິກິດ)' },
+        { name: 'BOD (ຄວາມຕ້ອງການອົກຊີເຈນຊີວະເຄມີ)', val: `${safeBod} mg/L`, q: qBod, w: 4.0, rule: safeBod <= 1.5 ? '≤ 1.5 (ດີຫຼາຍ)' : safeBod <= 2.5 ? '1.6–2.5 (ດີ)' : safeBod <= 4 ? '2.6–4.0 (ປານກາງ)' : safeBod <= 6 ? '4.1–6.0 (ຕ່ຳ)' : '> 6.0 (ວິກິດ)' },
+        { name: 'pH (ຄວາມເປັນກົດ-ດ່າງ)', val: `${safePh}`, q: qPh, w: 3.0, rule: `100 - |${safePh} - 7.2| × 35` },
+        { name: 'COD (ຄວາມຕ້ອງການອົກຊີເຈນເຄມີ)', val: `${safeCod} mg/L`, q: qCod, w: 3.0, rule: safeCod <= 5 ? '≤ 5.0 (ດີຫຼາຍ)' : safeCod <= 10 ? '5.1–10 (ດີ)' : safeCod <= 20 ? '10.1–20 (ປານກາງ)' : safeCod <= 40 ? '20.1–40 (ຕ່ຳ)' : '> 40 (ວິກິດ)' },
+        { name: 'Turbidity (ຄວາມຂຸ່ນ)', val: `${safeTurb} NTU`, q: qTurb, w: 2.0, rule: safeTurb <= 5 ? '≤ 5.0 (ດີຫຼາຍ)' : safeTurb <= 15 ? '5.1–15 (ດີ)' : safeTurb <= 30 ? '15.1–30 (ປານກາງ)' : safeTurb <= 50 ? '30.1–50 (ຕ່ຳ)' : '> 50 (ວິກິດ)' },
+        { name: 'EC (ການນຳໄຟຟ້າ)', val: `${safeEc} µS/cm`, q: qEc, w: 1.5, rule: safeEc <= 250 ? '≤ 250 (ດີຫຼາຍ)' : safeEc <= 500 ? '251–500 (ດີ)' : safeEc <= 1000 ? '501–1000 (ປານກາງ)' : safeEc <= 1500 ? '1001–1500 (ຕ່ຳ)' : '> 1500 (ວິກິດ)' }
+      ].map(r => ({ ...r, qw: +((r.q * r.w).toFixed(1)) }));
+
+      const totalW = +(breakdownRows.reduce((s, r) => s + r.w, 0).toFixed(1));
+      const totalQW = +(breakdownRows.reduce((s, r) => s + r.qw, 0).toFixed(1));
+      const minSubQ = Math.min(...breakdownRows.map(r => r.q));
+      const minSubParams = breakdownRows.filter(r => r.q === minSubQ).map(r => r.name);
 
       // Calculate QWI sub-indices
-      const customs = { ph, do: doVal, bod, cod, turbidity: turb, coliform: coli, tss, ec };
+      const customs = { ph: safePh, do: safeDo, bod: safeBod, cod: safeCod, turbidity: safeTurb, coliform: safeColi, tss: safeTss, ec: safeEc };
       const score = calculateAutoQWI(customs);
       const qi = interpretQWI(score);
+      const minSubQi = interpretQWI(minSubQ);
+
+      // Compute dataset statistics for the currently selected Simulator dataset
+      const simPool = getSimulatorPoolStations();
+      const activePool = qwiModalState.simLoadMode === 'CUSTOM_SET' && qwiModalState.simCustomSetIds
+        ? simPool.filter(s => qwiModalState.simCustomSetIds.has(s.uid))
+        : simPool;
+      const validPoolScores = activePool
+        .filter(s => s.qi && typeof s.qi.score === 'number' && !isNaN(s.qi.score))
+        .map(s => s.qi.score);
+      const dsAvg = validPoolScores.length > 0 ? +((validPoolScores.reduce((a, b) => a + b, 0) / validPoolScores.length).toFixed(1)) : '-';
+      const dsMin = validPoolScores.length > 0 ? Math.min(...validPoolScores) : '-';
+      const dsMax = validPoolScores.length > 0 ? Math.max(...validPoolScores) : '-';
+      const dsInterp = typeof dsAvg === 'number' ? interpretQWI(dsAvg) : null;
 
       const resBox = document.getElementById('simulatorResultBox');
       if (!resBox) return;
@@ -9638,18 +10130,90 @@
               ${score}
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h5 class="text-base font-extrabold text-slate-800">ຄະແນນ QWI: ${score} / 100</h5>
+              <div class="text-[11px] font-bold text-indigo-700 mb-0.5 flex flex-wrap items-center gap-1.5">
+                <span>🗂️ ຊຸດຂໍ້ມູນທີ່ເລືອກແປຜົນ:</span>
+                <span class="bg-indigo-100/80 text-indigo-950 px-2 py-0.5 rounded-md border border-indigo-200">${escAttr(qwiModalState.simSourceLabel || 'ຄ່າເລີ່ມຕົ້ນທົດລອງ')}</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h5 class="text-base font-extrabold text-slate-800">ຜົນການແປຄ່າ WQI: ${score} / 100</h5>
                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${qi.badgeClass}">
                   ${qi.dot} ${qi.text}
                 </span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-800 border border-rose-200">
+                  🔻 ຄະແນນຍ່ອຍຕ່ຳສຸດ (q_min): ${minSubQ} / 100 (${minSubParams.join(', ')})
+                </span>
               </div>
               <p class="text-xs text-slate-600 mt-1">${qi.desc}</p>
+              <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-600 bg-white/80 px-2.5 py-1 rounded-lg border border-slate-200 w-fit">
+                <span>📊 <b>ສະຖິຕິຂອງຊຸດຂໍ້ມູນທີ່ເລືອກ (${activePool.length} ສະຖານີ):</b></span>
+                <span>WQI ສະເລ່ຍ = <b class="text-indigo-700">${dsAvg}</b> ${dsInterp ? `(${dsInterp.dot} ${dsInterp.label})` : ''}</span>
+                <span>•</span>
+                <span>ຄ່າຕ່ຳສຸດ (Min) = <b class="text-rose-700">${dsMin}</b></span>
+                <span>•</span>
+                <span>ຄ່າສູງສຸດ (Max) = <b class="text-emerald-700">${dsMax}</b></span>
+              </div>
             </div>
           </div>
           <button type="button" onclick="setQwiModalTab('eval')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition shadow-xs self-start md:self-auto cursor-pointer">
             ← ກັບໄປໜ້າແປຜົນລວມ
           </button>
+        </div>
+
+        <!-- Live Step-by-Step Formula Substitution Table -->
+        <div class="rounded-xl border border-indigo-200 overflow-hidden bg-white">
+          <div class="px-3.5 py-2.5 bg-indigo-50/80 border-b border-indigo-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="font-extrabold text-indigo-950 flex items-center gap-1.5">
+              <span>🧮</span> ການແທນຄ່າຕົວຈິງໃນສູດຄິດໄລ່ WQI = Σ(qᵢ × wᵢ) ÷ Σwᵢ ແລະ ການວິເຄາະຄະແນນຍ່ອຍຕ່ຳສຸດ (q_min)
+            </span>
+            <span class="font-mono font-bold text-indigo-700 bg-white px-2.5 py-0.5 rounded border border-indigo-200">
+              WQI = ${totalQW} ÷ ${totalW} = ${score}
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-[11px]">
+              <thead class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="py-2 px-3">ພາຣາມິເຕີ</th>
+                  <th class="py-2 px-2 text-center">ຄ່າທີ່ປ້ອນ</th>
+                  <th class="py-2 px-3">ເງື່ອນໄຂສູດທີ່ໃຊ້ທຽບ</th>
+                  <th class="py-2 px-2 text-center">ຄະແນນຍ່ອຍ (qᵢ)</th>
+                  <th class="py-2 px-2 text-center">ນ້ຳໜັກ (wᵢ)</th>
+                  <th class="py-2 px-2 text-center">ຜົນຄູນ (qᵢ × wᵢ)</th>
+                  <th class="py-2 px-3">ສະຖານະທຽບຄ່າຕ່ຳສຸດ</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${breakdownRows.map(r => {
+                  const isMin = r.q === minSubQ;
+                  return `
+                    <tr class="${isMin ? 'bg-rose-50/70 font-semibold' : 'hover:bg-slate-50'}">
+                      <td class="py-1.5 px-3 font-bold text-slate-800">${r.name}</td>
+                      <td class="py-1.5 px-2 text-center font-mono text-slate-700">${r.val}</td>
+                      <td class="py-1.5 px-3 font-mono text-[10.5px] text-slate-600">${r.rule}</td>
+                      <td class="py-1.5 px-2 text-center font-mono font-bold ${isMin ? 'text-rose-700' : 'text-indigo-700'}">${r.q}</td>
+                      <td class="py-1.5 px-2 text-center font-mono text-slate-600">${r.w}</td>
+                      <td class="py-1.5 px-2 text-center font-mono font-extrabold text-slate-800">${r.qw}</td>
+                      <td class="py-1.5 px-3">
+                        ${isMin
+                          ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🔻 ຄະແນນຍ່ອຍຕ່ຳສຸດ (q_min = ${r.q})</span>`
+                          : `<span class="text-[10px] text-emerald-700">✓ ປົກກະຕິ (${minSubQi ? '' : ''}+${(r.q - minSubQ).toFixed(0)} ຈາກ q_min)</span>`
+                        }
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+              <tfoot class="bg-slate-100 font-bold text-slate-800 border-t border-slate-200">
+                <tr>
+                  <td colspan="3" class="py-2 px-3 text-right">ຜົນບວກລວມທັງໝົດ (Σ):</td>
+                  <td class="py-2 px-2 text-center font-mono text-rose-700">q_min = ${minSubQ}</td>
+                  <td class="py-2 px-2 text-center font-mono text-indigo-700">Σwᵢ = ${totalW}</td>
+                  <td class="py-2 px-2 text-center font-mono text-indigo-700">Σ(qᵢ×wᵢ) = ${totalQW}</td>
+                  <td class="py-2 px-3 font-mono text-indigo-800">WQI = ${totalQW} / ${totalW} = ${score}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
