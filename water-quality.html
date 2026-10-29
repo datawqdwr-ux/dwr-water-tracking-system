@@ -348,6 +348,11 @@
               <span class="flex-1 truncate">ແຜນທີ່ GIS ສະພາບນ້ຳ</span>
               <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-900/60 text-rose-300 border border-rose-700/50">GIS</span>
             </button>
+            <button type="button" data-nav-view="wqi" onclick="setAppView('wqi')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer">
+              <span class="text-base">🌊</span>
+              <span class="flex-1 truncate">ດັດຊະນີ WQI ສະເລ່ຍ</span>
+              <span id="sidebarWqiAvgPill" class="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 font-mono font-bold">WQI</span>
+            </button>
             <button type="button" data-nav-view="chart" onclick="setAppView('chart')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer">
               <span class="text-base">📈</span>
               <span class="flex-1 truncate">ກຣາຟແຍກສະເພາະຕົວຊີ້ວັດ</span>
@@ -438,7 +443,7 @@
       <main class="flex-1 p-4 sm:p-6 lg:p-7 space-y-6">
 
         <!-- KPI Metric Dashboard Cards -->
-        <div id="kpiDashboardGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div id="kpiDashboardGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs text-slate-500 font-medium">ຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ</p>
@@ -465,19 +470,6 @@
           </div>
         </div>
         <div class="bg-rose-50 group-hover:bg-rose-600 group-hover:text-white p-3 rounded-lg text-rose-600 text-xl transition shadow-xs">⚠️</div>
-      </div>
-      <div onclick="openQwiDetailModal()" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-400 hover:shadow-md hover:bg-indigo-50/20 transition group select-none" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດດັດຊະນີ QWI, ການແປຄ່າ ແລະ ສະຖິຕິຕາມສະຖານີ">
-        <div>
-          <div class="flex items-center gap-1.5">
-            <p class="text-xs text-slate-500 font-medium group-hover:text-indigo-600 transition">ດັດຊະນີ QWI ສະເລ່ຍ</p>
-            <span class="text-[10px] text-indigo-500 opacity-80 group-hover:opacity-100 font-bold">ℹ️ ລາຍລະອຽດ</span>
-          </div>
-          <div class="flex flex-wrap items-baseline gap-1.5 mt-1">
-            <h3 class="text-2xl font-bold text-indigo-700" id="kpiQwiAvg">-</h3>
-            <span id="kpiQwiBadge" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">ລໍຖ້າຂໍ້ມູນ</span>
-          </div>
-        </div>
-        <div class="bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white p-3 rounded-lg text-indigo-600 text-xl transition shadow-xs">🌊</div>
       </div>
     </div>
 
@@ -758,7 +750,7 @@
     <div id="dataSection" class="space-y-6">
       
       <!-- 🌟 Executive Summary Cards for Records & Database -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- 1. Total Datasets / Companies -->
         <div class="bg-gradient-to-br from-white via-indigo-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-indigo-100/90 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0">
           <div class="min-w-0">
@@ -803,23 +795,6 @@
           </div>
           <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-rose-600 to-pink-600 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-rose-500/20 shrink-0 ring-1 ring-white/40">
             🚨
-          </div>
-        </div>
-
-        <!-- 4. Mean QWI Score -->
-        <div class="bg-gradient-to-br from-white via-emerald-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-emerald-100/90 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0">
-          <div class="min-w-0">
-            <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">🌊 ດັດຊະນີ QWI ສະເລ່ຍ</p>
-            <div class="flex items-baseline gap-1.5 mt-1">
-              <span id="recStatQwiAvg" class="text-2xl sm:text-3xl font-black text-slate-800 font-mono">-</span>
-              <span class="text-xs font-semibold text-slate-400">/ 100</span>
-            </div>
-            <div class="mt-0.5">
-              <span id="recStatQwiBadge" class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">ຍັງບໍ່ມີຂໍ້ມູນ</span>
-            </div>
-          </div>
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-emerald-600 to-teal-600 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-emerald-500/20 shrink-0 ring-1 ring-white/40">
-            🌊
           </div>
         </div>
       </div>
@@ -1732,6 +1707,13 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- 🌊 ຫ້ອງສະເພາະ: ດັດຊະນີ WQI ສະເລ່ຍ (Dedicated Average WQI Index Room) -->
+    <div id="wqiDedicatedCard" class="hidden space-y-6">
+      <div id="wqiDedicatedContent" class="space-y-6">
+        <!-- Populated dynamically via renderWqiDedicatedView() -->
       </div>
     </div>
     </div>
@@ -2961,6 +2943,7 @@
       // 2. Update visibility of cards in workspace (Each function is in its own dedicated clear window)
       const kpiGrid = document.getElementById('kpiDashboardGrid');
       const mapCard = document.getElementById('mapCard');
+      const wqiCard = document.getElementById('wqiDedicatedCard');
       const chartCard = document.getElementById('chartCard');
       const trendCard = document.getElementById('monthlyTrendCard');
       const twelveCard = document.getElementById('twelveMonthCard');
@@ -2969,6 +2952,7 @@
 
       if (kpiGrid) kpiGrid.classList.toggle('hidden', currentAppView !== 'map');
       if (mapCard) mapCard.classList.toggle('hidden', currentAppView !== 'map');
+      if (wqiCard) wqiCard.classList.toggle('hidden', currentAppView !== 'wqi');
       if (chartCard) chartCard.classList.toggle('hidden', currentAppView !== 'chart');
       if (trendCard) trendCard.classList.toggle('hidden', currentAppView !== 'trend');
       if (twelveCard) twelveCard.classList.toggle('hidden', currentAppView !== 'stats12');
@@ -2978,6 +2962,7 @@
       // 3. Update Header Title and Breadcrumb
       const viewMeta = {
         map: { title: '📍 ແຜນທີ່ Google Maps GIS ສະພາບນ້ຳ', sub: 'ສະແດງຕຳແໜ່ງພິກັດສະຖານີເກັບຕົວຢ່າງນ້ຳ, ລະດັບຄຸນນະພາບນ້ຳ ແລະ ສະຖານະມາດຕະຖານຕາມແຜນທີ່ພູມສາດ' },
+        wqi: { title: '🌊 ດັດຊະນີ WQI ສະເລ່ຍ (Water Quality Index Analytics)', sub: 'ຫ້ອງສະເພາະສຳລັບປະເມີນຄ່າດັດຊະນີຄຸນນະພາບນໍ້າ WQI ສະເລ່ຍ, ເລືອກຊຸດຂໍ້ມູນສະຖານີເພື່ອແປຜົນ ແລະ ທົດລອງຄິດໄລ່ຄ່າ WQI' },
         chart: { title: '📈 ກຣາຟແຍກສະເພາະຕົວຊີ້ວັດ', sub: 'ປຽບທຽບຄ່າວິເຄາະຕົວຊີ້ວັດແຕ່ລະສະຖານີ ພ້ອມເສັ້ນມາດຕະຖານຄຸນນະພາບນ້ຳແຫ່ງຊາດ' },
         trend: { title: '📊 ແນວໂນ້ມລາຍເດືອນ (Monthly Trend Analytics)', sub: 'ວິເຄາະທ່າອ່ຽງຄຸນນະພາບນ້ຳຕາມເດືອນ, ປຽບທຽບຫຼາຍໂຕຊີ້ວັດພ້ອມກັນ ພ້ອມອັດຕາຜ່ານມາດຕະຖານ' },
         stats12: { title: '📅 ສະຖິຕິການປ່ຽນແປງຄຸນນະພາບນໍ້າໃນຮອບ 12 ເດືອນ', sub: 'ຕິດຕາມທ່າອ່ຽງຄຸນນະພາບນ້ຳ, ຄ່າສະເລ່ຍລາຍເດືອນ, ຈຳນວນຕົວຢ່າງທີ່ກວດ ແລະ ອັດຕາການເກີນເກນ' },
@@ -2993,6 +2978,9 @@
       // 4. Invalidate sizes and re-render visual components if needed
       if (currentAppView === 'map') {
         setTimeout(() => { if (typeof map !== 'undefined' && map) map.invalidateSize(); }, 150);
+      }
+      if (currentAppView === 'wqi') {
+        setTimeout(() => { if (typeof renderWqiDedicatedView === 'function') renderWqiDedicatedView(); }, 30);
       }
       if (currentAppView === 'chart') {
         setTimeout(() => { if (typeof drawChartNow === 'function') drawChartNow(); }, 150);
@@ -8961,29 +8949,31 @@
 
     function openQwiDetailModal() {
       const allStations = getAllQwiStationsData();
-      // Initialize selected IDs if first time
       if (!qwiModalState.selectedIds) {
         qwiModalState.selectedIds = new Set(allStations.map(s => s.uid));
       }
+      setAppView('wqi');
+      renderWqiDedicatedView();
+    }
 
-      let modal = document.getElementById('qwiDetailModal');
-      if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'qwiDetailModal';
-        modal.className = 'fixed inset-0 z-[1600] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-5 overflow-y-auto';
-        document.body.appendChild(modal);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQwiDetailModal(); });
-      }
-      document.body.style.overflow = 'hidden';
-
+    function renderWqiDedicatedView() {
       renderQwiModalContent();
     }
 
     function renderQwiModalContent() {
+      const dedicatedEl = document.getElementById('wqiDedicatedContent');
       const modal = document.getElementById('qwiDetailModal');
-      if (!modal) return;
+      if (!dedicatedEl && !modal) return;
 
       const allStations = getAllQwiStationsData();
+      if (!qwiModalState.selectedIds || qwiModalState.selectedIds.size === 0) {
+        if (!qwiModalState._initializedSelection && allStations.length > 0) {
+          qwiModalState.selectedIds = new Set(allStations.map(s => s.uid));
+          qwiModalState._initializedSelection = true;
+        } else if (!qwiModalState.selectedIds) {
+          qwiModalState.selectedIds = new Set();
+        }
+      }
 
       // Extract unique companies & provinces for filter dropdowns
       const companies = Array.from(new Set(allStations.map(s => s.comp))).sort();
@@ -9007,7 +8997,7 @@
         return true;
       });
 
-      // Selected stations among filtered stations (or globally selected)
+      // Selected stations among filtered stations
       const selectedStations = filteredStations.filter(s => qwiModalState.selectedIds.has(s.uid));
 
       // Calculate statistics on SELECTED stations
@@ -9042,7 +9032,7 @@
         avgInterp = interpretQWI(avg);
       }
 
-      // Sort stations descending by QWI
+      // Sort stations descending by WQI
       const sortedFilteredStations = [...filteredStations].sort((a, b) => {
         const sa = (a.qi && typeof a.qi.score === 'number') ? a.qi.score : -1;
         const sb = (b.qi && typeof b.qi.score === 'number') ? b.qi.score : -1;
@@ -9054,41 +9044,49 @@
       // Build interpretation summary narrative
       let interpretationNarrative = '';
       if (totalSelected === 0) {
-        interpretationNarrative = 'ກະລຸນາໝາຍເລືອກສະຖານີໃນຕາຕະລາງ ຫຼື ປັບຕົວເລືອກດ້ານເທິງ ເພື່ອເລີ່ມຕົ້ນການແປຜົນຄຸນນະພາບນ້ຳ.';
+        interpretationNarrative = 'ກະລຸນາໝາຍເລືອກສະຖານີໃນຕາຕະລາງ ຫຼື ປັບຕົວເລືອກດ້ານເທິງ ເພື່ອເລີ່ມຕົ້ນການແປຜົນດັດຊະນີ WQI ສະເລ່ຍ.';
       } else if (avgInterp) {
         const goodCount = distribution.EXCELLENT.count + distribution.GOOD.count;
         const modCount = distribution.MODERATE.count;
         const poorCount = distribution.POOR.count + distribution.VERY_POOR.count;
         const goodPct = ((goodCount / totalSelected) * 100).toFixed(0);
 
-        interpretationNarrative = `<b>📊 ບົດສະຫຼຸບການແປຜົນ:</b> ຈາກຂໍ້ມູນທີ່ທ່ານເລືອກຈຳນວນ <b>${totalSelected} ສະຖານີ</b>, ຄ່າດັດຊະນີຄຸນນະພາບນ້ຳສະເລ່ຍແມ່ນ <b>${avgScore} / 100</b> ເຊິ່ງຈັດຢູ່ໃນເກນ <b>${avgInterp.dot} ${avgInterp.text}</b>. ` +
+        interpretationNarrative = `<b>📊 ບົດສະຫຼຸບການແປຜົນດັດຊະນີ WQI ສະເລ່ຍ:</b> ຈາກຂໍ້ມູນທີ່ທ່ານເລືອກຈຳນວນ <b>${totalSelected} ສະຖານີ</b>, ຄ່າດັດຊະນີຄຸນນະພາບນ້ຳ WQI ສະເລ່ຍແມ່ນ <b>${avgScore} / 100</b> ເຊິ່ງຈັດຢູ່ໃນເກນ <b>${avgInterp.dot} ${avgInterp.text}</b>. ` +
           `ພົບສະຖານີທີ່ມີຄຸນນະພາບນ້ຳດີເຖິງດີຫຼາຍ <b>${goodCount} ແຫ່ງ (${goodPct}%)</b>, ຄຸນນະພາບນ້ຳປານກາງ <b>${modCount} ແຫ່ງ</b>, ແລະ ຈຸດທີ່ມີຄຸນນະພາບນ້ຳຕ່ຳ/ຕ້ອງເຝົ້າລະວັງ <b>${poorCount} ແຫ່ງ</b>. ` +
           `<span class="text-indigo-900 block mt-1">📌 <b>ຄຳແນະນຳການນຳໃຊ້:</b> ${avgInterp.desc}</span>`;
       } else {
-        interpretationNarrative = `ຂໍ້ມູນທີ່ເລືອກ ${totalSelected} ສະຖານີ ຍັງບໍ່ມີຄ່າດັດຊະນີ QWI ທີ່ສົມບູນ.`;
+        interpretationNarrative = `ຂໍ້ມູນທີ່ເລືອກ ${totalSelected} ສະຖານີ ຍັງບໍ່ມີຄ່າດັດຊະນີ WQI ທີ່ສົມບູນ.`;
       }
 
-      modal.innerHTML = `
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-5xl w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+      const contentHtml = `
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 w-full flex flex-col overflow-hidden">
           
-          <!-- Modal Header -->
-          <div class="px-5 py-4 bg-gradient-to-r from-indigo-700 via-indigo-600 to-sky-600 text-white flex items-center justify-between shadow-xs shrink-0">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner">
+          <!-- Dedicated Room Header -->
+          <div class="px-6 py-5 bg-gradient-to-r from-indigo-900 via-indigo-700 to-sky-700 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-3xl shadow-inner ring-1 ring-white/25 shrink-0">
                 🌊
               </div>
               <div>
-                <h3 class="font-bold text-base md:text-lg flex items-center gap-2">
-                  <span>ລາຍລະອຽດດັດຊະນີຄຸນນະພາບນ້ຳ (QWI / WQI)</span>
-                  <span class="text-[11px] font-normal px-2 py-0.5 rounded-full bg-white/20 text-white/95">ກົມຊັບພະຍາກອນນ້ຳ</span>
-                </h3>
-                <p class="text-xs text-indigo-100">ລະບົບປະເມີນຄຸນນະພາບນໍ້າແບບລວມສູນ ພ້ອມຟັງຊັນເລືອກຂໍ້ມູນເພື່ອແປຜົນ (Water Quality Index 0 — 100)</p>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-400/20 text-sky-200 border border-sky-300/30">ຫ້ອງສະເພາະ (Dedicated WQI Room)</span>
+                  <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-white/15 text-white/95">ກົມຊັບພະຍາກອນນ້ຳ</span>
+                </div>
+                <h2 class="font-extrabold text-lg md:text-xl mt-1 flex items-center gap-2">
+                  <span>ດັດຊະນີ WQI ສະເລ່ຍ (Water Quality Index — WQI / QWI)</span>
+                </h2>
+                <p class="text-xs text-indigo-100 mt-0.5">ລະບົບປະເມີນຄ່າດັດຊະນີຄຸນນະພາບນໍ້າ WQI ສະເລ່ຍແບບລວມສູນ ພ້ອມຟັງຊັນເລືອກຊຸດຂໍ້ມູນສະຖານີເພື່ອແປຜົນ ແລະ ທົດລອງຄິດໄລ່ (0 — 100)</p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="closeQwiDetailModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer" title="ປິດ (Esc)">
-                ✕
-              </button>
+            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-xs px-4 py-2.5 rounded-2xl border border-white/20 shrink-0">
+              <div>
+                <p class="text-[10px] text-indigo-100 font-semibold uppercase">ດັດຊະນີ WQI ສະເລ່ຍລວມ</p>
+                <div class="flex items-baseline gap-2 mt-0.5">
+                  <span class="text-2xl md:text-3xl font-black font-mono text-white" id="kpiQwiAvg">${avgScore}</span>
+                  <span class="text-xs text-indigo-200">/ 100</span>
+                  <span id="kpiQwiBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full ${avgInterp ? avgInterp.badgeClass : 'bg-white/20 text-white'}">${avgInterp ? `${avgInterp.dot} ${avgInterp.label}` : 'ລໍຖ້າຂໍ້ມູນ'}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -9096,10 +9094,10 @@
           <div class="px-5 pt-3 pb-2 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs">
             <div class="inline-flex p-1 rounded-xl bg-slate-200/80 border border-slate-300/80 font-bold">
               <button type="button" onclick="setQwiModalTab('eval')" class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${qwiModalState.activeTab === 'eval' ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'}">
-                📊 ການແປຜົນຂໍ້ມູນທີ່ເລືອກ (${totalSelected} / ${allStations.length})
+                📊 ການແປຜົນຂໍ້ມູນ WQI ສະເລ່ຍ (${totalSelected} / ${allStations.length} ສະຖານີ)
               </button>
               <button type="button" onclick="setQwiModalTab('sim')" class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${qwiModalState.activeTab === 'sim' ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'}">
-                🧪 ທົດລອງປ້ອນຄ່າ/ແປຜົນ (QWI Simulator)
+                🧪 ທົດລອງປ້ອນຄ່າ/ແປຜົນ (WQI Simulator)
               </button>
             </div>
             
@@ -9158,7 +9156,7 @@
 
                   <!-- Level filter -->
                   <div>
-                    <label class="block text-[10px] font-bold text-slate-500 mb-1">🌊 ລະດັບຄຸນນະພາບ QWI:</label>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-1">🌊 ລະດັບຄຸນນະພາບ WQI:</label>
                     <select onchange="changeQwiLevel(this.value)" class="w-full border border-slate-300 rounded-lg p-1.5 bg-white font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-400">
                       <option value="ALL" ${qwiModalState.level === 'ALL' ? 'selected' : ''}>ທຸກລະດັບຄຸນນະພາບ</option>
                       <option value="EXCELLENT" ${qwiModalState.level === 'EXCELLENT' ? 'selected' : ''}>🟢 ດີຫຼາຍ (91 — 100)</option>
@@ -9186,7 +9184,7 @@
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div class="bg-gradient-to-br from-indigo-50/80 via-white to-sky-50/50 p-3.5 rounded-xl border border-indigo-200 flex flex-col justify-between shadow-2xs">
                   <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold text-[11px]">ຄ່າ QWI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ</span>
+                    <span class="text-slate-500 font-semibold text-[11px]">ດັດຊະນີ WQI ສະເລ່ຍຂໍ້ມູນທີ່ເລືອກ</span>
                     <span class="text-xs">🌊</span>
                   </div>
                   <div class="my-1.5 flex items-baseline gap-1.5">
@@ -9242,7 +9240,7 @@
               <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-200 text-xs space-y-1.5 shadow-2xs">
                 <div class="flex items-center justify-between">
                   <div class="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
-                    <span>📢</span> ຜົນການວິເຄາະ ແລະ ແປຜົນດັດຊະນີ QWI ຂອງຂໍ້ມູນທີ່ເລືອກ (Evaluation Result):
+                    <span>📢</span> ຜົນການວິເຄາະ ແລະ ແປຜົນດັດຊະນີ WQI ສະເລ່ຍຂອງຂໍ້ມູນທີ່ເລືອກ (Evaluation Result):
                   </div>
                   <button type="button" onclick="copyQwiSummaryNarrative()" class="text-[11px] font-bold text-indigo-700 hover:text-indigo-900 flex items-center gap-1 cursor-pointer">
                     📋 ຄັດລອກຂໍ້ຄວາມ
@@ -9291,7 +9289,7 @@
                       <input type="checkbox" onchange="toggleAllFilteredQwi(this.checked)" ${allFilteredChecked ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-400">
                       <span>ລາຍຊື່ສະຖານີ (${sortedFilteredStations.length} ຈຸດ)</span>
                     </label>
-                    <span class="text-[11px] text-slate-500">— ໝາຍຕິກ ☑️ ເພື່ອເລືອກ/ຍົກເວັ້ນສະຖານີໃນການແປຜົນ</span>
+                    <span class="text-[11px] text-slate-500">— ໝາຍຕິກ ☑️ ເພື່ອເລືອກ/ຍົກເວັ້ນສະຖານີໃນການຄິດໄລ່ດັດຊະນີ WQI ສະເລ່ຍ</span>
                   </div>
                   <span class="text-[11px] font-bold text-indigo-700 bg-white border border-indigo-200 px-2 py-0.5 rounded-full">
                     ຄັດເລືອກ: ${totalSelected} ຈຸດ
@@ -9309,7 +9307,7 @@
                         <th class="p-2.5">ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</th>
                         <th class="p-2.5">ແຂວງ</th>
                         <th class="p-2.5 text-center">ວັນທີເກັບ</th>
-                        <th class="p-2.5 text-center">ຄະແນນ QWI</th>
+                        <th class="p-2.5 text-center">ຄະແນນ WQI</th>
                         <th class="p-2.5 text-center">ການແປຜົນ</th>
                         <th class="p-2.5 text-center">ຈັດການ</th>
                       </tr>
@@ -9356,13 +9354,13 @@
                 </div>
               </div>
             ` : `
-              <!-- 🧪 QWI Simulator & Custom Parameter Calculator -->
+              <!-- 🧪 WQI Simulator & Custom Parameter Calculator -->
               <div class="space-y-4">
                 <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200">
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <div>
                       <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-                        <span>🧪</span> ທົດລອງປ້ອນຄ່າພາຣາມິເຕີເພື່ອຄິດໄລ່ ແລະ ແປຜົນ QWI ທັນທີ (Interactive Simulator)
+                        <span>🧪</span> ທົດລອງປ້ອນຄ່າພາຣາມິເຕີເພື່ອຄິດໄລ່ ແລະ ແປຜົນ WQI ທັນທີ (Interactive Simulator)
                       </h4>
                       <p class="text-[11px] text-slate-500">ປ້ອນຄ່າ ຫຼື ເລືອກດຶງຄ່າຈາກສະຖານີຕົວຈິງ ເພື່ອວິເຄາະສູດຄິດໄລ່ ແລະ ການແປຄຸນນະພາບນ້ຳ</p>
                     </div>
@@ -9436,7 +9434,7 @@
             <!-- Notes & Explanation Footer -->
             <div class="bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100 text-[11px] text-slate-600 space-y-1">
               <p class="font-bold text-indigo-900 flex items-center gap-1">
-                <span>💡</span> ເກນການແປຄ່າດັດຊະນີ QWI (Water Quality Index Standards):
+                <span>💡</span> ເກນການແປຄ່າດັດຊະນີ WQI (Water Quality Index Standards):
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-5 gap-1.5 pt-1 text-[10.5px]">
                 <div class="p-1.5 rounded bg-white border border-emerald-200">🟢 <b>91 — 100: ດີຫຼາຍ</b> (ນຳໃຊ້ໄດ້ທຸກປະເພດ ຫຼັງຂ້າເຊື້ອ)</div>
@@ -9448,21 +9446,11 @@
             </div>
 
           </div>
-
-          <!-- Modal Footer -->
-          <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
-            <span class="text-[11px] text-slate-500">
-              ກົດປຸ່ມ <b>Esc</b> ຫຼື ປຸ່ມປິດ ເພື່ອກັບຄືນ
-            </span>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="closeQwiDetailModal()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition cursor-pointer">
-                ປິດໜ້າຕ່າງ
-              </button>
-            </div>
-          </div>
-
         </div>
       `;
+
+      if (dedicatedEl) dedicatedEl.innerHTML = contentHtml;
+      if (modal) modal.innerHTML = contentHtml;
 
       // If in simulator tab, trigger initial live calculation
       if (qwiModalState.activeTab === 'sim') {
@@ -13187,6 +13175,16 @@
         }
       }
 
+      const sidebarWqiPill = document.getElementById('sidebarWqiAvgPill');
+      if (sidebarWqiPill) {
+        if (qwiValues.length > 0) {
+          const avg = +( (qwiValues.reduce((a, b) => a + b, 0) / qwiValues.length).toFixed(1) );
+          sidebarWqiPill.innerText = `${avg}`;
+        } else {
+          sidebarWqiPill.innerText = 'WQI';
+        }
+      }
+
       const qwiAvgEl = document.getElementById('kpiQwiAvg');
       const qwiBadgeEl = document.getElementById('kpiQwiBadge');
       if (qwiAvgEl && qwiBadgeEl) {
@@ -13205,6 +13203,10 @@
         }
       }
 
+      if (currentAppView === 'wqi' && typeof renderWqiDedicatedView === 'function') {
+        renderWqiDedicatedView();
+      }
+
       // 🌟 Update records view executive metrics
       const recDsEl = document.getElementById('recStatDatasets');
       if (recDsEl) recDsEl.innerText = filteredBatches.length;
@@ -13220,23 +13222,6 @@
         } else {
           recAlBadge.className = 'inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
           recAlBadge.innerText = '✅ ປົກກະຕິທັງໝົດ';
-        }
-      }
-      const recQwiEl = document.getElementById('recStatQwiAvg');
-      const recQwiBadge = document.getElementById('recStatQwiBadge');
-      if (recQwiEl && recQwiBadge) {
-        if (qwiValues.length > 0) {
-          const avg = +( (qwiValues.reduce((a, b) => a + b, 0) / qwiValues.length).toFixed(1) );
-          const qi = interpretQWI(avg);
-          recQwiEl.innerText = avg;
-          if (qi) {
-            recQwiBadge.className = `inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${qi.badgeClass}`;
-            recQwiBadge.innerText = `${qi.dot} ${qi.label}`;
-          }
-        } else {
-          recQwiEl.innerText = '-';
-          recQwiBadge.className = 'inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500';
-          recQwiBadge.innerText = 'ຍັງບໍ່ມີຂໍ້ມູນ';
         }
       }
     }
