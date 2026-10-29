@@ -1310,39 +1310,73 @@
             </div>
           </div>
 
-          <div class="p-4 sm:p-5 space-y-4">
-            <!-- Filter Bar with Dropdowns -->
-            <div class="bg-gradient-to-r from-slate-50 via-white to-slate-50 p-3 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-wrap items-center gap-2.5">
-              <div class="relative flex-1 min-w-[180px]">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">🔍</span>
-                <input type="text" id="searchInput" autocomplete="off" oninput="render()" placeholder="ຄົ້ນຫາ ຊື່ບໍລິສັດ, ອົງການລັດ, ລະຫັດ ຫຼື ສະຖານທີ່..." class="w-full border border-slate-200 pl-8 pr-3 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white transition">
+          <div class="p-4 sm:p-5 space-y-3.5">
+            <!-- ⚡ 1. ຊ່ອງຄົ້ນຫາຂໍ້ມູນຄວາມໄວສູງ ຄູ່ກັບ ປຸ່ມກັ່ນຕອງ ປະເພດທີ 1 (ບໍລິສັດ/ກິດຈະການ) & ປະເພດທີ 2 (ອົງການຈັດຕັ້ງລັດ) -->
+            <div class="bg-gradient-to-r from-indigo-50/60 via-white to-sky-50/60 p-3.5 rounded-2xl border-2 border-indigo-200/80 shadow-xs space-y-3">
+              <!-- ແຖວເທິງ: ປຸ່ມກັ່ນຕອງດ່ວນ ປະເພດທີ 1 ຫຼື ປະເພດທີ 2 ຄູ່ກັບ ຊ່ອງຄົ້ນຫາທັນທີ -->
+              <div class="flex flex-col xl:flex-row xl:items-center gap-2.5">
+                <!-- ປຸ່ມກັ່ນຕອງ 2 ປະເພດຂໍ້ມູນ (ກົດເລືອກຄູ່ກັບຊ່ອງຄົ້ນຫາ) -->
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200/90 shrink-0">
+                  <span class="text-[10.5px] font-extrabold text-slate-500 px-1.5 hidden sm:inline">🗂️ ເລືອກປະເພດຄູ່ກັບຄົ້ນຫາ:</span>
+                  <button type="button" id="tblQuickCatBtn_ALL" onclick="setActiveDataCategoryFilter('ALL')" class="px-2.5 py-1.5 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 cursor-pointer bg-slate-900 text-white shadow-2xs" title="ຄົ້ນຫາໃນທຸກປະເພດຂໍ້ມູນ">
+                    <span>🌐</span>
+                    <span>ທັງໝົດ</span>
+                    <span id="tblQuickCatCount_ALL" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-white/20 text-white">0</span>
+                  </button>
+                  <button type="button" id="tblQuickCatBtn_COMPANY" onclick="setActiveDataCategoryFilter('COMPANY')" class="px-2.5 py-1.5 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 cursor-pointer bg-white hover:bg-indigo-50 text-indigo-900 border border-indigo-200" title="ກັ່ນຕອງສະເພາະ ປະເພດທີ 1 (ບໍລິສັດ/ກິດຈະການ) ຄູ່ກັບຊ່ອງຄົ້ນຫາ">
+                    <span>🏢</span>
+                    <span>ປະເພດທີ 1: ບໍລິສັດ/ກິດຈະການ</span>
+                    <span id="tblQuickCatCount_COMPANY" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-indigo-100 text-indigo-800">0</span>
+                  </button>
+                  <button type="button" id="tblQuickCatBtn_GOV" onclick="setActiveDataCategoryFilter('GOV')" class="px-2.5 py-1.5 rounded-lg text-xs font-extrabold transition flex items-center gap-1.5 cursor-pointer bg-white hover:bg-sky-50 text-sky-900 border border-sky-200" title="ກັ່ນຕອງສະເພາະ ປະເພດທີ 2 (ອົງການຈັດຕັ້ງລັດ) ຄູ່ກັບຊ່ອງຄົ້ນຫາ">
+                    <span>🏛️</span>
+                    <span>ປະເພດທີ 2: ອົງການຈັດຕັ້ງລັດ</span>
+                    <span id="tblQuickCatCount_GOV" class="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-sky-100 text-sky-800">0</span>
+                  </button>
+                </div>
+
+                <!-- ຊ່ອງຄົ້ນຫາຂໍ້ມູນທັນທີ (Instant Search Box) -->
+                <div class="relative flex-1 min-w-[220px]">
+                  <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-600 text-xs pointer-events-none font-bold">🔍</span>
+                  <input type="text" id="searchInput" autocomplete="off" oninput="onTableSearchInput(this.value)" placeholder="ຄົ້ນຫາຊຸດຂໍ້ມູນໃນພริບຕາ: ພິມຊື່ບໍລິສັດ, ອົງການລັດ, ລະຫັດສະຖານີ, ແຂວງ ຫຼື ຜູ້ບັນທຶກ..." class="w-full border-2 border-indigo-200 focus:border-indigo-500 pl-9 pr-20 py-2 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500/25 bg-white shadow-2xs transition">
+                  <button type="button" id="clearTableSearchBtn" onclick="clearTableSearch()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-[10.5px] transition cursor-pointer">
+                    ✕ ລ້າງຄຳຄົ້ນ
+                  </button>
+                </div>
               </div>
-              <div class="w-full sm:w-auto sm:min-w-[235px]">
-                <select id="categoryTableFilter" onchange="setActiveDataCategoryFilter(this.value)" class="w-full border-2 border-indigo-200 px-3 py-2 rounded-xl text-xs outline-none bg-indigo-50/40 font-bold text-indigo-950 transition cursor-pointer" title="ແຍກ ແລະ ກອງຂໍ້ມູນຕາມ 2 ປະເພດຫຼັກ">
-                  <option value="ALL">🗂️ ທັງ 2 ປະເພດ (ແຍກໝວດໝູ່ຊັດເຈນ)</option>
-                  <option value="COMPANY">🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
-                  <option value="GOV">🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
-                </select>
-              </div>
-              <div class="w-full sm:w-auto sm:min-w-[210px]">
-                <select id="datasetFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ">
-                  <option value="ALL">🏢 ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</option>
-                </select>
-              </div>
-              <div class="w-full sm:w-auto sm:min-w-[140px]">
-                <select id="yearTableFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກປີ">
-                  <option value="ALL">📅 ທຸກປີ (All Years)</option>
-                </select>
-              </div>
-              <div class="w-full sm:w-auto sm:min-w-[160px]">
-                <select id="statusFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-2 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກສະຖານະ">
-                  <option value="ALL">🌐 ສະຖານະທັງໝົດ</option>
-                  <option value="NORMAL">✅ Normal ປົກກະຕິ</option>
-                  <option value="ALERT">🚨 Alert ເຕືອນໄພ</option>
-                </select>
-              </div>
-              <div class="shrink-0 ml-auto hidden md:block">
-                <span id="filteredRecordsCount" class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">0 Records</span>
+
+              <!-- ແຖວລຸ່ມ: ຕົວກອງລະອຽດເພີ່ມເຕີມ (ຊື່ຊຸດຂໍ້ມູນ, ປີ, ສະຖານະ) + ສະຫຼຸບຈຳນວນທີ່ພົບ -->
+              <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200/70">
+                <div class="w-full sm:w-auto sm:min-w-[220px]">
+                  <select id="categoryTableFilter" onchange="setActiveDataCategoryFilter(this.value)" class="w-full border border-indigo-200 px-3 py-1.5 rounded-xl text-xs outline-none bg-indigo-50/40 font-bold text-indigo-950 transition cursor-pointer" title="ແຍກ ແລະ ກອງຂໍ້ມູນຕາມ 2 ປະເພດຫຼັກ">
+                    <option value="ALL">🗂️ ທັງ 2 ປະເພດ (ແຍກໝວດໝູ່ຊັດເຈນ)</option>
+                    <option value="COMPANY">🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
+                    <option value="GOV">🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
+                  </select>
+                </div>
+                <div class="w-full sm:w-auto sm:min-w-[210px] flex-1">
+                  <select id="datasetFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-1.5 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ">
+                    <option value="ALL">🏢 ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</option>
+                  </select>
+                </div>
+                <div class="w-full sm:w-auto sm:min-w-[135px]">
+                  <select id="yearTableFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-1.5 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກປີ">
+                    <option value="ALL">📅 ທຸກປີ (All Years)</option>
+                  </select>
+                </div>
+                <div class="w-full sm:w-auto sm:min-w-[155px]">
+                  <select id="statusFilter" onchange="render()" class="w-full border border-slate-200 px-3 py-1.5 rounded-xl text-xs outline-none bg-white font-semibold text-slate-700 transition" title="ເລືອກສະຖານະ">
+                    <option value="ALL">🌐 ສະຖານະທັງໝົດ</option>
+                    <option value="NORMAL">✅ Normal ປົກກະຕິ</option>
+                    <option value="ALERT">🚨 Alert ເຕືອນໄພ</option>
+                  </select>
+                </div>
+                <button type="button" onclick="resetAllTableSearchAndFilters()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 font-bold text-[11px] transition cursor-pointer shrink-0" title="ລ້າງຕົວກອງ ແລະ ຄຳຄົ້ນຫາທັງໝົດ">
+                  🔄 ຣີເຊັດຕົວກອງ
+                </button>
+                <div class="shrink-0 ml-auto">
+                  <span id="filteredRecordsCount" class="text-xs font-extrabold text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">0 Records</span>
+                </div>
               </div>
             </div>
 
@@ -1352,37 +1386,59 @@
             <div id="mergeBanner" class="no-print hidden mb-2"></div>
             <p id="dragTip" class="no-print hidden text-[11px] text-slate-400 mb-2">💡 ລາກແຖວ ⠿ ໄປວາງໃສ່ອີກຊຸດເພື່ອລວມກັນ · ລາກໄຟລ໌ Excel ມາວາງໃສ່ແຖວໃດ ຈະນຳເຂົ້າເຂົ້າຊຸດນັ້ນ</p>
             
-            <!-- ⚡ Toolbar ຄວບຄຸມການເລື່ອນຫາຂໍ້ມູນ ແລະ ຂະໜາດຕາຕະລາງ (Table Navigator & Page Controls) -->
-            <div class="bg-gradient-to-r from-indigo-50/80 via-white to-blue-50/80 border border-indigo-200/90 rounded-2xl p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2.5 shadow-2xs">
-              <!-- ⚡ Dropdown ເລື່ອນຫາຂໍ້ມູນດ່ວນ -->
-              <div class="flex items-center gap-2 flex-1 min-w-[260px]">
-                <span class="text-xs font-bold text-indigo-900 flex items-center gap-1 shrink-0">
-                  <span>⚡</span> <span>ເລື່ອນຫາຂໍ້ມູນ:</span>
-                </span>
-                <select id="tableQuickScrollDropdown" onchange="scrollToTableRow(this.value)" class="flex-1 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-950 font-semibold text-xs rounded-xl px-3 py-1.5 outline-none focus:ring-2 focus:ring-indigo-500/30 transition shadow-2xs cursor-pointer" title="ເລືອກຊຸດຂໍ້ມູນເພື່ອເລື່ອນໄປຫາທັນທີ">
-                  <option value="">-- ເລືອກຊຸດຂໍ້ມູນເພື່ອເລື່ອນໄປຫາທັນທີ --</option>
-                </select>
+            <!-- ⚡ 2. Toolbar ຄວບຄຸມການເລື່ອນຫາຂໍ້ມູນ ແລະ ຕັ້ງຄ່າຈຳນວນລາຍການຕໍ່ໜ້າ (10 ຫຼື 20 ລາຍການ/ໜ້າ ເປັນຄ່າເລີ່ມຕົ້ນເພື່ອຄວາມໄວສູງສຸດ) -->
+            <div class="bg-gradient-to-r from-indigo-50/80 via-white to-emerald-50/60 border border-indigo-200/90 rounded-2xl p-2.5 sm:p-3 space-y-2 shadow-2xs">
+              <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <!-- ⚡ Dropdown ເລື່ອນຫາຂໍ້ມູນດ່ວນ -->
+                <div class="flex items-center gap-2 flex-1 min-w-[240px]">
+                  <span class="text-xs font-bold text-indigo-900 flex items-center gap-1 shrink-0">
+                    <span>⚡</span> <span>ເລື່ອນຫາຂໍ້ມູນດ່ວນ:</span>
+                  </span>
+                  <select id="tableQuickScrollDropdown" onchange="scrollToTableRow(this.value)" class="flex-1 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-950 font-semibold text-xs rounded-xl px-3 py-1.5 outline-none focus:ring-2 focus:ring-indigo-500/30 transition shadow-2xs cursor-pointer" title="ເລືອກຊຸດຂໍ້ມູນເພື່ອເລື່ອນໄປຫາທັນທີ">
+                    <option value="">-- ເລືອກຊຸດຂໍ້ມູນເພື່ອເລື່ອນໄປຫາທັນທີ --</option>
+                  </select>
+                </div>
+
+                <!-- ປຸ່ມລັດ 10 / 20 ລາຍການ/ໜ້າ (ແນະນຳ) & Dropdown ໜ້າ -->
+                <div class="flex items-center gap-2 flex-wrap">
+                  <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-emerald-200 shadow-2xs">
+                    <span class="text-[11px] font-extrabold text-emerald-800">⚡ ສະແດງຕໍ່ໜ້າ (ແນະນຳ):</span>
+                    <button type="button" id="pageSizeQuickBtn_10" onclick="setTablePageSize('10')" class="px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-emerald-600 text-white shadow-2xs transition cursor-pointer" title="ສະແດງ 10 ລາຍການ/ໜ້າ (ຄ່າເລີ່ມຕົ້ນ - ໄວສູງສຸດ)">
+                      10 / ໜ້າ
+                    </button>
+                    <button type="button" id="pageSizeQuickBtn_20" onclick="setTablePageSize('20')" class="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition cursor-pointer" title="ສະແດງ 20 ລາຍການ/ໜ້າ (ແນະນຳ)">
+                      20 / ໜ້າ
+                    </button>
+                  </div>
+
+                  <div class="flex items-center gap-1.5">
+                    <select id="tablePageSizeDropdown" onchange="setTablePageSize(this.value)" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer" title="ຈຳນວນລາຍການທີ່ສະແດງຕໍ່ໜ້າ">
+                      <option value="10" selected>10 ລາຍການ/ໜ້າ (ຄ່າເລີ່ມຕົ້ນ - ແນະນຳ)</option>
+                      <option value="20">20 ລາຍການ/ໜ້າ (ແນະນຳ)</option>
+                      <option value="50">50 ລາຍການ/ໜ້າ</option>
+                      <option value="ALL">ສະແດງທັງໝົດພ້ອມກັນ</option>
+                    </select>
+                  </div>
+
+                  <div class="flex items-center gap-1.5" id="pageSelectorBox">
+                    <span class="text-[11.5px] font-semibold text-slate-600">ໜ້າ:</span>
+                    <select id="tablePageDropdown" onchange="goToTablePage(Number(this.value))" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer" title="ເລືອກໜ້າ">
+                      <option value="1">1 / 1</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <!-- Dropdown ຈຳນວນແຖວຕໍ່ໜ້າ & Dropdown ໜ້າ -->
-              <div class="flex items-center gap-2 flex-wrap">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[11.5px] font-semibold text-slate-600">ສະແດງ:</span>
-                  <select id="tablePageSizeDropdown" onchange="setTablePageSize(this.value)" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer" title="ຈຳນວນແຖວທີ່ສະແດງຕໍ່ໜ້າ">
-                    <option value="10">10 ແຖວ</option>
-                    <option value="15" selected>15 ແຖວ</option>
-                    <option value="25">25 ແຖວ</option>
-                    <option value="50">50 ແຖວ</option>
-                    <option value="ALL">ທັງໝົດ</option>
-                  </select>
-                </div>
-
-                <div class="flex items-center gap-1.5" id="pageSelectorBox">
-                  <span class="text-[11.5px] font-semibold text-slate-600">ໜ້າ:</span>
-                  <select id="tablePageDropdown" onchange="goToTablePage(Number(this.value))" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer" title="ເລືອກໜ້າ">
-                    <option value="1">1 / 1</option>
-                  </select>
-                </div>
+              <!-- ຄຳແນະນຳເພື່ອຄວາມວ່ອງໄວສູງສຸດ -->
+              <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600 pt-1 border-t border-indigo-100/80">
+                <span class="flex items-center gap-1.5 font-medium">
+                  <span class="text-emerald-600 font-bold">💡 ຄຳແນະນຳຄວາມໄວສູງສຸດ:</span>
+                  <span>ຕັ້ງຄ່າສະແດງຜົນໄວ້ທີ່ <b class="text-emerald-700">10 ຫຼື 20 ລາຍການ/ໜ້າ (ຄ່າເລີ່ມຕົ້ນ)</b> ແລະ ກົດປຸ່ມ <b class="text-indigo-700">ປະເພດທີ 1</b> ຫຼື <b class="text-sky-700">ປະເພດທີ 2</b> ຄູ່ກັບຊ່ອງຄົ້ນຫາ ເພື່ອຊອກຫາຂໍ້ມູນພົບໃນພริບຕາ.</span>
+                </span>
+                <span id="allPageSizeSpeedNotice" class="hidden inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10.5px]">
+                  <span>⚠️ ກຳລັງສະແດງທຸກລາຍການພ້ອມກັນ</span>
+                  <button type="button" onclick="setTablePageSize('10')" class="underline text-indigo-700 hover:text-indigo-900 cursor-pointer ml-1">ກັບໄປໃຊ້ 10 ລາຍການ/ໜ້າ (ໄວສູງສຸດ)</button>
+                </span>
               </div>
             </div>
 
@@ -13414,6 +13470,40 @@
         if (optGov) optGov.textContent = `🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govDatasets} ຊຸດ)`;
         if (sel.value !== activeDataCategoryFilter) sel.value = activeDataCategoryFilter;
       }
+
+      // 4. ອັບເດດປຸ່ມກັ່ນຕອງດ່ວນຄູ່ກັບຊ່ອງຄົ້ນຫາໃນຕາຕະລາງ (ປະເພດທີ 1 ຫຼື ປະເພດທີ 2 + ຊ່ອງຄົ້ນຫາ)
+      setTxt('tblQuickCatCount_ALL', totalDatasets);
+      setTxt('tblQuickCatCount_COMPANY', compDatasets);
+      setTxt('tblQuickCatCount_GOV', govDatasets);
+
+      const qBtnAll = document.getElementById('tblQuickCatBtn_ALL');
+      const qBtnComp = document.getElementById('tblQuickCatBtn_COMPANY');
+      const qBtnGov = document.getElementById('tblQuickCatBtn_GOV');
+
+      if (qBtnAll && qBtnComp && qBtnGov) {
+        qBtnAll.className = activeDataCategoryFilter === 'ALL'
+          ? 'px-3.5 py-2 text-xs font-extrabold rounded-xl bg-teal-600 text-white shadow-sm transition cursor-pointer flex items-center gap-1.5 ring-2 ring-teal-500/20'
+          : 'px-3.5 py-2 text-xs font-bold rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1.5';
+
+        qBtnComp.className = activeDataCategoryFilter === 'COMPANY'
+          ? 'px-3.5 py-2 text-xs font-extrabold rounded-xl border-2 border-indigo-600 bg-indigo-600 text-white shadow-sm transition cursor-pointer flex items-center gap-1.5 ring-2 ring-indigo-500/20'
+          : 'px-3.5 py-2 text-xs font-extrabold rounded-xl border-2 border-indigo-200 bg-white text-indigo-800 hover:bg-indigo-50 transition cursor-pointer flex items-center gap-1.5';
+
+        qBtnGov.className = activeDataCategoryFilter === 'GOV'
+          ? 'px-3.5 py-2 text-xs font-extrabold rounded-xl border-2 border-sky-600 bg-sky-600 text-white shadow-sm transition cursor-pointer flex items-center gap-1.5 ring-2 ring-sky-500/20'
+          : 'px-3.5 py-2 text-xs font-extrabold rounded-xl border-2 border-sky-200 bg-white text-sky-800 hover:bg-sky-50 transition cursor-pointer flex items-center gap-1.5';
+      }
+
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) {
+        if (activeDataCategoryFilter === 'COMPANY') {
+          searchEl.placeholder = 'ພິມຊື່ ບໍລິສັດ / ກິດຈະການ, ລະຫັດສະຖານີ, ແຂວງ ຫຼື ເດືອນ ເພື່ອຄົ້ນຫາພາຍໃນພริບຕາ...';
+        } else if (activeDataCategoryFilter === 'GOV') {
+          searchEl.placeholder = 'ພິມຊື່ ອົງການຈັດຕັ້ງລັດ, ແຫຼ່ງນໍ້າ, ລະຫັດສະຖານີ ຫຼື ແຂວງ ເພື່ອຄົ້ນຫາພາຍໃນພริບຕາ...';
+        } else {
+          searchEl.placeholder = 'ພິມຊື່ ບໍລິສັດ / ອົງການລັດ, ສະຖານີ, ແຫຼ່ງນໍ້າ, ແຂວງ ຫຼື ເດືອນ ເພື່ອຄົ້ນຫາພາຍໃນພริບຕາ...';
+        }
+      }
     }
 
     function findDatasetByTitle(title, dataCategory = '') {
@@ -15256,16 +15346,23 @@
     let dataLoaded = false;
     let tableLimit = 50;           // ຈຳນວນຊຸດຂໍ້ມູນທີ່ສະແດງໃນຕາຕະລາງ (ກົດ "ສະແດງເພີ່ມ" ເພື່ອເບິ່ງຕໍ່)
     let tableCurrentPage = 1;      // ໜ້າປັດຈຸບັນຂອງຕາຕະລາງຫຼັກ
-    let tablePageSize = 15;        // ຈຳນວນແຖວຕໍ່ໜ້າ (Default 15 ແຖວ ເພື່ອບໍ່ໃຫ້ແຖວຍາວ)
+    let tablePageSize = 10;        // ຄ່າເລີ່ມຕົ້ນ 10 ລາຍການ/ໜ້າ (ແນະນຳ 10 ຫຼື 20 ລາຍການ/ໜ້າ ເພື່ອຄວາມວ່ອງໄວສູງສຸດ)
     let filteredDataGlobal = [];   // ເກັບຂໍ້ມູນທີ່ຜ່ານການກອງສຳລັບການເລື່ອນຫາ
     let lastFilterKey = '';
     let lastBoundsKey = '';
     let renderQueued = false;
 
-    // ແປງຂໍ້ມູນຈາກ Firebase ໃຫ້ຢູ່ໃນຮູບແບບດຽວກັນ: stations ເປັນ array ສະເໝີ, ບໍ່ມີຊ່ອງ null, ຂໍ້ຄວາມເປັນ string
+    // ແປງຂໍ້ມູນຈາກ Firebase ໃຫ້ຢູ່ໃນຮູບແບບດຽວກັນ: stations ເປັນ array ສະເໝີ, ບໍ່ມີຊ່ອງ null, ຂໍ້ຄວາມເປັນ string + ສ້າງດັດຊະນີຄົ້ນຫາໄວ (_searchIndex)
     function normalizeRecord(key, raw) {
       if (!raw || typeof raw !== 'object') return null;
       const rec = { fbKey: key, ...raw };
+      const searchParts = [
+        rec.companyName || '',
+        rec.name || '',
+        rec.projectLocation || '',
+        rec.recordedBy || '',
+        rec.date || ''
+      ];
       if (rec.stations !== undefined) {
         let arr = Array.isArray(rec.stations) ? rec.stations : (rec.stations && typeof rec.stations === 'object' ? Object.values(rec.stations) : []);
         arr = arr.filter(st => st && typeof st === 'object');
@@ -15277,11 +15374,13 @@
             else if (st.customs.wqi !== undefined && st.customs.wqi !== '-') st.qwi = st.customs.wqi;
             else if (st.extra && st.extra.qwi !== undefined && st.extra.qwi !== '-') st.qwi = st.extra.qwi;
           }
+          searchParts.push(st.code || '', st.name || '', st.province || '', st.section || '');
         });
         rec._healStations = !Array.isArray(rec.stations) || arr.length !== rec.stations.length;
         rec.stations = arr;
       }
       if (rec.companyName !== undefined && typeof rec.companyName !== 'string') rec.companyName = String(rec.companyName);
+      rec._searchIndex = searchParts.join(' ').toLowerCase();
       return rec;
     }
 
@@ -16428,9 +16527,45 @@
     }
 
     function setTablePageSize(val) {
-      tablePageSize = val;
+      tablePageSize = val === 'ALL' ? 'ALL' : (Number(val) || 10);
       tableCurrentPage = 1;
       render();
+    }
+
+    function onTableSearchInput(val) {
+      const clearBtn = document.getElementById('clearTableSearchBtn');
+      if (clearBtn) {
+        clearBtn.classList.toggle('hidden', !String(val || '').trim());
+      }
+      tableCurrentPage = 1;
+      render();
+    }
+
+    function clearTableSearch() {
+      const inp = document.getElementById('searchInput');
+      if (inp) {
+        inp.value = '';
+        inp.focus();
+      }
+      const clearBtn = document.getElementById('clearTableSearchBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      tableCurrentPage = 1;
+      render();
+    }
+
+    function resetAllTableSearchAndFilters() {
+      const inp = document.getElementById('searchInput');
+      if (inp) inp.value = '';
+      const clearBtn = document.getElementById('clearTableSearchBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      const dSel = document.getElementById('datasetFilter');
+      if (dSel) dSel.value = 'ALL';
+      const ySel = document.getElementById('yearTableFilter');
+      if (ySel) ySel.value = 'ALL';
+      const sSel = document.getElementById('statusFilter');
+      if (sSel) sSel.value = 'ALL';
+      if (tablePageSize === 'ALL') tablePageSize = 10;
+      setActiveDataCategoryFilter('ALL');
     }
 
     function goToTablePage(page) {
@@ -16554,24 +16689,36 @@
       const categoryVal = activeDataCategoryFilter || 'ALL';
 
       const filteredData = waterData.filter(item => {
-        const company = (item.companyName || item.name || '').toLowerCase();
-        const recorder = (item.recordedBy || '').toLowerCase();
         const stations = item.stations || [item];
         const recCat = getRecordDataCategory(item);
 
         const matchCategory = categoryVal === 'ALL' || recCat === categoryVal;
-        const matchDataset = datasetVal === 'ALL' || item.fbKey === datasetVal;
-        const matchYear = yearVal === 'ALL' || stations.some(st => String(rowYear(st, item) || '') === yearVal);
+        if (!matchCategory) return false;
 
-        const matchSearch = !searchKeyword || company.includes(searchKeyword) || recorder.includes(searchKeyword) || 
-                            stations.some(s => (s.code || '').toLowerCase().includes(searchKeyword) || (s.name || '').toLowerCase().includes(searchKeyword));
+        const matchDataset = datasetVal === 'ALL' || item.fbKey === datasetVal;
+        if (!matchDataset) return false;
+
+        const matchYear = yearVal === 'ALL' || stations.some(st => String(rowYear(st, item) || '') === yearVal);
+        if (!matchYear) return false;
+
+        if (searchKeyword) {
+          if (item._searchIndex) {
+            if (!item._searchIndex.includes(searchKeyword)) return false;
+          } else {
+            const company = (item.companyName || item.name || '').toLowerCase();
+            const recorder = (item.recordedBy || '').toLowerCase();
+            const hit = company.includes(searchKeyword) || recorder.includes(searchKeyword) ||
+                        stations.some(s => (s.code || '').toLowerCase().includes(searchKeyword) || (s.name || '').toLowerCase().includes(searchKeyword) || (s.province || '').toLowerCase().includes(searchKeyword));
+            if (!hit) return false;
+          }
+        }
         
         const matchStatus = statusVal === 'ALL' || stations.some(s => {
           const isAlert = s.status ? s.status.isAlert : false;
           return (statusVal === 'NORMAL' && !isAlert) || (statusVal === 'ALERT' && isAlert);
         });
 
-        return matchCategory && matchDataset && matchYear && matchSearch && matchStatus;
+        return matchStatus;
       }).sort((a, b) => {
         // ຈັດກຸ່ມໃຫ້ 1. ຂໍ້ມູນສະເພາະບໍລິສັດ/ກິດຈະການ ('COMPANY') ຂຶ້ນກ່ອນ ແລະ 2. ຂໍ້ມູນອົງການຈັດຕັ້ງລັດ ('GOV') ຕາມຫຼັງ ເພື່ອບໍ່ໃຫ້ປົນກັນ
         const catA = getRecordDataCategory(a) === 'COMPANY' ? 0 : 1;
@@ -16665,10 +16812,24 @@
         }
       }
 
-      // ອັບເດດ Dropdown Page Size
+      // ອັບເດດ Dropdown Page Size & ປຸ່ມລັດ 10 / 20 ລາຍການ/ໜ້າ
       const sizeDropdown = document.getElementById('tablePageSizeDropdown');
       if (sizeDropdown && sizeDropdown.value !== String(tablePageSize)) {
         sizeDropdown.value = String(tablePageSize);
+      }
+      const btn10 = document.getElementById('pageSizeQuickBtn_10');
+      const btn20 = document.getElementById('pageSizeQuickBtn_20');
+      if (btn10 && btn20) {
+        btn10.className = String(tablePageSize) === '10'
+          ? 'px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-emerald-600 text-white shadow-2xs transition cursor-pointer'
+          : 'px-2 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition cursor-pointer';
+        btn20.className = String(tablePageSize) === '20'
+          ? 'px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-emerald-600 text-white shadow-2xs transition cursor-pointer'
+          : 'px-2 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition cursor-pointer';
+      }
+      const speedNotice = document.getElementById('allPageSizeSpeedNotice');
+      if (speedNotice) {
+        speedNotice.classList.toggle('hidden', tablePageSize !== 'ALL' || totalRecords <= 20);
       }
 
       // ອັບເດດ Badge ຈຳນວນ
