@@ -526,19 +526,25 @@
 
         <!-- KPI Metric Dashboard Cards -->
         <div id="kpiDashboardGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div onclick="openAllStationsDetailModal('ALL')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-400 hover:shadow-md hover:bg-indigo-50/20 transition group select-none" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດຊຸດຂໍ້ມູນ ແລະ ສະຖານີທັງໝົດ">
         <div>
-          <p class="text-xs text-slate-500 font-medium">ຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ</p>
-          <h3 class="text-2xl font-bold text-slate-800" id="kpiTotal">0</h3>
+          <div class="flex items-center gap-1.5">
+            <p class="text-xs text-slate-500 font-medium group-hover:text-indigo-600 transition">ຊື່ຂໍ້ມູນ/ຫົວຂໍ້ຫຼັກ</p>
+            <span class="text-[10px] text-indigo-500 opacity-80 group-hover:opacity-100 font-bold">ℹ️ ລາຍລະອຽດ</span>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1" id="kpiTotal">0</h3>
         </div>
-        <div class="bg-rose-50 p-3 rounded-lg text-rose-600 text-xl">📍</div>
+        <div class="bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white p-3 rounded-lg text-indigo-600 text-xl transition shadow-xs">📍</div>
       </div>
-      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div onclick="openAllStationsDetailModal('NORMAL')" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-emerald-400 hover:shadow-md hover:bg-emerald-50/20 transition group select-none" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດສະຖານີປົກກະຕິ (Normal Stations)">
         <div>
-          <p class="text-xs text-slate-500 font-medium">ສະຖານີປົກກະຕິ (Normal)</p>
-          <h3 class="text-2xl font-bold text-emerald-600" id="kpiNormal">0</h3>
+          <div class="flex items-center gap-1.5">
+            <p class="text-xs text-slate-500 font-medium group-hover:text-emerald-600 transition">ສະຖານີປົກກະຕິ (Normal)</p>
+            <span class="text-[10px] text-emerald-600 opacity-80 group-hover:opacity-100 font-bold">ℹ️ ລາຍລະອຽດ</span>
+          </div>
+          <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="kpiNormal">0</h3>
         </div>
-        <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600 text-xl">✅</div>
+        <div class="bg-emerald-50 group-hover:bg-emerald-600 group-hover:text-white p-3 rounded-lg text-emerald-600 text-xl transition shadow-xs">✅</div>
       </div>
       <div onclick="openAlertStationsModal()" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-rose-400 hover:shadow-md hover:bg-rose-50/20 transition group select-none" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດສະຖານີທີ່ແຈ້ງເຕືອນ (Alert Details)">
         <div>
@@ -834,48 +840,58 @@
       <!-- 🌟 Executive Summary Cards for Records & Database -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- 1. Total Datasets / Companies -->
-        <div class="bg-gradient-to-br from-white via-indigo-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-indigo-100/90 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0">
+        <div onclick="openAllStationsDetailModal('ALL')" class="bg-gradient-to-br from-white via-indigo-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-indigo-100/90 hover:border-indigo-400 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0 cursor-pointer group select-none" title="ກົດເພື່ອເບິ່ງລາຍລະອຽດຊຸດຂໍ້ມູນ ແລະ ສະຖານີທັງໝົດ">
           <div class="min-w-0">
-            <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">🏢 ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</p>
+            <div class="flex items-center gap-1.5">
+              <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 group-hover:text-indigo-600 uppercase tracking-wide truncate transition">🏢 ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</p>
+              <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md border border-indigo-200/80 opacity-85 group-hover:opacity-100 transition shrink-0">ℹ️ ລາຍລະອຽດ</span>
+            </div>
             <div class="flex items-baseline gap-1.5 mt-1">
               <span id="recStatDatasets" class="text-2xl sm:text-3xl font-black text-slate-800 font-mono">0</span>
-              <span class="text-xs font-semibold text-slate-400">ຊຸດ</span>
+              <span class="text-xs font-semibold text-slate-400 font-phetsarath" style="font-family: 'Phetsarath OT', 'Phetsarath', sans-serif !important;">ຊຸດ</span>
             </div>
-            <p class="text-[10px] sm:text-[10.5px] text-slate-400 mt-0.5 truncate">ຄັງຂໍ້ມູນລວມສູນໃນລະບົບ</p>
+            <p class="text-[10px] sm:text-[10.5px] text-slate-400 group-hover:text-indigo-600/80 mt-0.5 truncate transition">👆 ກົດເພື່ອເບິ່ງລາຍລະອຽດຄັງຂໍ້ມູນ</p>
           </div>
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-indigo-700 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-indigo-500/20 shrink-0 ring-1 ring-white/40">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-indigo-700 group-hover:scale-105 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-indigo-500/20 shrink-0 ring-1 ring-white/40 transition-transform">
             🏢
           </div>
         </div>
 
         <!-- 2. Total Monitoring Stations -->
-        <div class="bg-gradient-to-br from-white via-blue-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-blue-100/90 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0">
+        <div onclick="openAllStationsDetailModal('ALL')" class="bg-gradient-to-br from-white via-blue-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-blue-100/90 hover:border-sky-400 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0 cursor-pointer group select-none" title="ກົດເພື່ອເບິ່ງໜ້າຕ່າງລາຍລະອຽດຈຳນວນສະຖານີທັງໝົດ">
           <div class="min-w-0">
-            <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">📍 ຈຳນວນສະຖານີທັງໝົດ</p>
+            <div class="flex items-center gap-1.5">
+              <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 group-hover:text-sky-600 uppercase tracking-wide truncate transition">📍 ຈຳນວນສະຖານີທັງໝົດ</p>
+              <span class="text-[10px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded-md border border-sky-200/80 opacity-85 group-hover:opacity-100 transition shrink-0">ℹ️ ລາຍລະອຽດ</span>
+            </div>
             <div class="flex items-baseline gap-1.5 mt-1">
               <span id="recStatStations" class="text-2xl sm:text-3xl font-black text-slate-800 font-mono">0</span>
-              <span class="text-xs font-semibold text-slate-400">ສະຖານີ</span>
+              <span class="text-xs font-semibold text-slate-400 font-phetsarath" style="font-family: 'Phetsarath OT', 'Phetsarath', sans-serif !important;">ສະຖານີ</span>
             </div>
-            <p class="text-[10px] sm:text-[10.5px] text-slate-400 mt-0.5 truncate">ຈຸດກວດວັດຄຸນນະພາບນ້ຳ</p>
+            <p class="text-[10px] sm:text-[10.5px] text-slate-400 group-hover:text-sky-600/80 mt-0.5 truncate transition">👆 ກົດເພື່ອເບິ່ງລາຍລະອຽດທຸກສະຖານີ</p>
           </div>
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-sky-500/20 shrink-0 ring-1 ring-white/40">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 group-hover:scale-105 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-sky-500/20 shrink-0 ring-1 ring-white/40 transition-transform">
             📍
           </div>
         </div>
 
         <!-- 3. Alert Status -->
-        <div class="bg-gradient-to-br from-white via-rose-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-rose-100/90 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0">
+        <div onclick="openAlertStationsModal()" class="bg-gradient-to-br from-white via-rose-50/20 to-white p-4 sm:p-4.5 rounded-2xl border border-rose-100/90 hover:border-rose-400 shadow-xs hover:shadow-md transition-all flex items-center justify-between min-w-0 cursor-pointer group select-none" title="ກົດເພື່ອເບິ່ງໜ້າຕ່າງລາຍລະອຽດສະຖານະການເຕືອນໄພ">
           <div class="min-w-0">
-            <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">🚨 ສະຖານະການເຕືອນໄພ</p>
+            <div class="flex items-center gap-1.5">
+              <p class="text-[10.5px] sm:text-[11px] font-bold text-slate-500 group-hover:text-rose-600 uppercase tracking-wide truncate transition">🚨 ສະຖານະການເຕືອນໄພ</p>
+              <span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-200/80 opacity-85 group-hover:opacity-100 transition shrink-0">ℹ️ ລາຍລະອຽດ</span>
+            </div>
             <div class="flex items-baseline gap-1.5 mt-1">
               <span id="recStatAlerts" class="text-2xl sm:text-3xl font-black text-rose-600 font-mono">0</span>
               <span class="text-xs font-semibold text-slate-400">ຈຸດ</span>
             </div>
-            <div class="mt-0.5">
+            <div class="mt-0.5 flex items-center gap-1.5">
               <span id="recStatAlertBadge" class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">✅ ປົກກະຕິທັງໝົດ</span>
+              <span class="text-[10px] text-rose-500 hidden sm:inline group-hover:underline">👆 ເບິ່ງຂໍ້ມູນ</span>
             </div>
           </div>
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-rose-600 to-pink-600 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-rose-500/20 shrink-0 ring-1 ring-white/40">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-rose-600 to-pink-600 group-hover:scale-105 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-rose-500/20 shrink-0 ring-1 ring-white/40 transition-transform">
             🚨
           </div>
         </div>
@@ -11524,6 +11540,7 @@
       const list = [];
       (waterData || []).forEach(rec => {
         const comp = rec.companyName || rec.name || 'ບໍ່ລະບຸບໍລິສັດ';
+        const category = typeof getRecordDataCategory === 'function' ? getRecordDataCategory(rec) : 'COMPANY';
         const sts = stationsOf(rec);
         sts.forEach((st, stIdx) => {
           const violations = getStationAlertViolations(st);
@@ -11537,6 +11554,7 @@
               st,
               rec,
               comp,
+              category,
               stIdx,
               violations,
               isAlert,
@@ -11557,13 +11575,17 @@
     }
 
     function openAlertStationsModal() {
-      alertModalState = { search: '', indicator: 'ALL', company: 'ALL', province: 'ALL' };
+      const defaultCat = (typeof activeDataCategoryFilter === 'string' && (activeDataCategoryFilter === 'COMPANY' || activeDataCategoryFilter === 'GOV'))
+        ? activeDataCategoryFilter
+        : 'ALL';
+      alertModalState = { search: '', indicator: 'ALL', company: 'ALL', province: 'ALL', category: defaultCat };
 
       let modal = document.getElementById('alertStationsModal');
       if (!modal) {
         modal = document.createElement('div');
         modal.id = 'alertStationsModal';
         modal.className = 'fixed inset-0 z-[1600] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-5 overflow-y-auto';
+        modal.onclick = (e) => { if (e.target === modal) closeAlertStationsModal(); };
         document.body.appendChild(modal);
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAlertStationsModal(); });
       }
@@ -11575,20 +11597,40 @@
     function closeAlertStationsModal() {
       const modal = document.getElementById('alertStationsModal');
       if (modal) modal.remove();
-      document.body.style.overflow = '';
+      if (!document.getElementById('allStationsDetailModal')) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    function setAlertCategoryFilter(cat) {
+      alertModalState.category = (cat === 'COMPANY' || cat === 'GOV') ? cat : 'ALL';
+      alertModalState.company = 'ALL';
+      renderAlertModalShell();
     }
 
     function renderAlertModalShell() {
       const modal = document.getElementById('alertStationsModal');
       if (!modal) return;
 
-      const allAlertStations = getAllAlertStationsList();
+      const rawAllAlerts = getAllAlertStationsList();
+      const compAlertsCount = rawAllAlerts.filter(x => x.category !== 'GOV').length;
+      const govAlertsCount = rawAllAlerts.filter(x => x.category === 'GOV').length;
+
+      const allAlertStations = rawAllAlerts.filter(item => {
+        if (alertModalState.category === 'COMPANY') return item.category !== 'GOV';
+        if (alertModalState.category === 'GOV') return item.category === 'GOV';
+        return true;
+      });
+
       const affectedCompanies = new Set();
       const affectedProvinces = new Set();
       const violationCountsByParam = {};
       let totalSystemStations = 0;
 
       (waterData || []).forEach(rec => {
+        const recCat = typeof getRecordDataCategory === 'function' ? getRecordDataCategory(rec) : 'COMPANY';
+        if (alertModalState.category === 'COMPANY' && recCat === 'GOV') return;
+        if (alertModalState.category === 'GOV' && recCat !== 'GOV') return;
         totalSystemStations += stationsOf(rec).length;
       });
 
@@ -11618,14 +11660,17 @@
                 🚨
               </div>
               <div>
-                <h3 class="font-bold text-base md:text-lg flex items-center gap-2">
-                  <span>ລາຍລະອຽດສະຖານີເຕືອນໄພຄຸນນະພາບນ້ຳ (Alert Stations)</span>
-                  <span class="text-[11px] font-normal px-2 py-0.5 rounded-full bg-white/20 text-white/95">${totalAlertsCount} ສະຖານີ</span>
+                <h3 class="font-bold text-base md:text-lg flex items-center gap-2 flex-wrap">
+                  <span>ລາຍລະອຽດສະຖານະການເຕືອນໄພຄຸນນະພາບນ້ຳ (Alert Stations)</span>
+                  <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 text-white">${totalAlertsCount} ຈຸດ</span>
                 </h3>
-                <p class="text-xs text-rose-100">ລະບົບຕິດຕາມກວດກາ ແລະ ແຈ້ງເຕືອນຄ່າຄຸນນະພາບນ້ຳທີ່ເກີນມາດຕະຖານ · ກົມຊັບພະຍາກອນນ້ຳ</p>
+                <p class="text-xs text-rose-100">ໜ້າຕ່າງສະເພາະສະແດງລາຍລະອຽດສະຖານີທີ່ມີຄ່າເກີນມາດຕະຖານ · ກົມຊັບພະຍາກອນນ້ຳ</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
+              <button type="button" onclick="openAllStationsDetailModal('ALL'); closeAlertStationsModal();" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition cursor-pointer" title="ສະຫຼັບໄປເບິ່ງສະຖານີທັງໝົດ">
+                📍 <span>ເບິ່ງສະຖານີທັງໝົດ</span>
+              </button>
               <button type="button" onclick="copyAllAlertsSummary()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition cursor-pointer" title="ສຳເນົາສະຫຼຸບຂໍ້ມູນເຕືອນໄພ">
                 📋 <span>ສຳເນົາສະຫຼຸບ</span>
               </button>
@@ -11640,6 +11685,24 @@
 
           <!-- Modal Body -->
           <div class="p-5 overflow-y-auto space-y-4 text-slate-700 text-xs">
+
+            <!-- Category Filter Bar (ແຍກ 2 ປະເພດຂໍ້ມູນ) -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-slate-600 flex items-center gap-1.5 px-1">
+                <span>🗂️</span> ແຍກຕາມປະເພດແຫຼ່ງຂໍ້ມູນ:
+              </span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="setAlertCategoryFilter('ALL')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border ${alertModalState.category === 'ALL' ? 'bg-slate-800 text-white border-slate-800 shadow-xs' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'}">
+                  🗂️ ທັງໝົດ (${rawAllAlerts.length} ຈຸດ)
+                </button>
+                <button type="button" onclick="setAlertCategoryFilter('COMPANY')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border ${alertModalState.category === 'COMPANY' ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs' : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'}">
+                  🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compAlertsCount} ຈຸດ)
+                </button>
+                <button type="button" onclick="setAlertCategoryFilter('GOV')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border ${alertModalState.category === 'GOV' ? 'bg-sky-600 text-white border-sky-600 shadow-xs' : 'bg-white text-sky-700 border-sky-200 hover:bg-sky-50'}">
+                  🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govAlertsCount} ຈຸດ)
+                </button>
+              </div>
+            </div>
             
             <!-- Summary KPI Box -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -11807,7 +11870,11 @@
       const container = document.getElementById('alertModalListContainer');
       if (!container) return;
 
-      const list = preloadedList || getAllAlertStationsList();
+      const list = (preloadedList || getAllAlertStationsList()).filter(item => {
+        if (alertModalState.category === 'COMPANY') return item.category !== 'GOV';
+        if (alertModalState.category === 'GOV') return item.category === 'GOV';
+        return true;
+      });
       const kw = (alertModalState.search || '').trim().toLowerCase();
       const paramF = alertModalState.indicator;
       const compF = alertModalState.company;
@@ -11847,8 +11914,13 @@
               <div class="text-4xl">🎉</div>
               <h4 class="text-base font-bold text-emerald-800">ບໍ່ພົບສະຖານີທີ່ມີການແຈ້ງເຕືອນ (No Alert Stations)</h4>
               <p class="text-xs text-emerald-600 max-w-md mx-auto">
-                ທຸກສະຖານີໃນລະບົບວັດແທກຄຸນນະພາບນ້ຳໄດ້ຄ່າປົກກະຕິ (Normal) ຕາມເກນມາດຕະຖານຄຸນນະພາບນ້ຳແຫ່ງຊາດ.
+                ທຸກສະຖານີໃນໝວດໝູ່ນີ້ວັດແທກຄຸນນະພາບນ້ຳໄດ້ຄ່າປົກກະຕິ (Normal) ຕາມເກນມາດຕະຖານຄຸນນະພາບນ້ຳແຫ່ງຊາດ.
               </p>
+              <div class="pt-2">
+                <button type="button" onclick="openAllStationsDetailModal('ALL'); closeAlertStationsModal();" class="cursor-pointer px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition shadow-xs">
+                  📍 ເປີດເບິ່ງລາຍລະອຽດສະຖານີທັງໝົດ
+                </button>
+              </div>
             </div>
           `;
         } else {
@@ -11882,7 +11954,7 @@
                       🚨 ${escAttr(code)}
                     </span>
                     <span class="font-bold text-slate-800 text-sm">${escAttr(name)}</span>
-                    ${renderOrgBadge(comp)}
+                    ${renderOrgBadge(comp, rec)}
                     ${item.section ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600">📂 ${escAttr(item.section)}</span>` : ''}
                     ${province && province !== '-' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-sky-100">📍 ${escAttr(province)}</span>` : ''}
                   </div>
@@ -12012,30 +12084,43 @@
     }
 
     function resetAlertModalFilters() {
-      alertModalState = { search: '', indicator: 'ALL', company: 'ALL', province: 'ALL' };
+      alertModalState = { search: '', indicator: 'ALL', company: 'ALL', province: 'ALL', category: 'ALL' };
       renderAlertModalShell();
     }
 
     function jumpFromAlertToMap(fbKey, stIdx) {
       closeAlertStationsModal();
-      mapSelectCompany(fbKey);
+      if (typeof setAppView === 'function' && currentAppView !== 'map') {
+        setAppView('map');
+      }
       setTimeout(() => {
-        mapSelectStation(`${fbKey}:${stIdx}`);
-      }, 300);
+        mapSelectCompany(fbKey);
+        setTimeout(() => {
+          mapSelectStation(`${fbKey}:${stIdx}`);
+        }, 300);
+      }, 150);
     }
 
     function jumpFromAlertToRecord(fbKey) {
       closeAlertStationsModal();
+      if (typeof setAppView === 'function' && currentAppView !== 'records') {
+        setAppView('records');
+      }
       jumpToRecords([fbKey]);
     }
 
     function filterMainTableByAlerts() {
       closeAlertStationsModal();
+      if (typeof setAppView === 'function' && currentAppView !== 'records') {
+        setAppView('records');
+      }
       const sf = document.getElementById('statusFilter');
       if (sf) sf.value = 'ALERT';
       render();
-      const el = document.getElementById('printableTableContainer');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => {
+        const el = document.getElementById('printableTableContainer');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
       Swal.fire({
         icon: 'info',
         title: 'ກອງສະແດງສະເພາະ Alert',
@@ -12043,6 +12128,635 @@
         timer: 1600,
         showConfirmButton: false
       });
+    }
+
+    /* ==========================================================================
+       📍 ໜ້າຕ່າງສະເພາະ ລາຍລະອຽດຈຳນວນສະຖານີທັງໝົດ (All Monitoring Stations Detail Modal)
+       ========================================================================== */
+    let allStationsModalState = {
+      search: '',
+      status: 'ALL',
+      category: 'ALL',
+      company: 'ALL',
+      province: 'ALL',
+      limit: 50
+    };
+
+    function getAllStationsDetailedList() {
+      const list = [];
+      (waterData || []).forEach(rec => {
+        const comp = rec.companyName || rec.name || 'ບໍ່ລະບຸບໍລິສັດ';
+        const category = typeof getRecordDataCategory === 'function' ? getRecordDataCategory(rec) : 'COMPANY';
+        const sts = stationsOf(rec);
+        sts.forEach((st, stIdx) => {
+          const violations = getStationAlertViolations(st);
+          const isAlert = Boolean((st.status && st.status.isAlert) || violations.length > 0);
+          const rawQ = (st.qwi !== undefined && st.qwi !== null && st.qwi !== '' && st.qwi !== '-')
+            ? st.qwi
+            : calculateAutoQWI(st.customs || {});
+          const qi = interpretQWI(rawQ);
+          const dCoord = typeof withDerivedCoord === 'function' ? withDerivedCoord(st) : st;
+          const lat = dCoord && dCoord.lat !== undefined ? dCoord.lat : st.lat;
+          const lng = dCoord && dCoord.lng !== undefined ? dCoord.lng : st.lng;
+
+          // ດຶງຄ່າວັດແທກຕົວຈິງຂອງສະຖານີ
+          const measuredParams = [];
+          const customs = st.customs || {};
+          const violationMap = {};
+          violations.forEach(v => { violationMap[v.key] = v; });
+
+          (customIndicators || []).forEach(ind => {
+            const val = customs[ind.key];
+            if (val !== undefined && val !== null && val !== '' && val !== '-') {
+              measuredParams.push({
+                key: ind.key,
+                name: ind.name,
+                unit: ind.unit || '',
+                val: val,
+                violation: violationMap[ind.key] || null
+              });
+            }
+          });
+
+          list.push({
+            st,
+            rec,
+            comp,
+            category,
+            stIdx,
+            violations,
+            isAlert,
+            rawQ,
+            qi,
+            measuredParams,
+            code: st.code || '-',
+            name: st.name || '-',
+            province: st.province || '-',
+            sampleDate: st.sampleDate || rec.date || '',
+            section: st.section || rec.section || '',
+            lat,
+            lng
+          });
+        });
+      });
+      return list;
+    }
+
+    function openAllStationsDetailModal(initialStatus = 'ALL') {
+      const defaultCat = (typeof activeDataCategoryFilter === 'string' && (activeDataCategoryFilter === 'COMPANY' || activeDataCategoryFilter === 'GOV'))
+        ? activeDataCategoryFilter
+        : 'ALL';
+      allStationsModalState = {
+        search: '',
+        status: (initialStatus === 'NORMAL' || initialStatus === 'ALERT') ? initialStatus : 'ALL',
+        category: defaultCat,
+        company: 'ALL',
+        province: 'ALL',
+        limit: 50
+      };
+
+      let modal = document.getElementById('allStationsDetailModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'allStationsDetailModal';
+        modal.className = 'fixed inset-0 z-[1600] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-5 overflow-y-auto';
+        modal.onclick = (e) => { if (e.target === modal) closeAllStationsDetailModal(); };
+        document.body.appendChild(modal);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllStationsDetailModal(); });
+      }
+      document.body.style.overflow = 'hidden';
+
+      renderAllStationsModalShell();
+    }
+
+    function closeAllStationsDetailModal() {
+      const modal = document.getElementById('allStationsDetailModal');
+      if (modal) modal.remove();
+      if (!document.getElementById('alertStationsModal')) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    function setAllStationsCategoryFilter(cat) {
+      allStationsModalState.category = (cat === 'COMPANY' || cat === 'GOV') ? cat : 'ALL';
+      allStationsModalState.company = 'ALL';
+      allStationsModalState.limit = 50;
+      renderAllStationsModalShell();
+    }
+
+    function setAllStationsStatusFilter(status) {
+      allStationsModalState.status = (status === 'NORMAL' || status === 'ALERT') ? status : 'ALL';
+      allStationsModalState.limit = 50;
+      const sel = document.getElementById('allStModalStatusSelect');
+      if (sel) sel.value = allStationsModalState.status;
+      renderAllStationsModalShell();
+    }
+
+    function renderAllStationsModalShell() {
+      const modal = document.getElementById('allStationsDetailModal');
+      if (!modal) return;
+
+      const rawAll = getAllStationsDetailedList();
+      const compTotalCount = rawAll.filter(x => x.category !== 'GOV').length;
+      const govTotalCount = rawAll.filter(x => x.category === 'GOV').length;
+
+      const catFilteredList = rawAll.filter(item => {
+        if (allStationsModalState.category === 'COMPANY') return item.category !== 'GOV';
+        if (allStationsModalState.category === 'GOV') return item.category === 'GOV';
+        return true;
+      });
+
+      const totalCount = catFilteredList.length;
+      const normalCount = catFilteredList.filter(x => !x.isAlert).length;
+      const alertCount = catFilteredList.filter(x => x.isAlert).length;
+      const normalPct = totalCount > 0 ? ((normalCount / totalCount) * 100).toFixed(1) : '0';
+      const alertPct = totalCount > 0 ? ((alertCount / totalCount) * 100).toFixed(1) : '0';
+
+      const companiesSet = new Set();
+      const provincesSet = new Set();
+      catFilteredList.forEach(item => {
+        companiesSet.add(item.comp);
+        if (item.province && item.province !== '-') provincesSet.add(item.province);
+      });
+
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-6xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+          
+          <!-- Modal Header -->
+          <div class="px-5 py-4 bg-gradient-to-r from-sky-700 via-blue-700 to-indigo-700 text-white flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner">
+                📍
+              </div>
+              <div>
+                <h3 class="font-bold text-base md:text-lg flex items-center gap-2 flex-wrap">
+                  <span>ລາຍລະອຽດຈຳນວນສະຖານີກວດວັດຄຸນນະພາບນ້ຳທັງໝົດ</span>
+                  <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 text-white font-phetsarath" style="font-family: 'Phetsarath OT', 'Phetsarath', sans-serif !important;">${totalCount} ສະຖານີ</span>
+                </h3>
+                <p class="text-xs text-sky-100">ໜ້າຕ່າງສະເພາະສະແດງຂໍ້ມູນສະຖານີ, ພິກັດ, ຄ່າວິເຄາະພາຣາມິເຕີ ແລະ ສະຖານະມາດຕະຖານ · ກົມຊັບພະຍາກອນນ້ຳ</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="openAlertStationsModal(); closeAllStationsDetailModal();" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/90 hover:bg-rose-500 text-white text-xs font-bold transition cursor-pointer shadow-xs" title="ສະຫຼັບໄປເບິ່ງສະເພາະສະຖານີເຕືອນໄພ">
+                🚨 <span>ສະຖານີເຕືອນໄພ (${alertCount})</span>
+              </button>
+              <button type="button" onclick="copyAllStationsSummary()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition cursor-pointer" title="ສຳເນົາລາຍຊື່ສະຖານີ">
+                📋 <span>ສຳເນົາ</span>
+              </button>
+              <button type="button" onclick="printAllStationsSummary()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition cursor-pointer" title="ພິມລາຍງານສະຖານີທັງໝົດ">
+                🖨️ <span>ພິມ</span>
+              </button>
+              <button type="button" onclick="closeAllStationsDetailModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer" title="ປິດ (Esc)">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-5 overflow-y-auto space-y-4 text-slate-700 text-xs">
+
+            <!-- Category Filter Bar (ແຍກ 2 ປະເພດຂໍ້ມູນຊັດເຈນ) -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-slate-600 flex items-center gap-1.5 px-1">
+                <span>🗂️</span> ເລືອກເບິ່ງຕາມປະເພດຂໍ້ມູນ:
+              </span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="setAllStationsCategoryFilter('ALL')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border font-phetsarath ${allStationsModalState.category === 'ALL' ? 'bg-slate-800 text-white border-slate-800 shadow-xs' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'}">
+                  🗂️ ທັງໝົດ (${rawAll.length} ສະຖານີ)
+                </button>
+                <button type="button" onclick="setAllStationsCategoryFilter('COMPANY')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border font-phetsarath ${allStationsModalState.category === 'COMPANY' ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs' : 'bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50'}">
+                  🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ (${compTotalCount} ສະຖານີ)
+                </button>
+                <button type="button" onclick="setAllStationsCategoryFilter('GOV')" class="cursor-pointer px-3 py-1.5 rounded-lg text-xs font-bold transition border font-phetsarath ${allStationsModalState.category === 'GOV' ? 'bg-sky-600 text-white border-sky-600 shadow-xs' : 'bg-white text-sky-700 border-sky-200 hover:bg-sky-50'}">
+                  🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ (${govTotalCount} ສະຖານີ)
+                </button>
+              </div>
+            </div>
+
+            <!-- Summary KPI Box (Clickable Quick Status Filters) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div onclick="setAllStationsStatusFilter('ALL')" class="cursor-pointer bg-gradient-to-br from-sky-50 to-white p-3.5 rounded-xl border ${allStationsModalState.status === 'ALL' ? 'border-sky-500 ring-2 ring-sky-500/20' : 'border-sky-200 hover:border-sky-400'} flex flex-col justify-between transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-500 font-bold text-[11px]">📍 ສະຖານີທັງໝົດ</span>
+                  <span class="text-[10px] font-bold text-sky-600">ກົດສະແດງທັງໝົດ</span>
+                </div>
+                <div class="my-1 flex items-baseline gap-1.5">
+                  <span class="text-2xl md:text-3xl font-extrabold text-sky-700">${totalCount}</span>
+                  <span class="text-xs text-slate-400 font-phetsarath">ສະຖານີ</span>
+                </div>
+                <span class="text-[10.5px] text-slate-500 font-medium">ໃນ <b>${companiesSet.size}</b> <span class="font-phetsarath">ຊຸດຂໍ້ມູນ</span> · <b>${provincesSet.size}</b> ແຂວງ</span>
+              </div>
+
+              <div onclick="setAllStationsStatusFilter('NORMAL')" class="cursor-pointer bg-gradient-to-br from-emerald-50 to-white p-3.5 rounded-xl border ${allStationsModalState.status === 'NORMAL' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-emerald-200 hover:border-emerald-400'} flex flex-col justify-between transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-500 font-bold text-[11px]">✅ ສະຖານີປົກກະຕິ (Normal)</span>
+                  <span class="text-[10px] font-bold text-emerald-600">ກົດກອງ</span>
+                </div>
+                <div class="my-1 flex items-baseline gap-1.5">
+                  <span class="text-2xl md:text-3xl font-extrabold text-emerald-700">${normalCount}</span>
+                  <span class="text-xs text-slate-400 font-phetsarath">ສະຖານີ</span>
+                </div>
+                <div>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                    ຜ່ານເກນມາດຕະຖານ (${normalPct}%)
+                  </span>
+                </div>
+              </div>
+
+              <div onclick="setAllStationsStatusFilter('ALERT')" class="cursor-pointer bg-gradient-to-br from-rose-50 to-white p-3.5 rounded-xl border ${allStationsModalState.status === 'ALERT' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-rose-200 hover:border-rose-400'} flex flex-col justify-between transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-500 font-bold text-[11px]">🚨 ສະຖານີເຕືອນໄພ (Alert)</span>
+                  <span class="text-[10px] font-bold text-rose-600">ກົດກອງ</span>
+                </div>
+                <div class="my-1 flex items-baseline gap-1.5">
+                  <span class="text-2xl md:text-3xl font-extrabold text-rose-600">${alertCount}</span>
+                  <span class="text-xs text-slate-400 font-phetsarath">ສະຖານີ</span>
+                </div>
+                <div>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${alertCount > 0 ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                    ${alertCount > 0 ? `ເກີນເກນມາດຕະຖານ (${alertPct}%)` : 'ບໍ່ມີການເຕືອນໄພ'}
+                  </span>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-indigo-50 to-white p-3.5 rounded-xl border border-indigo-200 flex flex-col justify-between">
+                <span class="text-slate-500 font-bold text-[11px]">🗂️ ອັດຕາສ່ວນ 2 ປະເພດຂໍ້ມູນ</span>
+                <div class="my-1 space-y-1 text-[11px]">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-indigo-700">🏢 1. ບໍລິສັດ/ກິດຈະການ:</span>
+                    <span class="font-extrabold text-slate-800 font-phetsarath">${compTotalCount} ສະຖານີ</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-sky-700">🏛️ 2. ອົງການຈັດຕັ້ງລັດ:</span>
+                    <span class="font-extrabold text-slate-800 font-phetsarath">${govTotalCount} ສະຖານີ</span>
+                  </div>
+                </div>
+                <span class="text-[10px] text-indigo-600 font-medium">ແຍກໝວດໝູ່ຊັດເຈນ</span>
+              </div>
+            </div>
+
+            <!-- Filter Controls Bar -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+              <div>
+                <label class="block text-[10.5px] font-bold text-slate-500 mb-1">🔍 ຄົ້ນຫາສະຖານີ</label>
+                <input type="text" id="allStModalSearchInput" oninput="onAllStationsFilterChange()" value="${escAttr(allStationsModalState.search)}" placeholder="ລະຫັດ, ຊື່ສະຖານີ, ບໍລິສັດ, ແຂວງ..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+              <div>
+                <label class="block text-[10.5px] font-bold text-slate-500 mb-1">🛡️ ສະຖານະຄຸນນະພາບນ້ຳ</label>
+                <select id="allStModalStatusSelect" onchange="onAllStationsFilterChange()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-sky-400 bg-white font-bold text-slate-700">
+                  <option value="ALL" ${allStationsModalState.status === 'ALL' ? 'selected' : ''}>🌐 ທຸກສະຖານະ (${totalCount})</option>
+                  <option value="NORMAL" ${allStationsModalState.status === 'NORMAL' ? 'selected' : ''}>✅ ສະຖານີປົກກະຕິ (${normalCount})</option>
+                  <option value="ALERT" ${allStationsModalState.status === 'ALERT' ? 'selected' : ''}>🚨 ສະຖານີເຕືອນໄພ (${alertCount})</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10.5px] font-bold text-slate-500 mb-1">🏢 ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</label>
+                <select id="allStModalCompSelect" onchange="onAllStationsFilterChange()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-sky-400 bg-white font-medium text-slate-700">
+                  <option value="ALL">ທຸກຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ (${companiesSet.size})</option>
+                  ${[...companiesSet].sort().map(c => `<option value="${escAttr(c)}" ${allStationsModalState.company === c ? 'selected' : ''}>${escAttr(c)}</option>`).join('')}
+                </select>
+              </div>
+              <div class="flex items-end gap-1.5">
+                <div class="flex-1">
+                  <label class="block text-[10.5px] font-bold text-slate-500 mb-1">📍 ແຂວງ</label>
+                  <select id="allStModalProvSelect" onchange="onAllStationsFilterChange()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-sky-400 bg-white font-medium text-slate-700">
+                    <option value="ALL">ທຸກແຂວງ (${provincesSet.size})</option>
+                    ${[...provincesSet].sort().map(p => `<option value="${escAttr(p)}" ${allStationsModalState.province === p ? 'selected' : ''}>${escAttr(p)}</option>`).join('')}
+                  </select>
+                </div>
+                <button type="button" onclick="resetAllStationsModalFilters()" class="cursor-pointer px-2.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-600 font-bold text-xs" title="ລ້າງການກອງ">
+                  🔄
+                </button>
+              </div>
+            </div>
+
+            <!-- List Container -->
+            <div id="allStModalListContainer"></div>
+
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span id="allStModalFooterCount" class="text-xs text-slate-600 font-medium"></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="openAlertStationsModal(); closeAllStationsDetailModal();" class="cursor-pointer px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition">
+                🚨 ເປີດໜ້າຕ່າງສະຖານະການເຕືອນໄພ
+              </button>
+              <button type="button" onclick="closeAllStationsDetailModal()" class="cursor-pointer px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs transition shadow-xs">
+                ປິດໜ້າຕ່າງ
+              </button>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+      renderAllStationsModalList(catFilteredList);
+    }
+
+    function getFilteredAllStationsForModal(preloadedList) {
+      const list = (preloadedList || getAllStationsDetailedList()).filter(item => {
+        if (allStationsModalState.category === 'COMPANY') return item.category !== 'GOV';
+        if (allStationsModalState.category === 'GOV') return item.category === 'GOV';
+        return true;
+      });
+
+      const kw = (allStationsModalState.search || '').trim().toLowerCase();
+      const statusF = allStationsModalState.status;
+      const compF = allStationsModalState.company;
+      const provF = allStationsModalState.province;
+
+      return list.filter(item => {
+        if (statusF === 'NORMAL' && item.isAlert) return false;
+        if (statusF === 'ALERT' && !item.isAlert) return false;
+        if (compF !== 'ALL' && item.comp !== compF) return false;
+        if (provF !== 'ALL' && item.province !== provF) return false;
+        if (kw) {
+          const matchCode = (item.code || '').toLowerCase().includes(kw);
+          const matchName = (item.name || '').toLowerCase().includes(kw);
+          const matchComp = (item.comp || '').toLowerCase().includes(kw);
+          const matchProv = (item.province || '').toLowerCase().includes(kw);
+          const matchSec = (item.section || '').toLowerCase().includes(kw);
+          if (!matchCode && !matchName && !matchComp && !matchProv && !matchSec) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderAllStationsModalList(preloadedList) {
+      const container = document.getElementById('allStModalListContainer');
+      if (!container) return;
+
+      const filtered = getFilteredAllStationsForModal(preloadedList);
+      const limit = allStationsModalState.limit || 50;
+      const visibleItems = filtered.slice(0, limit);
+
+      const footerCount = document.getElementById('allStModalFooterCount');
+      if (footerCount) {
+        footerCount.innerHTML = `ສະແດງ <b>${visibleItems.length}</b> ຈາກທັງໝົດ <b>${filtered.length}</b> ສະຖານີ`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center space-y-2">
+            <div class="text-3xl">🔍</div>
+            <h4 class="text-sm font-bold text-slate-700">ບໍ່ພົບສະຖານີທີ່ກົງກັບເງື່ອນໄຂການຄົ້ນຫາ</h4>
+            <p class="text-xs text-slate-500">ກະລຸນາລອງປ່ຽນຄຳຄົ້ນຫາ ຫຼື ກົດປຸ່ມລ້າງການກອງ</p>
+            <button type="button" onclick="resetAllStationsModalFilters()" class="cursor-pointer mt-2 px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100">
+              🔄 ລ້າງການກອງທັງໝົດ
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="space-y-3">
+          ${visibleItems.map((item, idx) => {
+            const { st, rec, comp, stIdx, violations, isAlert, qi, measuredParams, code, name, province, sampleDate, lat, lng } = item;
+            const coordsValid = lat !== null && lat !== undefined && lat !== '' && !isNaN(lat) && lng !== null && lng !== undefined && lng !== '' && !isNaN(lng);
+
+            return `
+              <div class="bg-white border ${isAlert ? 'border-rose-200 hover:border-rose-300' : 'border-slate-200 hover:border-sky-300'} rounded-xl p-3.5 shadow-2xs hover:shadow-sm transition space-y-2.5">
+                <!-- Header Row -->
+                <div class="flex flex-wrap items-start justify-between gap-2 border-b border-slate-100 pb-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[11px] font-mono font-bold text-slate-400">#${idx + 1}</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-mono font-bold text-xs ${isAlert ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-sky-100 text-sky-800 border border-sky-200'}">
+                      ${isAlert ? '🚨' : '📍'} ${escAttr(code)}
+                    </span>
+                    <span class="font-bold text-slate-800 text-sm">${escAttr(name)}</span>
+                    ${renderOrgBadge(comp, rec)}
+                    ${item.section ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600">📂 ${escAttr(item.section)}</span>` : ''}
+                    ${province && province !== '-' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">📍 ${escAttr(province)}</span>` : ''}
+                  </div>
+
+                  <!-- Quick Actions -->
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold border ${isAlert ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}">
+                      ${isAlert ? `🚨 ເຕືອນໄພ (${violations.length} ຄ່າເກີນເກນ)` : '✅ ປົກກະຕິ (ຜ່ານເກນ)'}
+                    </span>
+                    <button type="button" onclick="openStationNationalStandardComparison('${rec.fbKey}', ${stIdx})" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition shadow-xs" title="ສົມທຽບຄຸນນະພາບນ້ຳສະຖານີນີ້ກັບມາດຕະຖານແຫ່ງຊາດ 81/ລບ">
+                      ⚖️ <span>ທຽບມາດຕະຖານ 81/ລບ</span>
+                    </button>
+                    ${coordsValid ? `
+                      <button type="button" onclick="jumpFromStationModalToMap('${rec.fbKey}', ${stIdx})" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 font-bold text-[11px] transition" title="ເບິ່ງຈຸດນີ້ໃນແຜນທີ່ Google Maps GIS">
+                        🗺️ <span>ແຜນທີ່</span>
+                      </button>
+                    ` : ''}
+                    <button type="button" onclick="jumpFromStationModalToRecord('${rec.fbKey}')" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-[11px] transition" title="ເປີດເບິ່ງໃນຕາຕະລາງຖານຂໍ້ມູນ">
+                      👁️ <span>ຕາຕະລາງ</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Meta Info Row -->
+                <div class="flex flex-wrap items-center gap-y-1 gap-x-4 text-[11px] text-slate-500">
+                  <div class="flex items-center gap-1">
+                    <span class="text-slate-400">📅 ວັນທີເກັບຕົວຢ່າງ:</span>
+                    <span class="font-semibold text-slate-700">${sampleDate ? fmtSampleDate(sampleDate) : '-'}</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <span class="text-slate-400">🧭 ພິກັດ:</span>
+                    <span class="font-mono text-slate-700 font-medium">${coordsValid ? `${Number(lat).toFixed(5)}, ${Number(lng).toFixed(5)}` : 'ບໍ່ມີພິກັດ'}</span>
+                  </div>
+                  ${qi ? `
+                    <div class="flex items-center gap-1">
+                      <span class="text-slate-400">🌊 ດັດຊະນີ QWI:</span>
+                      <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border ${qi.badgeClass}">
+                        ${qi.dot} ${qi.score !== '-' ? qi.score : ''} ${qi.label}
+                      </span>
+                    </div>
+                  ` : ''}
+                  <div class="flex items-center gap-1 ml-auto">
+                    <span class="text-slate-400">🧪 ພາຣາມິເຕີທີ່ວັດແທກ:</span>
+                    <span class="font-bold text-slate-700">${measuredParams.length} ຕົວຊີ້ວັດ</span>
+                  </div>
+                </div>
+
+                <!-- Measured Parameters Chips -->
+                ${measuredParams.length > 0 ? `
+                  <div class="bg-slate-50/80 rounded-lg border border-slate-200/80 p-2.5 flex flex-wrap items-center gap-1.5">
+                    ${measuredParams.map(p => {
+                      const vObj = p.violation;
+                      const chipCls = vObj
+                        ? 'bg-rose-100/90 text-rose-800 border-rose-300 font-bold'
+                        : 'bg-white text-slate-700 border-slate-200';
+                      return `
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] ${chipCls}" title="${vObj ? `ເກີນມາດຕະຖານ (${vObj.standardRange})` : 'ປົກກະຕິ'}">
+                          <span class="text-slate-500 font-medium">${escAttr(p.name)}:</span>
+                          <span class="font-mono font-bold">${escAttr(String(p.val))}</span>
+                          ${p.unit ? `<span class="text-[10px] opacity-75">${escAttr(p.unit)}</span>` : ''}
+                          ${vObj ? `<span class="text-[10px] text-rose-600">⚠️</span>` : ''}
+                        </span>
+                      `;
+                    }).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+
+          ${filtered.length > limit ? `
+            <div class="text-center pt-2">
+              <button type="button" onclick="loadMoreStationsInModal()" class="cursor-pointer px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition shadow-xs">
+                👇 ສະແດງເພີ່ມອີກ (${filtered.length - limit} ສະຖານີທີ່ເຫຼືອ)
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function onAllStationsFilterChange() {
+      const sInp = document.getElementById('allStModalSearchInput');
+      const stSel = document.getElementById('allStModalStatusSelect');
+      const compSel = document.getElementById('allStModalCompSelect');
+      const provSel = document.getElementById('allStModalProvSelect');
+
+      allStationsModalState.search = sInp ? sInp.value : '';
+      allStationsModalState.status = stSel ? stSel.value : 'ALL';
+      allStationsModalState.company = compSel ? compSel.value : 'ALL';
+      allStationsModalState.province = provSel ? provSel.value : 'ALL';
+      allStationsModalState.limit = 50;
+
+      renderAllStationsModalList();
+    }
+
+    function loadMoreStationsInModal() {
+      allStationsModalState.limit = (allStationsModalState.limit || 50) + 100;
+      renderAllStationsModalList();
+    }
+
+    function resetAllStationsModalFilters() {
+      allStationsModalState = {
+        search: '',
+        status: 'ALL',
+        category: 'ALL',
+        company: 'ALL',
+        province: 'ALL',
+        limit: 50
+      };
+      renderAllStationsModalShell();
+    }
+
+    function jumpFromStationModalToMap(fbKey, stIdx) {
+      closeAllStationsDetailModal();
+      if (typeof setAppView === 'function' && currentAppView !== 'map') {
+        setAppView('map');
+      }
+      setTimeout(() => {
+        mapSelectCompany(fbKey);
+        setTimeout(() => {
+          mapSelectStation(`${fbKey}:${stIdx}`);
+        }, 300);
+      }, 150);
+    }
+
+    function jumpFromStationModalToRecord(fbKey) {
+      closeAllStationsDetailModal();
+      if (typeof setAppView === 'function' && currentAppView !== 'records') {
+        setAppView('records');
+      }
+      jumpToRecords([fbKey]);
+    }
+
+    function copyAllStationsSummary() {
+      requireExportPermission(() => {
+        const filtered = getFilteredAllStationsForModal();
+        if (!filtered.length) return Swal.fire({ icon: 'info', title: 'ບໍ່ມີຂໍ້ມູນສະຖານີ' });
+
+        let text = `📍 ລາຍງານສະຫຼຸບຂໍ້ມູນສະຖານີກວດວັດຄຸນນະພາບນ້ຳ\n`;
+        text += `ກົມຊັບພະຍາກອນນ້ຳ · ກະຊວງຊັບພະຍາກອນທຳມະຊາດ ແລະ ສິ່ງແວດລ້ອມ\n`;
+        text += `ຈຳນວນສະຖານີ: ${filtered.length} ສະຖານີ\n`;
+        text += `--------------------------------------------------\n`;
+        filtered.forEach((item, idx) => {
+          const catLabel = item.category === 'GOV' ? '2. ອົງການຈັດຕັ້ງລັດ' : '1. ບໍລິສັດ/ກິດຈະການ';
+          const statusLabel = item.isAlert ? `🚨 ເຕືອນໄພ (${item.violations.length} ລາຍການ)` : '✅ ປົກກະຕິ';
+          text += `[${idx + 1}] ${item.code} - ${item.name} | ${catLabel} | ${item.comp} | ແຂວງ: ${item.province} | ສະຖານະ: ${statusLabel}\n`;
+        });
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            Swal.fire({ icon: 'success', title: 'ສຳເນົາຂໍ້ມູນສຳເລັດ!', timer: 1500, showConfirmButton: false });
+          }).catch(() => fallbackCopyText(text));
+        } else {
+          fallbackCopyText(text);
+        }
+      }, 'ສຳເນົາລາຍຊື່ສະຖານີທັງໝົດ');
+    }
+
+    function printAllStationsSummary() {
+      requireExportPermission(() => {
+        const filtered = getFilteredAllStationsForModal();
+        if (!filtered.length) return Swal.fire({ icon: 'info', title: 'ບໍ່ມີຂໍ້ມູນສະຖານີ' });
+        const printWin = window.open('', '_blank');
+        if (!printWin) return Swal.fire({ icon: 'warning', title: 'ກະລຸນາອະນຸຍາດ Pop-up ເພື່ອພິມ' });
+
+        const rowsHtml = filtered.map((item, idx) => {
+          const catLabel = item.category === 'GOV' ? '2. ອົງການຈັດຕັ້ງລັດ' : '1. ບໍລິສັດ/ກິດຈະການ';
+          const statusHtml = item.isAlert
+            ? `<b style="color:#b91c1c;">🚨 ເຕືອນໄພ (${item.violations.length})</b>`
+            : `<b style="color:#047857;">✅ ປົກກະຕິ</b>`;
+          return `
+            <tr>
+              <td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">${idx + 1}</td>
+              <td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold; font-family:monospace;">${escAttr(item.code)}</td>
+              <td style="padding:6px; border:1px solid #cbd5e1;"><b>${escAttr(item.name)}</b></td>
+              <td style="padding:6px; border:1px solid #cbd5e1;">${escAttr(catLabel)}</td>
+              <td style="padding:6px; border:1px solid #cbd5e1;">${escAttr(item.comp)}</td>
+              <td style="padding:6px; border:1px solid #cbd5e1;">${escAttr(item.province)}</td>
+              <td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">${item.sampleDate ? fmtSampleDate(item.sampleDate) : '-'}</td>
+              <td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">${statusHtml}</td>
+            </tr>
+          `;
+        }).join('');
+
+        printWin.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>ລາຍງານສະຖານີກວດວັດຄຸນນະພາບນ້ຳທັງໝົດ</title>
+            <style>
+              body { font-family: 'Phetsarath OT', 'Noto Sans Lao', sans-serif; padding: 20px; color: #1e293b; }
+              h2, h4 { margin: 0 0 6px 0; }
+              table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 15px; }
+              th { background: #f1f5f9; padding: 8px; border: 1px solid #cbd5e1; text-align: left; }
+              @media print { button { display: none; } }
+            </style>
+          </head>
+          <body>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:12px; margin-bottom:12px;">
+              <div>
+                <h2>📍 ລາຍງານຂໍ້ມູນສະຖານີກວດວັດຄຸນນະພາບນ້ຳທັງໝົດ</h2>
+                <h4>ກົມຊັບພະຍາກອນນ້ຳ · ກະຊວງຊັບພະຍາກອນທຳມະຊາດ ແລະ ສິ່ງແວດລ້ອມ</h4>
+                <div style="font-size:12px; color:#64748b;">ວັນທີອອກລາຍງານ: ${new Date().toLocaleDateString('lo-LA')} | ຈຳນວນທັງໝົດ: ${filtered.length} ສະຖານີ</div>
+              </div>
+              <button onclick="window.print()" style="padding:8px 16px; background:#0284c7; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">🖨️ ສັ່ງພິມ</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">ລ/ດ</th>
+                  <th style="width:80px;">ລະຫັດ</th>
+                  <th>ຊື່ສະຖານີ</th>
+                  <th>ປະເພດຂໍ້ມູນ</th>
+                  <th>ຊື່ຂໍ້ມູນ / ຫົວຂໍ້ຫຼັກ</th>
+                  <th>ແຂວງ</th>
+                  <th style="text-align:center;">ວັນທີເກັບ</th>
+                  <th style="text-align:center;">ສະຖານະ</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </body>
+          </html>
+        `);
+        printWin.document.close();
+      }, 'ພິມລາຍງານສະຖານີທັງໝົດ');
     }
 
     function copyStationAlert(code, comp) {
@@ -12343,9 +13057,10 @@
       const modal = document.getElementById('stationStandardComparisonModal');
       if (modal) modal.remove();
       const alertModal = document.getElementById('alertStationsModal');
+      const allStModal = document.getElementById('allStationsDetailModal');
       const dsExceedModal = document.getElementById('datasetExceedanceModal');
       const auditKpiModal = document.getElementById('auditKpiDetailModal');
-      if (!alertModal && (!dsExceedModal || dsExceedModal.classList.contains('hidden')) && (!auditKpiModal || auditKpiModal.classList.contains('hidden'))) {
+      if (!alertModal && !allStModal && (!dsExceedModal || dsExceedModal.classList.contains('hidden')) && (!auditKpiModal || auditKpiModal.classList.contains('hidden'))) {
         document.body.style.overflow = '';
       }
     }
@@ -13703,6 +14418,9 @@
     function jumpToRecords(keys) {
       keys = (keys || []).filter(Boolean);
       if (!keys.length) return;
+      if (typeof setAppView === 'function' && currentAppView !== 'records') {
+        setAppView('records');
+      }
       const si = document.getElementById('searchInput');
       if (si) si.value = '';
       const sf = document.getElementById('statusFilter');
@@ -13710,14 +14428,18 @@
       keys.forEach(k => expandedRows[k] = true);
       render();
       setTimeout(() => {
-        const el = document.getElementById('row_' + keys[0]);
-        if (!el) return;
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        keys.forEach(k => {
-          const r = document.getElementById('row_' + k);
-          if (r) { r.classList.add('row-flash'); setTimeout(() => r.classList.remove('row-flash'), 2600); }
-        });
-      }, 400);
+        if (typeof scrollToTableRow === 'function') {
+          scrollToTableRow(keys[0]);
+        }
+        setTimeout(() => {
+          const el = document.getElementById('row_' + keys[0]);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          keys.forEach(k => {
+            const r = document.getElementById('row_' + k);
+            if (r) { r.classList.add('row-flash'); setTimeout(() => r.classList.remove('row-flash'), 2600); }
+          });
+        }, 120);
+      }, 250);
     }
 
     function mergeResultText(results) {
