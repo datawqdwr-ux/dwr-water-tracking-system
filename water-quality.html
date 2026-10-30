@@ -1031,32 +1031,6 @@
             </div>
           </div>
 
-          <!-- ນຳເຂົ້າຂໍ້ມູນຈາກ Excel -->
-          <div id="excelImportBox">
-            <div id="excelDropZone"
-                 onclick="document.getElementById('excelFileInput').click()"
-                 ondragover="event.preventDefault(); this.classList.add('border-emerald-500','bg-emerald-50/80','scale-[1.01]')"
-                 ondragleave="this.classList.remove('border-emerald-500','bg-emerald-50/80','scale-[1.01]')"
-                 ondrop="handleExcelDrop(event)"
-                 class="cursor-pointer border-2 border-dashed border-emerald-300/90 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 hover:bg-emerald-50/80 rounded-2xl p-3.5 text-center transition-all duration-200 shadow-2xs group">
-              <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-1.5 text-lg group-hover:scale-110 transition shadow-xs">
-                📂
-              </div>
-              <p class="text-xs sm:text-sm font-bold text-emerald-800">ນຳເຂົ້າຂໍ້ມູນຈາກ Excel / CSV (ເລືອກໄດ້ຫຼາຍໄຟລ໌)</p>
-              <p class="text-[11px] text-slate-500 mt-0.5">ກົດເພື່ອເລືອກໄຟລ໌ ຫຼື ລາກໄຟລ໌ມາວາງບ່ອນນີ້ (.xlsx, .xls, .csv)</p>
-              <div class="flex items-center justify-center gap-1.5 mt-2">
-                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">.XLSX</span>
-                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">.XLS</span>
-                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-teal-100 text-teal-800">.CSV</span>
-                <span class="text-[9.5px] font-semibold text-slate-400">· Multi-file</span>
-              </div>
-            </div>
-            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" multiple class="hidden" onchange="handleExcelFiles(this.files); this.value='';">
-            <button type="button" onclick="downloadExcelTemplate()" class="mt-2 w-full text-center text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center justify-center gap-1.5 py-1">
-              <span>📄</span> ດາວໂຫລດແບບຟອມ Excel (Template) ສຳລັບກອກຂໍ້ມູນ ↗
-            </button>
-          </div>
-
           <!-- ຟອມປ້ອນຂໍ້ມູນ Detail: ສະຖານີ -->
           <form id="waterForm" autocomplete="off" onsubmit="addTempStation(event)" class="space-y-3.5 border-t border-slate-200/80 pt-3.5">
             <div class="flex items-center justify-between pb-1">
@@ -1198,6 +1172,32 @@
 
             <button type="button" onclick="saveAllBatch()" id="saveBatchBtn" class="w-full bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 hover:from-indigo-500 hover:to-violet-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-indigo-600/25 transition mt-3 hidden flex items-center justify-center gap-2 active:scale-95">
               <span>💾</span> ບັນທຶກຂໍ້ມູນທັງໝົດ (Batch Save to Database)
+            </button>
+          </div>
+
+          <!-- ນຳເຂົ້າຂໍ້ມູນຈາກ Excel -->
+          <div id="excelImportBox" class="mt-4 border-t border-slate-200/80 pt-4">
+            <div id="excelDropZone"
+                 onclick="document.getElementById('excelFileInput').click()"
+                 ondragover="event.preventDefault(); this.classList.add('border-emerald-500','bg-emerald-50/80','scale-[1.01]')"
+                 ondragleave="this.classList.remove('border-emerald-500','bg-emerald-50/80','scale-[1.01]')"
+                 ondrop="handleExcelDrop(event)"
+                 class="cursor-pointer border-2 border-dashed border-emerald-300/90 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/40 hover:bg-emerald-50/80 rounded-2xl p-3.5 text-center transition-all duration-200 shadow-2xs group">
+              <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-1.5 text-lg group-hover:scale-110 transition shadow-xs">
+                📂
+              </div>
+              <p class="text-xs sm:text-sm font-bold text-emerald-800">ນຳເຂົ້າຂໍ້ມູນຈາກ Excel / CSV (ເລືອກໄດ້ຫຼາຍໄຟລ໌)</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">ກົດເພື່ອເລືອກໄຟລ໌ ຫຼື ລາກໄຟລ໌ມາວາງບ່ອນນີ້ (.xlsx, .xls, .csv)</p>
+              <div class="flex items-center justify-center gap-1.5 mt-2">
+                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">.XLSX</span>
+                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">.XLS</span>
+                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-teal-100 text-teal-800">.CSV</span>
+                <span class="text-[9.5px] font-semibold text-slate-400">· Multi-file</span>
+              </div>
+            </div>
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" multiple class="hidden" onchange="handleExcelFiles(this.files); this.value='';">
+            <button type="button" onclick="downloadExcelTemplate()" class="mt-2 w-full text-center text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center justify-center gap-1.5 py-1">
+              <span>📄</span> ດາວໂຫລດແບບຟອມ Excel (Template) ສຳລັບກອກຂໍ້ມູນ ↗
             </button>
           </div>
         </div>
