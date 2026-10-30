@@ -25,7 +25,7 @@
     var USER_KEYS = ["lao_wastewater_current_user_v2", "lao_water_current_user_v2"];
     function okRole(r) {
       r = String(r || "").toLowerCase();
-      return r === "admin" || r === "officer" || r === "super_admin" || r === "staff";
+      return r === "admin" || r === "sub_admin" || r === "officer" || r === "super_admin" || r === "staff";
     }
     function canExport() {
       try {
@@ -858,15 +858,19 @@ function subscribeToAuditLogs(onUpdate, onError) {
 /* --- ບັນຊີຜູ້ໃຊ້ຮ່ວມກັນ: ເກັບຢູ່ system_config/users (ບ່ອນດຽວກັບ ລະບົບຄຸນນະພາບນ້ຳ) ---
    ລະບົບຄຸນນະພາບນ້ຳ ໃຊ້ name/password/role (SUPER_ADMIN, STAFF)
    ລະບົບນີ້ໃຊ້ username/role (admin, officer, viewer) → ແປງໄປມາອັດຕະໂນມັດ */
-var Q2U = { SUPER_ADMIN: "admin", STAFF: "officer", VIEWER: "viewer" };
-var U2Q = { admin: "SUPER_ADMIN", officer: "STAFF", viewer: "VIEWER" };
+var Q2U = { SUPER_ADMIN: "admin", ADMIN: "sub_admin", STAFF: "officer", VIEWER: "viewer" };
+var U2Q = { admin: "SUPER_ADMIN", sub_admin: "ADMIN", officer: "STAFF", viewer: "VIEWER" };
 var GUEST_USER = {
   id: "guest", username: "guest", password: "", fullName: "ຜູ້ເບິ່ງທົ່ວໄປ (ຍັງບໍ່ເຂົ້າສູ່ລະບົບ)", position: "", email: "", phone: "",
   organization: "", department: "", role: "viewer", avatarColor: "bg-slate-500", notes: "", createdAt: "", updatedAt: ""
 };
 var DEFAULT_ADMIN = {
-  id: "default-admin", username: "admin", password: "9999", fullName: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "admin",
-  notes: "ບັນຊີເລີ່ມຕົ້ນ — ສ້າງບັນຊີ Admin ຂອງທ່ານເອງ ແລ້ວບັນຊີນີ້ຈະປິດເອງ", avatarColor: "bg-blue-600"
+  id: "default-admin", username: "admin", password: "9999", fullName: "Super Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "admin",
+  notes: "ບັນຊີເລີ່ມຕົ້ນ Super Admin", avatarColor: "bg-blue-600"
+};
+var DEFAULT_SUB_ADMIN = {
+  id: "default-subadmin", username: "subadmin", password: "8888", fullName: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "sub_admin",
+  notes: "ບັນຊີເລີ່ມຕົ້ນ Admin (ບໍ່ມີສິດລົບປະຫວັດ/ລ້າງຂໍ້ມູນ/ຈັດການຜູ້ໃຊ້/ຕັ້ງລະຫັດດາວໂຫຼດ)", avatarColor: "bg-indigo-600"
 };
 function normalizeUser(raw, fallbackId) {
   const rawCode = raw.userCode ? String(raw.userCode).toLowerCase().replace(/[^a-z0-9_-]/g, "") : "";
@@ -895,6 +899,7 @@ function toStoredUser(user) {
 function withDefaultAdmin(list) {
   let out = list;
   if (!out.some((u) => u.role === "admin")) out = [...out, normalizeUser(DEFAULT_ADMIN, "default-admin")];
+  if (!out.some((u) => u.role === "sub_admin")) out = [...out, normalizeUser(DEFAULT_SUB_ADMIN, "default-subadmin")];
   if (!list.some((u) => u.role === "officer")) out = [...out, normalizeUser({ id: "default-staff", username: "staff", password: "1234", fullName: "Staff (ບັນຊີເລີ່ມຕົ້ນ)", role: "officer", notes: "ບັນຊີເລີ່ມຕົ້ນ" }, "default-staff")];
   return out;
 }
@@ -917,7 +922,7 @@ async function saveUserProfile(user) {
   await set(dbRef(rtdb, `${PATHS.users}/${safeKey(user.id)}`), toStoredUser(updatedUser));
 }
 async function deleteUserProfile(userId) {
-  if (!userId || userId === "default-admin" || userId === "default-staff" || userId === "guest") return;
+  if (!userId || userId === "default-admin" || userId === "default-subadmin" || userId === "default-staff" || userId === "guest") return;
   await remove(dbRef(rtdb, `${PATHS.users}/${safeKey(userId)}`));
 }
 
@@ -953,7 +958,7 @@ function isElevatedExportUser() {
   } catch (e) {}
   if (!u || u.id === "guest") return false;
   const role = String(u.role || "").toLowerCase();
-  return role === "admin" || role === "officer" || role === "super_admin" || role === "staff";
+  return role === "admin" || role === "sub_admin" || role === "officer" || role === "super_admin" || role === "staff";
 }
 
 async function requireWaterExportPermission(onSuccess, label = 'ດາວໂຫຼດຂໍ້ມູນ') {
@@ -6046,7 +6051,8 @@ function openUserEditor(usr, currentUser, users) {
       <input name="phone" style="${inp}" value="${esc(usr.phone)}" autocomplete="off">
       <label style="${lab}">🎖️ ສິດ</label>
       <select name="role" style="${inp}" ${!isAdmin || isSelf ? "disabled" : ""}>
-        <option value="admin" ${usr.role === "admin" ? "selected" : ""}>🛡️ ຜູ້ດູແລລະບົບ (Super Admin)</option>
+        <option value="admin" ${usr.role === "admin" ? "selected" : ""}>👑 Super Admin (ຈັດການທຸກຢ່າງ)</option>
+        <option value="sub_admin" ${usr.role === "sub_admin" ? "selected" : ""}>🛡️ Admin (ບໍລິຫານຂໍ້ມູນ — ຍົກເວັ້ນລົບປະຫວັດ/ລ້າງຂໍ້ມູນ/ຈັດການຜູ້ໃຊ້/ຕັ້ງລະຫັດດາວໂຫຼດ)</option>
         <option value="officer" ${usr.role === "officer" ? "selected" : ""}>📋 ເຈົ້າໜ້າທີ່ຕິດຕາມ (Staff)</option>
         <option value="viewer" ${usr.role === "viewer" ? "selected" : ""}>👁️ ຜູ້ສັງເກດການ (ເບິ່ງຢ່າງດຽວ)</option>
       </select>
@@ -6115,7 +6121,7 @@ function openUserEditor(usr, currentUser, users) {
   });
 }
 
-var ROLE_TEXT = (r) => r === "admin" ? "👑 Super Admin" : r === "officer" ? "🛠️ Staff" : "👁️ ເບິ່ງຢ່າງດຽວ";
+var ROLE_TEXT = (r) => r === "admin" ? "👑 Super Admin" : r === "sub_admin" ? "🛡️ Admin" : r === "officer" ? "🛠️ Staff" : "👁️ ເບິ່ງຢ່າງດຽວ";
 var SecurityAndSettings = ({
   currentUser,
   users,
@@ -6519,10 +6525,12 @@ var SecurityAndSettings = ({
                 "select",
                 {
                   value: profile.role,
+                  disabled: currentUser.role !== "admin",
                   onChange: (e) => setProfile({ ...profile, role: e.target.value }),
-                  className: "w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-rose-500 cursor-pointer",
+                  className: "w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-rose-500 cursor-pointer disabled:opacity-60",
                   children: [
                     /* @__PURE__ */ jsx7("option", { value: "admin", children: "👑 Super Admin (ຈັດການທຸກຢ່າງ ແລະ ບັນຊີຜູ້ໃຊ້)" }),
+                    /* @__PURE__ */ jsx7("option", { value: "sub_admin", children: "🛡️ Admin (ບໍລິຫານຂໍ້ມູນ & ແຈ້ງເຕືອນ — ບໍ່ລວມລົບປະຫວັດ/ຈັດການຜູ້ໃຊ້/ຕັ້ງລະຫັດດາວໂຫຼດ)" }),
                     /* @__PURE__ */ jsx7("option", { value: "officer", children: "🛠️ Staff (ເພີ່ມ, ແກ້ໄຂ ແລະ ລຶບຂໍ້ມູນ)" }),
                     /* @__PURE__ */ jsx7("option", { value: "viewer", children: "👁️ ເບິ່ງຢ່າງດຽວ (ເບິ່ງ, ຄົ້ນຫາ ແລະ ສົ່ງອອກລາຍງານ)" })
                   ]
@@ -6630,7 +6638,7 @@ var SecurityAndSettings = ({
           ] }),
           /* @__PURE__ */ jsx7("p", { className: "text-xs text-slate-400 mt-0.5", children: "ຈັດການ ແລະ ສະຫຼັບບັນຊີຜູ້ໃຊ້ງານທີ່ສາມາດເຂົ້າລະບົບໄດ້" })
         ] }),
-        /* @__PURE__ */ jsxs7(
+        currentUser.role === "admin" && /* @__PURE__ */ jsxs7(
           "button",
           {
             onClick: () => setIsAddingUser(true),
@@ -6846,8 +6854,8 @@ var SecurityAndSettings = ({
           )
         ] }),
 
-        /* ບ໋ອກ Select & Bulk Action Toolbar */
-        /* @__PURE__ */ jsxs7("div", { className: "flex items-center justify-between p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs shrink-0", children: [
+        /* ບ໋ອກ Select & Bulk Action Toolbar (ສະເພາະ Super Admin) */
+        currentUser.role === "admin" && /* @__PURE__ */ jsxs7("div", { className: "flex items-center justify-between p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs shrink-0", children: [
           /* @__PURE__ */ jsxs7("label", { className: "flex items-center gap-2 cursor-pointer select-none text-slate-300 font-medium", children: [
             /* @__PURE__ */ jsx7("input", {
               type: "checkbox",
@@ -6875,7 +6883,7 @@ var SecurityAndSettings = ({
         ] }),
 
         /* Banner when logs are selected for bulk deletion */
-        selectedLogIds.length > 0 && /* @__PURE__ */ jsxs7("div", { className: "p-2.5 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-xs flex items-center justify-between shrink-0 animate-in fade-in", children: [
+        currentUser.role === "admin" && selectedLogIds.length > 0 && /* @__PURE__ */ jsxs7("div", { className: "p-2.5 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-xs flex items-center justify-between shrink-0 animate-in fade-in", children: [
           /* @__PURE__ */ jsxs7("span", { className: "font-bold text-rose-200", children: [
             "ເລືອກແລ້ວ: ",
             selectedLogIds.length,
@@ -6921,7 +6929,7 @@ var SecurityAndSettings = ({
         ] }) :
         /* @__PURE__ */ jsx7("div", { className: "divide-y divide-slate-800/80 max-h-[500px] overflow-y-auto pr-1", children: filteredLogs.map((log) => /* @__PURE__ */ jsxs7("div", { className: "py-3 flex items-start justify-between gap-3 text-xs", children: [
           /* @__PURE__ */ jsxs7("div", { className: "flex items-start gap-2.5", children: [
-            /* @__PURE__ */ jsx7("input", {
+            currentUser.role === "admin" && /* @__PURE__ */ jsx7("input", {
               type: "checkbox",
               checked: selectedLogIds.includes(log.id),
               onChange: (e) => {
@@ -7158,6 +7166,7 @@ var SecurityAndSettings = ({
                   className: "w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-emerald-500",
                   children: [
                     /* @__PURE__ */ jsx7("option", { value: "officer", children: "🛠️ Staff" }),
+                    /* @__PURE__ */ jsx7("option", { value: "sub_admin", children: "🛡️ Admin" }),
                     /* @__PURE__ */ jsx7("option", { value: "admin", children: "👑 Super Admin" }),
                     /* @__PURE__ */ jsx7("option", { value: "viewer", children: "👁️ ເບິ່ງຢ່າງດຽວ" })
                   ]
@@ -10002,7 +10011,7 @@ var DirectMessagingModal = ({
   messageHistory,
   currentUser
 }) => {
-  const isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "super_admin");
+  const isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "sub_admin" || currentUser.role === "super_admin");
   const [recipientName, setRecipientName] = useState9("");
   const [recipientPhone, setRecipientPhone] = useState9("");
   const [recipientEmail, setRecipientEmail] = useState9("");
@@ -11910,7 +11919,7 @@ function App() {
   const handleSwitchUser = async (user) => {
     setCurrentUser(user);
     try {
-      const key = user.id === "default-admin" ? "default:SUPER_ADMIN" : user.id === "default-staff" ? "default:STAFF" : user.id;
+      const key = user.id === "default-admin" ? "default:SUPER_ADMIN" : user.id === "default-subadmin" ? "default:ADMIN" : user.id === "default-staff" ? "default:STAFF" : user.id;
       localStorage.setItem("waterSession", JSON.stringify({ key, role: U2Q[user.role] || "VIEWER", name: user.fullName }));
       sessionStorage.removeItem("guestMode");
     } catch (e) {}
@@ -12004,7 +12013,7 @@ function App() {
       setIsDeleting(false);
     }
   };
-  const isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "super_admin");
+  const isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "sub_admin" || currentUser.role === "super_admin");
   const handleOpenDirectMessage = (p) => {
     if (!isSuperAdmin) {
       alert("⚠️ ສິດທິບໍ່ພຽງພໍ: ການສົ່ງຂໍ້ຄວາມແຈ້ງເຕືອນຫາເຈົ້າຂອງໂຄງການ ແມ່ນກໍານົດໃຫ້ Super Admin ເທົ່ານັ້ນທີ່ສາມາດສົ່ງຂໍ້ຄວາມແຈ້ງເຕືອນ.");
@@ -12380,7 +12389,8 @@ import { jsx as jsx15 } from "react/jsx-runtime";
 var SHARED_SESSION_KEY = "waterSession";
 var CURRENT_USER_KEY = "lao_water_current_user_v2";
 var SHARED_DEFAULTS = [
-  { username: "admin", password: "9999", role: "SUPER_ADMIN", name: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-admin" },
+  { username: "admin", password: "9999", role: "SUPER_ADMIN", name: "Super Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-admin" },
+  { username: "subadmin", password: "8888", role: "ADMIN", name: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-subadmin" },
   { username: "staff", password: "1234", role: "STAFF", name: "Staff (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-staff" }
 ];
 var normLogin = (v) => String(v || "").trim().toLowerCase();

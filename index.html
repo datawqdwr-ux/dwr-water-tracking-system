@@ -543,9 +543,11 @@
         if (user && user.id !== 'guest' && user.role !== 'guest') {
           const roleLabel = {
             SUPER_ADMIN: '👑 Super Admin',
+            ADMIN: '🛡️ Admin',
             STAFF: '🛠️ Staff',
             VIEWER: '👁️ Viewer',
             admin: '👑 Super Admin',
+            sub_admin: '🛡️ Admin',
             officer: '🛠️ Staff',
             viewer: '👁️ Viewer'
           }[user.role] || user.role || (lang === 'en' ? 'User' : 'ຜູ້ໃຊ້ງານ');

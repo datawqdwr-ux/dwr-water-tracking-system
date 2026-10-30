@@ -562,7 +562,8 @@
       } catch (e) {}
 
       return [
-        { username: 'admin', password: '9999', passwordHash: hashPassword('9999'), role: 'SUPER_ADMIN', fullName: 'Admin (ຜູ້ດູແລລະບົບຫຼັກ)', fbKey: 'default:SUPER_ADMIN' },
+        { username: 'admin', password: '9999', passwordHash: hashPassword('9999'), role: 'SUPER_ADMIN', fullName: 'Super Admin (ຜູ້ດູແລລະບົບຫຼັກ)', fbKey: 'default:SUPER_ADMIN' },
+        { username: 'subadmin', password: '8888', passwordHash: hashPassword('8888'), role: 'ADMIN', fullName: 'Admin (ຜູ້ບໍລິຫານລະບົບ)', fbKey: 'default:ADMIN' },
         { username: 'staff', password: '1234', passwordHash: hashPassword('1234'), role: 'STAFF', fullName: 'Staff (ວິຊາການສິ່ງແວດລ້ອມ)', fbKey: 'default:STAFF' }
       ];
     },
@@ -597,7 +598,8 @@
       } catch (e) {}
 
       if (!fbKey) {
-        fbKey = (u.toLowerCase() === 'admin') ? 'default:SUPER_ADMIN' : ((u.toLowerCase() === 'staff') ? 'default:STAFF' : ('qr:' + u));
+        const uLow = u.toLowerCase();
+        fbKey = (uLow === 'admin') ? 'default:SUPER_ADMIN' : (uLow === 'subadmin') ? 'default:ADMIN' : (uLow === 'staff') ? 'default:STAFF' : ('qr:' + u);
       }
 
       // Store only hashed credentials in local QR registry (no plaintext password persisted)
@@ -703,6 +705,24 @@
      * Open QR Code Generator / Printable Badge Modal
      */
     async openGeneratorModal(prefillUser = null) {
+      try {
+        const sess = JSON.parse(localStorage.getItem('waterSession') || sessionStorage.getItem('waterSession') || 'null');
+        const v2 = JSON.parse(localStorage.getItem('lao_water_current_user_v2') || localStorage.getItem('lao_wastewater_current_user_v2') || 'null');
+        const curRole = String((sess && sess.role) || (v2 && v2.role) || '').toUpperCase();
+        if (curRole === 'ADMIN' || curRole === 'SUB_ADMIN' || curRole === 'STAFF' || curRole === 'OFFICER' || curRole === 'VIEWER') {
+          if (window.Swal) {
+            window.Swal.fire({
+              icon: 'error',
+              title: '🔒 ບໍ່ມີສິດສ້າງ QR ບັນຊີຜູ້ໃຊ້',
+              text: 'ສະເພາະ Super Admin ເທົ່ານັ້ນທີ່ສາມາດສ້າງ QR Code ບັນຊີຜູ້ໃຊ້ໄດ້ (ບັນຊີ Admin ບໍ່ມີສິດສ້າງ QR)'
+            });
+          } else {
+            alert('🔒 ສະເພາະ Super Admin ເທົ່ານັ້ນທີ່ສາມາດສ້າງ QR Code ບັນຊີຜູ້ໃຊ້ໄດ້');
+          }
+          return;
+        }
+      } catch (e) {}
+
       await ensureDependencies();
 
       const existing = document.getElementById('dwrQrGenModal');
@@ -711,7 +731,10 @@
       let availableUsers = await DwrQrAuth.fetchAllSystemUsers();
 
       if (!availableUsers.some(u => (u.username || '').toLowerCase() === 'admin')) {
-        availableUsers.push({ username: 'admin', password: '9999', passwordHash: hashPassword('9999'), role: 'SUPER_ADMIN', fullName: 'Admin (ບັນຊີຫຼັກ)', fbKey: 'default:SUPER_ADMIN' });
+        availableUsers.push({ username: 'admin', password: '9999', passwordHash: hashPassword('9999'), role: 'SUPER_ADMIN', fullName: 'Super Admin (ບັນຊີຫຼັກ)', fbKey: 'default:SUPER_ADMIN' });
+      }
+      if (!availableUsers.some(u => (u.username || '').toLowerCase() === 'subadmin')) {
+        availableUsers.push({ username: 'subadmin', password: '8888', passwordHash: hashPassword('8888'), role: 'ADMIN', fullName: 'Admin (ບັນຊີຜູ້ບໍລິຫານ)', fbKey: 'default:ADMIN' });
       }
       if (!availableUsers.some(u => (u.username || '').toLowerCase() === 'staff')) {
         availableUsers.push({ username: 'staff', password: '1234', passwordHash: hashPassword('1234'), role: 'STAFF', fullName: 'Staff (ບັນຊີວິຊາການ)', fbKey: 'default:STAFF' });
@@ -798,6 +821,7 @@
                   <label class="block text-[10px] text-slate-400 mb-0.5">ສິດ (Role)</label>
                   <select id="dwrQrCustRole" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white">
                     <option value="SUPER_ADMIN">👑 Super Admin</option>
+                    <option value="ADMIN">🛡️ Admin</option>
                     <option value="STAFF" selected>🛠️ Staff</option>
                     <option value="VIEWER">👁️ Viewer</option>
                   </select>
@@ -889,7 +913,7 @@
           correctLevel: window.QRCode.CorrectLevel.M
         });
 
-        const roleText = user.role === 'SUPER_ADMIN' ? '👑 SUPER ADMIN' : user.role === 'STAFF' ? '🛠️ STAFF' : '👁️ VIEWER';
+        const roleText = user.role === 'SUPER_ADMIN' ? '👑 SUPER ADMIN' : user.role === 'ADMIN' ? '🛡️ ADMIN' : user.role === 'STAFF' ? '🛠️ STAFF' : '👁️ VIEWER';
         document.getElementById('dwrQrBadgeRole').innerText = roleText;
         document.getElementById('dwrQrBadgeName').innerText = user.fullName || user.name || user.username;
         document.getElementById('dwrQrBadgeUser').innerText = `username: ${user.username || user.name}`;

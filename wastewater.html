@@ -23,7 +23,7 @@
     var USER_KEYS = ["lao_wastewater_current_user_v2", "lao_water_current_user_v2"];
     function okRole(r) {
       r = String(r || "").toLowerCase();
-      return r === "admin" || r === "officer" || r === "super_admin" || r === "staff";
+      return r === "admin" || r === "sub_admin" || r === "officer" || r === "super_admin" || r === "staff";
     }
     function canExport() {
       try {
@@ -296,7 +296,7 @@ async function sendDirectMessage(msg) {
   }
   return newMsg;
 }
-var Q2U = { SUPER_ADMIN: "admin", STAFF: "officer", VIEWER: "viewer" }, U2Q = { admin: "SUPER_ADMIN", officer: "STAFF", viewer: "VIEWER" }, GUEST_USER = {
+var Q2U = { SUPER_ADMIN: "admin", ADMIN: "sub_admin", STAFF: "officer", VIEWER: "viewer" }, U2Q = { admin: "SUPER_ADMIN", sub_admin: "ADMIN", officer: "STAFF", viewer: "VIEWER" }, GUEST_USER = {
   id: "guest",
   username: "guest",
   password: "",
@@ -336,7 +336,7 @@ function toStoredUser(user) {
 }
 function withDefaultAccounts(list) {
   let out = list;
-  return out.some((u) => u.role === "admin") || (out = [...out, normalizeUser({ id: "default-admin", username: "admin", password: "9999", fullName: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "admin", notes: "ບັນຊີເລີ່ມຕົ້ນ" }, "default-admin")]), list.some((u) => u.role === "officer") || (out = [...out, normalizeUser({ id: "default-staff", username: "staff", password: "1234", fullName: "Staff (ບັນຊີເລີ່ມຕົ້ນ)", role: "officer", notes: "ບັນຊີເລີ່ມຕົ້ນ" }, "default-staff")]), out;
+  return out.some((u) => u.role === "admin") || (out = [...out, normalizeUser({ id: "default-admin", username: "admin", password: "9999", fullName: "Super Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "admin", notes: "ບັນຊີເລີ່ມຕົ້ນ" }, "default-admin")]), out.some((u) => u.role === "sub_admin") || (out = [...out, normalizeUser({ id: "default-subadmin", username: "subadmin", password: "8888", fullName: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", role: "sub_admin", notes: "ບັນຊີເລີ່ມຕົ້ນ Admin" }, "default-subadmin")]), list.some((u) => u.role === "officer") || (out = [...out, normalizeUser({ id: "default-staff", username: "staff", password: "1234", fullName: "Staff (ບັນຊີເລີ່ມຕົ້ນ)", role: "officer", notes: "ບັນຊີເລີ່ມຕົ້ນ" }, "default-staff")]), out;
 }
 function subscribeToUserProfiles(onUpdate) {
   let cached = readCache(LOCAL_USERS_KEY);
@@ -422,7 +422,7 @@ function isElevatedExportUser() {
   } catch (e) {}
   if (!u || u.id === "guest") return false;
   let role = String(u.role || "").toLowerCase();
-  return role === "admin" || role === "officer" || role === "super_admin" || role === "staff";
+  return role === "admin" || role === "sub_admin" || role === "officer" || role === "super_admin" || role === "staff";
 }
 
 async function requireWaterExportPermission(onSuccess, label = 'ດາວໂຫຼດຂໍ້ມູນ') {
@@ -7555,12 +7555,14 @@ var SecurityAndSettings = ({
                 "select",
                 {
                   value: profile.role,
+                  disabled: currentUser.role !== "admin",
                   onChange: (e) => setProfile({ ...profile, role: e.target.value }),
-                  className: "w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-sky-500 cursor-pointer",
+                  className: "w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-sky-500 cursor-pointer disabled:opacity-60",
                   children: [
-                    /* @__PURE__ */ jsx8("option", { value: "admin", children: "Admin - ຜູ້ດູແລລະບົບ (ສາມາດຈັດການຂໍ້ມູນໂຄງການ ແລະ ບັນຊີຜູ້ໃຊ້ອື່ນ)" }),
-                    /* @__PURE__ */ jsx8("option", { value: "officer", children: "Officer - ເຈົ້າໜ້າທີ່ (ສາມາດເພີ່ມ, ແກ້ໄຂ ແລະ ລຶບຂໍ້ມູນໂຄງການ)" }),
-                    /* @__PURE__ */ jsx8("option", { value: "viewer", children: "Viewer - ຜູ້ສັງເກດການ (ສາມາດເບິ່ງ, ຄົ້ນຫາ ແລະ ສົ່ງອອກລາຍງານ)" })
+                    /* @__PURE__ */ jsx8("option", { value: "admin", children: "👑 Super Admin - ຜູ້ດູແລລະບົບສູງສຸດ (ຈັດການທຸກຢ່າງ ແລະ ບັນຊີຜູ້ໃຊ້)" }),
+                    /* @__PURE__ */ jsx8("option", { value: "sub_admin", children: "🛡️ Admin - ຜູ້ບໍລິຫານລະບົບ (ບໍ່ລວມລົບປະຫວັດ/ຈັດການຜູ້ໃຊ້/ຕັ້ງລະຫັດດາວໂຫຼດ)" }),
+                    /* @__PURE__ */ jsx8("option", { value: "officer", children: "🛠️ Staff - ເຈົ້າໜ້າທີ່ (ເພີ່ມ, ແກ້ໄຂ ແລະ ລຶບຂໍ້ມູນໂຄງການ)" }),
+                    /* @__PURE__ */ jsx8("option", { value: "viewer", children: "👁️ Viewer - ຜູ້ສັງເກດການ (ເບິ່ງຢ່າງດຽວ)" })
                   ]
                 }
               )
@@ -7666,7 +7668,7 @@ var SecurityAndSettings = ({
           ] }),
           /* @__PURE__ */ jsx8("p", { className: "text-xs text-slate-400 mt-0.5", children: "ຈັດການ ແລະ ສະຫຼັບບັນຊີຜູ້ໃຊ້ງານທີ່ສາມາດເຂົ້າລະບົບໄດ້" })
         ] }),
-        /* @__PURE__ */ jsxs8(
+        currentUser.role === "admin" && /* @__PURE__ */ jsxs8(
           "button",
           {
             onClick: () => setIsAddingUser(!0),
@@ -7724,7 +7726,7 @@ var SecurityAndSettings = ({
                     ]
                   }
                 ),
-                users.length > 1 && !isCurrent && /* @__PURE__ */ jsx8(
+                currentUser.role === "admin" && users.length > 1 && !isCurrent && /* @__PURE__ */ jsx8(
                   "button",
                   {
                     type: "button",
@@ -7870,8 +7872,8 @@ var SecurityAndSettings = ({
           )
         ] }),
 
-        /* ບ໋ອກ Select & Bulk Action Toolbar */
-        /* @__PURE__ */ jsxs8("div", { className: "flex items-center justify-between p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs shrink-0", children: [
+        /* ບ໋ອກ Select & Bulk Action Toolbar (ສະເພາະ Super Admin) */
+        currentUser.role === "admin" && /* @__PURE__ */ jsxs8("div", { className: "flex items-center justify-between p-2.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs shrink-0", children: [
           /* @__PURE__ */ jsxs8("label", { className: "flex items-center gap-2 cursor-pointer select-none text-slate-300 font-medium", children: [
             /* @__PURE__ */ jsx8("input", {
               type: "checkbox",
@@ -7899,7 +7901,7 @@ var SecurityAndSettings = ({
         ] }),
 
         /* Banner when logs are selected for bulk deletion */
-        selectedLogIds.length > 0 && /* @__PURE__ */ jsxs8("div", { className: "p-2.5 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-xs flex items-center justify-between shrink-0 animate-in fade-in", children: [
+        currentUser.role === "admin" && selectedLogIds.length > 0 && /* @__PURE__ */ jsxs8("div", { className: "p-2.5 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-xs flex items-center justify-between shrink-0 animate-in fade-in", children: [
           /* @__PURE__ */ jsxs8("span", { className: "font-bold text-rose-200", children: [
             "ເລືອກແລ້ວ: ",
             selectedLogIds.length,
@@ -7945,7 +7947,7 @@ var SecurityAndSettings = ({
         ] }) :
         /* @__PURE__ */ jsx8("div", { className: "divide-y divide-slate-800/80 max-h-[500px] overflow-y-auto pr-1", children: filteredLogs.map((log) => /* @__PURE__ */ jsxs8("div", { className: "py-3 flex items-start justify-between gap-3 text-xs", children: [
           /* @__PURE__ */ jsxs8("div", { className: "flex items-start gap-2.5", children: [
-            /* @__PURE__ */ jsx8("input", {
+            currentUser.role === "admin" && /* @__PURE__ */ jsx8("input", {
               type: "checkbox",
               checked: selectedLogIds.includes(log.id),
               onChange: (e) => {
@@ -8104,9 +8106,10 @@ var SecurityAndSettings = ({
                   onChange: (e) => setNewUserData({ ...newUserData, role: e.target.value }),
                   className: "w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-hidden focus:border-emerald-500 cursor-pointer",
                   children: [
-                    /* @__PURE__ */ jsx8("option", { value: "officer", children: "Officer - ເຈົ້າໜ້າທີ່" }),
-                    /* @__PURE__ */ jsx8("option", { value: "admin", children: "Admin - ຜູ້ດູແລລະບົບ" }),
-                    /* @__PURE__ */ jsx8("option", { value: "viewer", children: "Viewer - ຜູ້ສັງເກດການ" })
+                    /* @__PURE__ */ jsx8("option", { value: "officer", children: "🛠️ Staff - ເຈົ້າໜ້າທີ່" }),
+                    /* @__PURE__ */ jsx8("option", { value: "sub_admin", children: "🛡️ Admin - ຜູ້ບໍລິຫານລະບົບ" }),
+                    /* @__PURE__ */ jsx8("option", { value: "admin", children: "👑 Super Admin - ຜູ້ດູແລລະບົບສູງສຸດ" }),
+                    /* @__PURE__ */ jsx8("option", { value: "viewer", children: "👁️ Viewer - ຜູ້ສັງເກດການ" })
                   ]
                 }
               )
@@ -14090,7 +14093,7 @@ var DirectMessagingModal = ({
   messageHistory,
   currentUser
 }) => {
-  let isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "super_admin");
+  let isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "sub_admin" || currentUser.role === "super_admin");
   let [recipientName, setRecipientName] = useState11(""), [recipientPhone, setRecipientPhone] = useState11(""), [recipientEmail, setRecipientEmail] = useState11(""), [subject, setSubject] = useState11(""), [message, setMessage] = useState11(""), [messageType, setMessageType] = useState11("permit_expiry"), [isSending, setIsSending] = useState11(!1), [activeTab, setActiveTab] = useState11("compose"), [copied, setCopied] = useState11(!1);
   useEffect5(() => {
     project ? (setRecipientName(project.ownerName), setRecipientPhone(project.contactPhone), setRecipientEmail(project.contactEmail || ""), new Date(project.permitExpiryDate).getTime() < Date.now() ? (setMessageType("permit_expiry"), setSubject(`ແຈ້ງເຕືອນດ່ວນ: ໃບອະນຸຍາດປ່ອຍນໍ້າເປື້ອນ ${project.permitNumber} ໝົດອາຍຸແລ້ວ`), setMessage(
@@ -14980,7 +14983,7 @@ function App() {
   }, handleSwitchUser = async (user) => {
     setCurrentUser(user);
     try {
-      let key = user.id === "default-admin" ? "default:SUPER_ADMIN" : user.id === "default-staff" ? "default:STAFF" : user.id;
+      let key = user.id === "default-admin" ? "default:SUPER_ADMIN" : user.id === "default-subadmin" ? "default:ADMIN" : user.id === "default-staff" ? "default:STAFF" : user.id;
       localStorage.setItem("waterSession", JSON.stringify({ key, role: U2Q[user.role] || "VIEWER", name: user.fullName })), sessionStorage.removeItem("guestMode");
     } catch {
     }
@@ -15044,7 +15047,7 @@ function App() {
     } finally {
       setIsDeleting(!1);
     }
-  }, isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "super_admin"), handleOpenDirectMessage = (p) => {
+  }, isSuperAdmin = currentUser && (currentUser.role === "admin" || currentUser.role === "sub_admin" || currentUser.role === "super_admin"), handleOpenDirectMessage = (p) => {
     if (!isSuperAdmin) {
       alert("⚠️ ສິດທິບໍ່ພຽງພໍ: ການສົ່ງຂໍ້ຄວາມແຈ້ງເຕືອນຫາເຈົ້າຂອງໂຄງການ ແມ່ນກໍານົດໃຫ້ Super Admin ເທົ່ານັ້ນທີ່ສາມາດສົ່ງຂໍ້ຄວາມແຈ້ງເຕືອນ.");
       return;
@@ -15431,7 +15434,8 @@ import { ref as dbRef2, get as get2 } from "firebase/database";
 import { update as dbUpdate } from "firebase/database";
 import { jsx as jsx16 } from "react/jsx-runtime";
 var SHARED_SESSION_KEY = "waterSession", CURRENT_USER_KEY = "lao_wastewater_current_user_v2", SHARED_DEFAULTS = [
-  { username: "admin", password: "9999", role: "SUPER_ADMIN", name: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-admin" },
+  { username: "admin", password: "9999", role: "SUPER_ADMIN", name: "Super Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-admin" },
+  { username: "subadmin", password: "8888", role: "ADMIN", name: "Admin (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-subadmin" },
   { username: "staff", password: "1234", role: "STAFF", name: "Staff (ບັນຊີເລີ່ມຕົ້ນ)", uid: "default-staff" }
 ], normLogin = (v) => String(v || "").trim().toLowerCase();
 async function fetchSharedUsers() {

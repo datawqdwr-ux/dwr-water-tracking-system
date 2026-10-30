@@ -17,7 +17,7 @@
     var USER_KEYS = ["lao_wastewater_current_user_v2", "lao_water_current_user_v2"];
     function okRole(r) {
       r = String(r || "").toLowerCase();
-      return r === "admin" || r === "officer" || r === "super_admin" || r === "staff";
+      return r === "admin" || r === "sub_admin" || r === "officer" || r === "super_admin" || r === "staff";
     }
     function canExport() {
       try {
@@ -2646,7 +2646,7 @@
       <div id="tabContent-users" class="space-y-4 hidden overflow-y-auto flex-1 pr-1 pt-1">
         <p class="text-[11px] text-slate-400">ບັນຊີນີ້ໃຊ້ໄດ້ທັງ <b>ລະບົບຄຸນນະພາບນ້ຳ</b> ແລະ <b>ລະບົບການນຳໃຊ້ນ້ຳ</b>. Login ດ້ວຍ <b>ຊື່ເຂົ້າລະບົບ</b> + <b>ລະຫັດຜ່ານ</b>; <b>ຊື່ເຕັມ</b> ຈະສະແດງໃນລະບົບ ແລະ ປະຫວັດ.</p>
         <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs">
-          ⚠️ <b>ບັນຊີເລີ່ມຕົ້ນ</b> (admin / 9999 ແລະ staff / 1234) ຈະໃຊ້ບໍ່ໄດ້ອີກ ເມື່ອສ້າງຜູ້ໃຊ້ຂອງສິດນັ້ນແລ້ວ. ກະລຸນາສ້າງຜູ້ໃຊ້ Super Admin ໃຫ້ຕົນເອງກ່ອນ ແລະ ຈື່ລະຫັດໄວ້.
+          ⚠️ <b>ບັນຊີເລີ່ມຕົ້ນ</b> (Super Admin: <code>admin / 9999</code>, Admin: <code>subadmin / 8888</code>, Staff: <code>staff / 1234</code>). ກະລຸນາສ້າງຜູ້ໃຊ້ຕາມສິດທີ່ຕ້ອງການ ແລະ ຈື່ລະຫັດໄວ້.
         </div>
         <div class="p-4 rounded-2xl bg-slate-850 border border-slate-800 space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2666,8 +2666,9 @@
           <div>
             <label class="block text-[10px] font-bold text-slate-300 mb-1">🛡️ ສິດການນຳໃຊ້ (Role)</label>
             <select id="newUserRole" class="border border-slate-700 bg-slate-800 p-2.5 rounded-xl text-xs text-white w-full outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer">
-              <option value="STAFF">🛠️ Staff (ບັນທຶກ/ແກ້ໄຂໄດ້)</option>
-              <option value="SUPER_ADMIN">👑 Super Admin (ທຸກຢ່າງ + ຈັດການຜູ້ໃຊ້ + ລົບປະຫວັດ)</option>
+              <option value="STAFF">🛠️ Staff (ບັນທຶກ/ແກ້ໄຂຂໍ້ມູນ & ດາວໂຫຼດລາຍງານ)</option>
+              <option value="ADMIN">🛡️ Admin (ບໍລິຫານຂໍ້ມູນ + ຕັ້ງຄ່າດັດຊະນີ/ເກນເຕືອນໄພ — ຍົກເວັ້ນລົບປະຫວັດ/ລ້າງຂໍ້ມູນ/ຈັດການຜູ້ໃຊ້/ຕັ້ງລະຫັດດາວໂຫຼດ)</option>
+              <option value="SUPER_ADMIN">👑 Super Admin (ທຸກຢ່າງ + ຈັດການຜູ້ໃຊ້/QR + ລົບປະຫວັດ + ຕັ້ງລະຫັດດາວໂຫຼດ)</option>
               <option value="VIEWER">👁️ Viewer (ເບິ່ງຢ່າງດຽວ)</option>
             </select>
           </div>
@@ -3333,7 +3334,8 @@
     const getSharedSessionRaw = () => localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
     // ບັນຊີເລີ່ມຕົ້ນ ໃຊ້ໄດ້ສະເພາະຕອນທີ່ຍັງບໍ່ມີຜູ້ໃຊ້ຂອງສິດນັ້ນ (ໃຊ້ເພື່ອສ້າງຜູ້ໃຊ້ຄົນທຳອິດ)
     const DEFAULT_ACCOUNTS = [
-      { username: 'admin', password: '9999', role: 'SUPER_ADMIN', name: 'Admin (ບັນຊີເລີ່ມຕົ້ນ)' },
+      { username: 'admin', password: '9999', role: 'SUPER_ADMIN', name: 'Super Admin (ບັນຊີເລີ່ມຕົ້ນ)' },
+      { username: 'subadmin', password: '8888', role: 'ADMIN', name: 'Admin (ບັນຊີເລີ່ມຕົ້ນ)' },
       { username: 'staff', password: '1234', role: 'STAFF', name: 'Staff (ບັນຊີເລີ່ມຕົ້ນ)' }
     ];
 
@@ -3802,14 +3804,14 @@
 
     /* --- USER MANAGEMENT (per-user password instead of one shared code) --- */
     const loginOf = u => u.username || u.name || '';
-    const ROLE_LABEL = { SUPER_ADMIN: '👑 Super Admin', STAFF: '🛠️ Staff', VIEWER: '👁️ ເບິ່ງຢ່າງດຽວ' };
-    const ROLE_CLASS = { SUPER_ADMIN: 'bg-amber-100 text-amber-800', STAFF: 'bg-rose-100 text-sky-800', VIEWER: 'bg-purple-100 text-purple-800' };
+    const ROLE_LABEL = { SUPER_ADMIN: '👑 Super Admin', ADMIN: '🛡️ Admin', STAFF: '🛠️ Staff', VIEWER: '👁️ ເບິ່ງຢ່າງດຽວ' };
+    const ROLE_CLASS = { SUPER_ADMIN: 'bg-amber-100 text-amber-800', ADMIN: 'bg-indigo-100 text-indigo-800', STAFF: 'bg-rose-100 text-sky-800', VIEWER: 'bg-purple-100 text-purple-800' };
 
     function validateLogin(login, exceptKey) {
       if (!login) return 'ກະລຸນາລະບຸຊື່ເຂົ້າລະບົບ!';
       if (login.length > 30) return 'ຊື່ເຂົ້າລະບົບຍາວເກີນໄປ (ບໍ່ເກີນ 30 ໂຕ) — ໃສ່ຊື່ເຕັມໃນຊ່ອງ "ຊື່ເຕັມ" ແທນ';
       if (systemUsers.some(u => u.fbKey !== exceptKey && normName(loginOf(u)) === normName(login))) return 'ຊື່ເຂົ້າລະບົບນີ້ມີແລ້ວ! ກະລຸນາໃຊ້ຊື່ອື່ນ';
-      if (DEFAULT_ACCOUNTS.some(d => d.username === normName(login))) return 'ຊື່ນີ້ສະຫງວນໄວ້ສຳລັບບັນຊີເລີ່ມຕົ້ນ (admin, staff)';
+      if (DEFAULT_ACCOUNTS.some(d => d.username === normName(login))) return 'ຊື່ນີ້ສະຫງວນໄວ້ສຳລັບບັນຊີເລີ່ມຕົ້ນ (admin, subadmin, staff)';
       return '';
     }
 
@@ -3853,7 +3855,7 @@
           <input id="eu_full" class="${inp}" value="${escAttr(u.fullName || u.name || '')}" autocomplete="off">
           <label class="${lab}">🎖️ ສິດ</label>
           <select id="eu_role" class="${inp} bg-white" ${isSelf ? 'disabled title="ປ່ຽນສິດຂອງຕົນເອງບໍ່ໄດ້"' : ''}>
-            ${['SUPER_ADMIN', 'STAFF', 'VIEWER'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLE_LABEL[r]}</option>`).join('')}
+            ${['SUPER_ADMIN', 'ADMIN', 'STAFF', 'VIEWER'].map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLE_LABEL[r]}</option>`).join('')}
           </select>
           <label class="${lab}">🔑 ລະຫັດຜ່ານໃໝ່ <span class="font-normal text-slate-400">(ປ່ອຍຫວ່າງ = ໃຊ້ລະຫັດເດີມ)</span></label>
           <input id="eu_pass" type="text" class="${inp}" placeholder="ພິມລະຫັດໃໝ່ ຖ້າຕ້ອງການປ່ຽນ" autocomplete="off">
@@ -3920,8 +3922,9 @@
         return;
       }
       const saved = JSON.parse(getSharedSessionRaw() || 'null');
+      const roleRank = r => r === 'SUPER_ADMIN' ? 0 : r === 'ADMIN' ? 1 : r === 'STAFF' ? 2 : 3;
       list.innerHTML = systemUsers
-        .slice().sort((a, b) => (a.role === 'SUPER_ADMIN' ? 0 : a.role === 'STAFF' ? 1 : 2) - (b.role === 'SUPER_ADMIN' ? 0 : b.role === 'STAFF' ? 1 : 2))
+        .slice().sort((a, b) => roleRank(a.role) - roleRank(b.role))
         .map(u => {
           const login = loginOf(u);
           const long = login.length > 30;
@@ -4178,7 +4181,7 @@
         return `
           <div class="py-3 flex items-start justify-between gap-3 text-xs hover:bg-slate-850/50 px-2.5 rounded-2xl transition">
             <div class="flex items-start gap-2.5 min-w-0 flex-1">
-              <input type="checkbox" value="${log._key}" onchange="updateSelectedLogsUI()" class="log-item-checkbox w-4 h-4 rounded text-rose-600 bg-slate-800 border-slate-700 focus:ring-rose-500 cursor-pointer mt-2 shrink-0">
+              ${isSuper ? `<input type="checkbox" value="${log._key}" onchange="updateSelectedLogsUI()" class="log-item-checkbox w-4 h-4 rounded text-rose-600 bg-slate-800 border-slate-700 focus:ring-rose-500 cursor-pointer mt-2 shrink-0">` : ''}
               <div class="w-8 h-8 rounded-xl ${iconBadgeClass} flex items-center justify-center shrink-0 mt-0.5 text-sm font-bold shadow-xs">
                 ${iconHtml}
               </div>
@@ -4224,7 +4227,7 @@
     function updateRBACUI() {
       const roleBadge = document.getElementById('roleBadge');
       if (roleBadge) {
-        roleBadge.innerText = currentUserRole === 'SUPER_ADMIN' ? '👑 Super Admin' : currentUserRole === 'STAFF' ? '🛠️ Staff' : '👁️ ຜູ້ເບິ່ງທົ່ວໄປ';
+        roleBadge.innerText = currentUserRole === 'SUPER_ADMIN' ? '👑 Super Admin' : currentUserRole === 'ADMIN' ? '🛡️ Admin' : currentUserRole === 'STAFF' ? '🛠️ Staff' : '👁️ ຜູ້ເບິ່ງທົ່ວໄປ';
       }
       const authBtn = document.getElementById('authBtn');
       if (authBtn) authBtn.innerText = getSharedSessionRaw() ? '🚪 ອອກຈາກລະບົບ' : '🔑 ເຂົ້າສູ່ລະບົບ';
@@ -4246,10 +4249,13 @@
       const quickAddIndBtn = document.getElementById('quickAddIndBtn');
       const formInputs = document.querySelectorAll('#waterForm input, #companyName, #recorderName, #customDatetime');
 
-      if (currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF') {
+      if (currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN' || currentUserRole === 'STAFF') {
         if (currentUserRole === 'SUPER_ADMIN') {
           adminBtn.classList.remove('hidden');
           adminClearBtn.classList.remove('hidden');
+        } else if (currentUserRole === 'ADMIN') {
+          adminBtn.classList.remove('hidden');
+          adminClearBtn.classList.add('hidden');
         } else {
           adminBtn.classList.add('hidden');
           adminClearBtn.classList.add('hidden');
@@ -4272,6 +4278,15 @@
         applyImportLock();
       }
 
+      const tabUsersBtn = document.getElementById('tabBtn-users');
+      if (tabUsersBtn) tabUsersBtn.classList.toggle('hidden', currentUserRole !== 'SUPER_ADMIN');
+      const tabExportSecBtn = document.getElementById('tabBtn-exportSecurity');
+      if (tabExportSecBtn) tabExportSecBtn.classList.toggle('hidden', currentUserRole !== 'SUPER_ADMIN');
+      const selectAllCb = document.getElementById('selectAllLogsCheckbox');
+      if (selectAllCb && selectAllCb.closest('div.flex.items-center.justify-between')) {
+        selectAllCb.closest('div.flex.items-center.justify-between').classList.toggle('hidden', currentUserRole !== 'SUPER_ADMIN');
+      }
+
       const clearLogsBtn = document.getElementById('clearAllLogsBtn');
       if (clearLogsBtn) clearLogsBtn.classList.toggle('hidden', currentUserRole !== 'SUPER_ADMIN');
       const logColHeader = document.getElementById('logActionColHeader');
@@ -4279,8 +4294,8 @@
       const expClearBtn = document.getElementById('expClearLogsSuperBtn');
       if (expClearBtn) expClearBtn.classList.toggle('hidden', currentUserRole !== 'SUPER_ADMIN');
 
-      // ສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນທີ່ເຫັນແຖບອະທິບາຍສັນຍາລັກເຕືອນໄພໃນແຜນທີ່
-      const canViewMapAlerts = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF';
+      // ສະເພາະ Super Admin, Admin ແລະ Staff ເທົ່ານັ້ນທີ່ເຫັນແຖບອະທິບາຍສັນຍາລັກເຕືອນໄພໃນແຜນທີ່
+      const canViewMapAlerts = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN' || currentUserRole === 'STAFF';
       const mapAlertLegend = document.getElementById('mapAlertLegendBar');
       if (mapAlertLegend) {
         mapAlertLegend.classList.toggle('hidden', !canViewMapAlerts);
@@ -4402,12 +4417,19 @@
     });
 
     function switchConfigTab(tabName) {
+      if ((tabName === 'users' || tabName === 'exportSecurity') && currentUserRole !== 'SUPER_ADMIN') {
+        Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະ Super Admin ເທົ່ານັ້ນທີ່ສາມາດຈັດການບັນຊີຜູ້ໃຊ້ ແລະ ຕັ້ງລະຫັດດາວໂຫຼດໄດ້' });
+        tabName = 'indicators';
+      }
       const allTabs = ['indicators', 'thresholds', 'users', 'logs', 'exportSecurity'];
       allTabs.forEach(t => {
         const c = document.getElementById(`tabContent-${t}`);
         const b = document.getElementById(`tabBtn-${t}`);
         if (c) c.classList.add('hidden');
-        if (b) b.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 shrink-0 font-semibold";
+        if (b) {
+          b.className = "flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 shrink-0 font-semibold";
+          if ((t === 'users' || t === 'exportSecurity') && currentUserRole !== 'SUPER_ADMIN') b.classList.add('hidden');
+        }
       });
       const activeC = document.getElementById(`tabContent-${tabName}`);
       const activeB = document.getElementById(`tabBtn-${tabName}`);
@@ -4422,11 +4444,11 @@
     }
 
     function toggleSettingsModal(tabName) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ 
           icon: 'warning', 
           title: 'ກະລຸນາເຂົ້າສູ່ລະບົບ', 
-          text: 'ຫ້ອງຕັ້ງຄ່າລະບົບ ແລະ ປະຫວັດການໃຊ້ງານ ສະຫງວນໄວ້ສະເພາະເຈົ້າໜ້າທີ່ ຫຼື Super Admin ເທົ່ານັ້ນ' 
+          text: 'ຫ້ອງຕັ້ງຄ່າລະບົບ ແລະ ປະຫວັດການໃຊ້ງານ ສະຫງວນໄວ້ສະເພາະເຈົ້າໜ້າທີ່, Admin ຫຼື Super Admin ເທົ່ານັ້ນ' 
         });
       }
       const modal = document.getElementById('settingsModal');
@@ -4523,7 +4545,7 @@
     }
 
     function saveThresholdConfig() {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       
       const newThresholds = {};
       customIndicators.forEach(i => {
@@ -8405,7 +8427,7 @@
     }
 
     function addCustomIndicator() {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       const name = document.getElementById('newIndName').value.trim();
       const unit = document.getElementById('newIndUnit').value.trim();
       if (!name) return Swal.fire({ icon: 'warning', title: 'ກະລຸນາລະບຸຊື່ Indicator!' });
@@ -8445,7 +8467,7 @@
     }
 
     function removeCustomIndicator(key) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       const ind = customIndicators.find(i => i.key === key);
       if (!ind) return;
       const n = countValuesFor(key);
@@ -8480,7 +8502,7 @@
     }
 
     function restoreIndicator(key) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       const ind = masterIndicators.find(m => m.key === key);
       if (!ind || customIndicators.some(c => c.key === key)) return;
       customIndicators.push(ind);
@@ -8494,7 +8516,7 @@
 
     // ລົບຖາວອນ: ລົບໂຕຊີ້ວັດ + ຄ່າຂອງມັນໃນທຸກສະຖານີ + ເກນເຕືອນໄພ (ກູ້ຄືນບໍ່ໄດ້)
     async function deleteIndicatorsPermanently(keys) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະ Super Admin' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະ Super Admin ແລະ Admin' });
       keys = [...new Set(keys)];
       const inds = keys.map(k => customIndicators.find(c => c.key === k) || masterIndicators.find(m => m.key === k)).filter(Boolean);
       if (!inds.length) return;
@@ -8548,7 +8570,7 @@
     }
 
     async function deleteIndicatorPermanently(key, skipConfirm = false) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະ Super Admin' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະ Super Admin ແລະ Admin' });
       const ind = masterIndicators.find(m => m.key === key) || customIndicators.find(c => c.key === key);
       if (!ind) return;
       const n = countValuesFor(key);
@@ -8663,7 +8685,7 @@
               <button type="button" onclick="bulkIndAction('chartOn')" class="px-2 py-1 border-l border-slate-700 font-semibold hover:bg-slate-700 cursor-pointer">ສະແດງ</button>
             </span>
             <button type="button" onclick="bulkIndAction('archive')" class="px-2 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 border border-indigo-500 font-semibold text-white text-[11px] cursor-pointer">🙈 ເກັບໄວ້</button>
-            ${currentUserRole === 'SUPER_ADMIN' ? `<button type="button" onclick="bulkIndAction('delete')" class="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 border border-rose-500 font-semibold text-white text-[11px] cursor-pointer">🗑️ ລົບຖາວອນ</button>` : ''}` : ''}
+            ${(currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN') ? `<button type="button" onclick="bulkIndAction('delete')" class="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 border border-rose-500 font-semibold text-white text-[11px] cursor-pointer">🗑️ ລົບຖາວອນ</button>` : ''}` : ''}
           ${selArc ? `
             <button type="button" onclick="bulkIndAction('restore')" class="px-2 py-1 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-500 font-semibold text-white text-[11px] cursor-pointer">↩️ ສະແດງຄືນ</button>
             <button type="button" onclick="bulkIndAction('delete')" class="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 border border-rose-500 font-semibold text-white text-[11px] cursor-pointer">🗑️ ລົບຖາວອນ</button>` : ''}
@@ -8734,7 +8756,7 @@
     }
 
     function setIndFlag(key, flag, value) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       const ind = customIndicators.find(i => i.key === key);
       if (!ind) return;
       ind[flag] = value;
@@ -8757,7 +8779,7 @@
 
     // ຄຳສັ່ງກັບໂຕທີ່ເລືອກທັງໝົດ
     async function bulkIndAction(action) {
-      if (currentUserRole !== 'SUPER_ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       const keys = [...indSel];
       if (!keys.length) return;
       const act = customIndicators.filter(i => keys.includes(i.key));
@@ -8828,7 +8850,7 @@
               ${pill(!i.noForm, '✏️ ຟອມ', '✏️ ຟອມ', `event.preventDefault(); event.stopPropagation(); setIndFlag('${escAttr(i.key)}', 'noForm', ${!i.noForm})`, i.noForm ? 'ຊ່ອງປ້ອນຄ່າຖືກເຊື່ອງ — ກົດເພື່ອສະແດງ' : 'ມີຊ່ອງປ້ອນຄ່າໃນຟອມ — ກົດເພື່ອເຊື່ອງ', `pill_form_${escAttr(i.key)}`)}
               ${pill(!i.noTable, '📋 ຕາຕະລາງ', '📋 ຕາຕະລາງ', `event.preventDefault(); event.stopPropagation(); setIndFlag('${escAttr(i.key)}', 'noTable', ${!i.noTable})`, i.noTable ? 'ເຊື່ອງຈາກຕາຕະລາງ/ແຜນທີ່/Export — ກົດເພື່ອສະແດງ' : 'ສະແດງໃນຕາຕະລາງ — ກົດເພື່ອເຊື່ອງ', `pill_table_${escAttr(i.key)}`)}
               ${pill(!i.noChart, '📈 ກຣາຟ', '📈 ກຣາຟ', `event.preventDefault(); event.stopPropagation(); setIndFlag('${escAttr(i.key)}', 'noChart', ${!i.noChart})`, i.noChart ? 'ເຊື່ອງຈາກກຣາຟ — ກົດເພື່ອສະແດງ' : 'ສະແດງໃນກຣາຟ — ກົດເພື່ອເຊື່ອງ', `pill_chart_${escAttr(i.key)}`)}`}
-            ${currentUserRole === 'SUPER_ADMIN' ? `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); deleteIndicatorsPermanently(['${escAttr(i.key)}'])" class="shrink-0 px-2 py-0.5 rounded-md border border-rose-500/60 text-rose-400 hover:bg-rose-600 hover:text-white text-[11px] font-bold" title="ລົບໂຕຊີ້ວັດນີ້ ແລະ ຄ່າທັງໝົດ ອອກຖາວອນ">🗑️ ລົບ</button>` : ''}
+            ${(currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN') ? `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); deleteIndicatorsPermanently(['${escAttr(i.key)}'])" class="shrink-0 px-2 py-0.5 rounded-md border border-rose-500/60 text-rose-400 hover:bg-rose-600 hover:text-white text-[11px] font-bold" title="ລົບໂຕຊີ້ວັດນີ້ ແລະ ຄ່າທັງໝົດ ອອກຖາວອນ">🗑️ ລົບ</button>` : ''}
           </label>`;
       };
 
@@ -13300,7 +13322,7 @@
     }
 
     function quickSwitchRecordCategory(fbKey) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ສະເພາະຜູ້ດູແລລະບົບ ຫຼື ພະນັກງານ ເທົ່ານັ້ນທີ່ສາມາດປ່ຽນປະເພດຂໍ້ມູນໄດ້' });
       }
       const item = waterData.find(d => d.fbKey === fbKey);
@@ -16734,8 +16756,8 @@
       // ບັນທຶກ filteredDataGlobal ສຳລັບການເລື່ອນຫາ
       filteredDataGlobal = filteredData;
 
-      const canDelete = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF';
-      const canViewMapAlerts = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF';
+      const canDelete = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN' || currentUserRole === 'STAFF';
+      const canViewMapAlerts = currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN' || currentUserRole === 'STAFF';
       const mapAlertLegend = document.getElementById('mapAlertLegendBar');
       if (mapAlertLegend) {
         mapAlertLegend.classList.toggle('hidden', !canViewMapAlerts);
@@ -17435,7 +17457,7 @@
     }
 
     function saveStationEdit(fbKey, idx) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       }
       const item = waterData.find(d => d.fbKey === fbKey);
@@ -17510,7 +17532,7 @@
     }
 
     function saveMasterEdit(fbKey) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       }
       const item = waterData.find(d => d.fbKey === fbKey);
@@ -18727,7 +18749,7 @@
     }
 
     function isElevatedExportUser() {
-      return currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'STAFF';
+      return currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN' || currentUserRole === 'STAFF';
     }
 
     async function requireExportPermission(onSuccess, label = 'ດາວໂຫຼດຂໍ້ມູນ') {
@@ -18780,7 +18802,7 @@
     }
 
     function deleteSubStation(fbKey, stationIndex, stationName) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       }
 
@@ -18835,7 +18857,7 @@
     }
 
     function deleteItem(fbKey, codeName) {
-      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'STAFF') {
+      if (currentUserRole !== 'SUPER_ADMIN' && currentUserRole !== 'ADMIN' && currentUserRole !== 'STAFF') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
       }
 
