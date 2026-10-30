@@ -385,19 +385,11 @@
             </button>
           </nav>
 
-          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">📁 ຖານຂໍ້ມູນ & ລາຍງານ (ແຍກ 2 ປະເພດ)</p>
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">📁 ຖານຂໍ້ມູນ & ລາຍງານ</p>
           <nav class="space-y-1">
             <button type="button" data-nav-view="records" onclick="selectDataCategoryAndOpenRecords('ALL')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer">
               <span class="text-base">🗄️</span>
               <span class="flex-1 truncate">ຖານຂໍ້ມູນຜົນການວັດແທກຄຸນນະພາບນໍ້າ</span>
-            </button>
-            <button type="button" id="sbNavCatCompany" onclick="selectDataCategoryAndOpenRecords('COMPANY')" class="w-full text-left pl-5 pr-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-[11px] font-semibold text-indigo-200 hover:text-white hover:bg-indigo-900/50 border border-transparent hover:border-indigo-500/40 transition-all cursor-pointer" title="ເບິ່ງ ແລະ ຈັດການສະເພາະຂໍ້ມູນບໍລິສັດ ຫຼື ກິດຈະການ">
-              <span class="flex items-center gap-1.5 truncate"><span>🏢</span> <span class="truncate">1. ຂໍ້ມູນສະເພາະບໍລິສັດ/ກິດຈະການ</span></span>
-              <span id="sidebarCatCompanyCount" class="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/25 text-indigo-200 border border-indigo-400/30 shrink-0">0</span>
-            </button>
-            <button type="button" id="sbNavCatGov" onclick="selectDataCategoryAndOpenRecords('GOV')" class="w-full text-left pl-5 pr-2.5 py-2 rounded-xl flex items-center justify-between gap-2 text-[11px] font-semibold text-sky-200 hover:text-white hover:bg-sky-900/50 border border-transparent hover:border-sky-500/40 transition-all cursor-pointer" title="ເບິ່ງ ແລະ ຈັດການສະເພາະຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ">
-              <span class="flex items-center gap-1.5 truncate"><span>🏛️</span> <span class="truncate">2. ຂໍ້ມູນອົງການຈັດຕັ້ງລັດ</span></span>
-              <span id="sidebarCatGovCount" class="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-sky-500/25 text-sky-200 border border-sky-400/30 shrink-0">0</span>
             </button>
             <button type="button" onclick="openAnnualReport(); if(window.innerWidth<1024)closeSidebarMobile();" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer">
               <span class="text-base">📑</span>
