@@ -268,68 +268,6 @@
 
       <!-- Sidebar Navigation Menu (ຫົວຂໍ້ຂອງແຕ່ລະຟັງຊັນ) -->
       <div class="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-xs">
-        
-        <!-- ==================== ຫ້ອງສະເພາະ ຢູ່ຟາກຊ້າຍມື: ກໍານົດມາດຕະຖານຄຸນນະພາບນໍ້າ (ຂໍ້ຕົກລົງ 81/ລບ) ==================== -->
-        <div id="sidebarStandardsBox" class="p-3 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/40 border border-emerald-500/40 shadow-lg shadow-emerald-950/30 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <span class="text-emerald-400 text-sm">⚖️</span>
-              <div class="min-w-0">
-                <h4 class="text-[11px] font-bold text-white tracking-tight truncate">ມາດຕະຖານ 81/ລບ</h4>
-                <p class="text-[9px] text-slate-400 truncate">21/02/2017 (5 ຊັ້ນຄຸນນະພາບ)</p>
-              </div>
-            </div>
-            <span id="sbActiveClassPill" class="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 shrink-0">ປະເພດ 2</span>
-          </div>
-
-          <div class="space-y-1">
-            <div class="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-0.5">
-              <span>ເລືອກປະເພດມາດຕະຖານ:</span>
-              <span id="sbClassShortDesc" class="text-emerald-300 text-[9.5px] font-bold truncate">ອຸປະໂພກ-ບໍລິໂພກ</span>
-            </div>
-            <div class="grid grid-cols-5 gap-1 p-1 bg-slate-950/80 rounded-xl border border-slate-800/80 text-center font-bold text-[11px]">
-              <button type="button" onclick="selectStandardClass(1)" id="sbClassBtn-1" class="py-1 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer" title="ປະເພດ 1: ອະນຸລັກຕົ້ນນ້ຳທຳມະຊາດ">1</button>
-              <button type="button" onclick="selectStandardClass(2)" id="sbClassBtn-2" class="py-1 rounded-lg transition-all bg-emerald-600 text-white shadow-xs cursor-pointer" title="ປະເພດ 2: ອຸປະໂພກ-ບໍລິໂພກ (ບຳບັດທຳມະດາ)">2</button>
-              <button type="button" onclick="selectStandardClass(3)" id="sbClassBtn-3" class="py-1 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer" title="ປະເພດ 3: ກະສິກຳ & ລ້ຽງສັດ">3</button>
-              <button type="button" onclick="selectStandardClass(4)" id="sbClassBtn-4" class="py-1 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer" title="ປະເພດ 4: ອຸດສາຫະກຳ & ຄົມມະນາຄົມ">4</button>
-              <button type="button" onclick="selectStandardClass(5)" id="sbClassBtn-5" class="py-1 rounded-lg transition-all text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer" title="ປະເພດ 5: ຄົມມະນາຄົມ & ລະບາຍນ້ຳ">5</button>
-            </div>
-          </div>
-
-          <!-- Key limits preview in sidebar -->
-          <div class="p-2 rounded-xl bg-slate-900/90 border border-slate-800/80 text-[10px] space-y-1 font-mono text-slate-300">
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400 font-sans">pH:</span>
-              <span class="font-bold text-white" id="sbLimit-pH">6.5 - 8.5</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400 font-sans">DO (min):</span>
-              <span class="font-bold text-emerald-400" id="sbLimit-DO">≥ 6.0 mg/L</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400 font-sans">BOD5 (max):</span>
-              <span class="font-bold text-rose-300" id="sbLimit-BOD">≤ 1.5 mg/L</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400 font-sans">COD (max):</span>
-              <span class="font-bold text-amber-300" id="sbLimit-COD">≤ 5.0 mg/L</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-slate-400 font-sans">TSS (max):</span>
-              <span class="font-bold text-sky-300" id="sbLimit-TSS">≤ 25 mg/L</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-            <button type="button" onclick="applyStandardClassToSystem()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-1.5 px-2 rounded-xl text-[10.5px] shadow-sm transition flex items-center justify-center gap-1 cursor-pointer" title="ນຳໃຊ້ມາດຕະຖານປະເພດນີ້ເປັນເກນລະບົບ">
-              <span>⚡</span> <span>ນຳໃຊ້ເກນນີ້</span>
-            </button>
-            <button type="button" onclick="setAppView('standards81')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-1.5 px-2 rounded-xl text-[10.5px] border border-slate-700 transition flex items-center justify-center gap-1 cursor-pointer" title="ເປີດຫ້ອງກຳນົດມາດຕະຖານເຕັມຮູບແບບ">
-              <span>📜</span> <span>ຕາຕະລາງ ↗</span>
-            </button>
-          </div>
-        </div>
-
         <!-- Group: ມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ -->
         <div>
           <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1.5 flex items-center justify-between">
