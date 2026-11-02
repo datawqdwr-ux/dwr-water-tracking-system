@@ -1210,13 +1210,16 @@
 
           <!-- Temporary Station List -->
           <div class="mt-4 border-t border-slate-200/80 pt-4">
-            <div class="flex items-center justify-between mb-2">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
               <h3 id="tempListTitleText" class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <span>📋</span> <span>ລາຍການສະຖານີທີ່ລໍຖ້າບັນທຶກ (ກົດ ✏️ ເພື່ອດຶງຂຶ້ນມາແກ້ໄຂ)</span>
+                <span>📋</span> <span>ລາຍການສະຖານີໃນຊຸດຂໍ້ມູນທີ່ກຳລັງແກ້ໄຂ (ມີຊ່ອງເພີ່ມ/ແກ້ໄຂຈຸດພິກັດທຸກສະຖານີ)</span>
               </h3>
-              <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200" id="tempCount">0</span>
+              <div class="flex items-center gap-1.5">
+                <span id="tempCoordSummaryBadge" class="hidden text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">🧭 ພິກັດ 0/0</span>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200" id="tempCount">0</span>
+              </div>
             </div>
-            <div class="max-h-60 overflow-y-auto border border-slate-200/80 rounded-2xl p-2.5 bg-slate-50/70 space-y-2 text-xs shadow-inner" id="tempListContainer">
+            <div class="max-h-[460px] overflow-y-auto border border-slate-200/80 rounded-2xl p-2.5 bg-slate-50/70 space-y-2.5 text-xs shadow-inner" id="tempListContainer">
               <p class="text-slate-400 text-center py-4">ຍັງບໍ່ມີຂໍ້ມູນສະຖານີ</p>
             </div>
 
@@ -15979,6 +15982,30 @@
       XLSX.writeFile(wb, 'ແບບຟອມ_ຄຸນນະພາບນ້ຳ.xlsx');
     }
 
+    function hasValidStationCoord(st) {
+      return st && st.lat !== null && st.lat !== undefined && st.lat !== '' && !isNaN(Number(st.lat)) &&
+             st.lng !== null && st.lng !== undefined && st.lng !== '' && !isNaN(Number(st.lng));
+    }
+
+    function updateTempCoordSummaryBadge() {
+      const coordBadge = document.getElementById('tempCoordSummaryBadge');
+      if (!coordBadge) return;
+      if (tempStations.length === 0) {
+        coordBadge.classList.add('hidden');
+        return;
+      }
+      coordBadge.classList.remove('hidden');
+      const withCoordCount = tempStations.filter(hasValidStationCoord).length;
+      const missingCount = tempStations.length - withCoordCount;
+      if (missingCount > 0) {
+        coordBadge.className = 'text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300';
+        coordBadge.innerText = `🧭 ມີພິກັດ ${withCoordCount}/${tempStations.length} · ⚠️ ຂາດພິກັດ ${missingCount} ຈຸດ`;
+      } else {
+        coordBadge.className = 'text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+        coordBadge.innerText = `🧭 ມີພິກັດຄົບທັງໝົດ (${withCoordCount}/${tempStations.length})`;
+      }
+    }
+
     function renderTempList() {
       const container = document.getElementById('tempListContainer');
       const countEl = document.getElementById('tempCount');
@@ -15989,9 +16016,11 @@
       if (countEl) countEl.innerText = tempStations.length;
       if (titleEl) {
         titleEl.innerHTML = editingFormDatasetKey
-          ? `<span>📋</span> <span class="text-indigo-900">ລາຍການສະຖານີໃນຊຸດຂໍ້ມູນທີ່ກຳລັງແກ້ໄຂ (ກົດ ✏️ ເພື່ອດຶງຂຶ້ນມາແກ້ໄຂ ຫຼື ✕ ເພື່ອລົບ)</span>`
-          : `<span>📋</span> <span>ລາຍການສະຖານີທີ່ລໍຖ້າບັນທຶກ (ກົດ ✏️ ເພື່ອດຶງຂຶ້ນມາແກ້ໄຂ)</span>`;
+          ? `<span>📋</span> <span class="text-indigo-900">ລາຍການສະຖານີໃນຊຸດຂໍ້ມູນທີ່ກຳລັງແກ້ໄຂ (ເພີ່ມ/ແກ້ໄຂຈຸດພິກັດ ຫຼື ກົດ ✏️ ເພື່ອແກ້ໄຂຄ່າວິເຄາະ)</span>`
+          : `<span>📋</span> <span>ລາຍການສະຖານີທີ່ລໍຖ້າບັນທຶກ (ເພີ່ມ/ແກ້ໄຂຈຸດພິກັດ ຫຼື ກົດ ✏️ ເພື່ອດຶງຂຶ້ນມາແກ້ໄຂ)</span>`;
       }
+
+      updateTempCoordSummaryBadge();
 
       if (tempStations.length > 0 || editingFormDatasetKey) {
         if (saveBtn) {
@@ -16014,24 +16043,73 @@
           const qi = interpretQWI(st.qwi);
           const isEditingThis = editingTempStationIdx === idx;
           const filledParams = Object.values(st.customs || {}).filter(v => v !== undefined && v !== null && v !== '' && v !== '-').length;
+          const hasCoord = hasValidStationCoord(st);
+          const latDisplay = hasCoord ? st.lat : '';
+          const lngDisplay = hasCoord ? st.lng : '';
+          const gpsDisplay = st.gps || (hasCoord ? toDMS(Number(st.lat), Number(st.lng)) : '');
+
           return `
-          <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 p-2.5 rounded-xl border ${isEditingThis ? 'bg-amber-50/90 border-2 border-amber-500 ring-2 ring-amber-400/25' : 'bg-white border-slate-200 hover:border-indigo-300'} shadow-2xs transition">
-            <div class="flex flex-wrap items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="loadTempStationForEdit(${idx})" title="ກົດເພື່ອດຶງສະຖານີນີ້ຂຶ້ນມາແກ້ໄຂໃນຟອມ">
-              <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">#${idx + 1}</span>
-              <span class="font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg text-[11px] border border-indigo-100">${escAttr(st.code)}</span>
-              <span class="font-bold text-slate-800 truncate">${escAttr(st.name)}</span>
-              ${st.province ? `<span class="text-[10.5px] text-slate-500">(${escAttr(st.province)})</span>` : ''}
-              ${st.section ? `<span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200/60">📂 ${escAttr(st.section)}</span>` : ''}
-              ${st.sampleDate ? `<span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-200/60">📅 ${escAttr(fmtSampleDate(st.sampleDate))}</span>` : ''}
-              <span class="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-semibold">🧪 ${filledParams} ຄ່າ</span>
-              ${qi ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${qi.badgeClass}">🌊 ${qi.score !== '-' ? qi.score : ''} ${qi.label}</span>` : ''}
-              ${isEditingThis ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950">✏️ ກຳລັງແກ້ໄຂຢູ່</span>` : ''}
+          <div class="p-3 rounded-xl border ${isEditingThis ? 'bg-amber-50/90 border-2 border-amber-500 ring-2 ring-amber-400/25' : 'bg-white border-slate-200 hover:border-indigo-300'} shadow-2xs transition space-y-2">
+            <!-- ແຖວເທິງ: ຂໍ້ມູນສະຖານີ + ສະຖານະພິກັດ + ປຸ່ມແກ້ໄຂ/ລົບ -->
+            <div class="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2">
+              <div class="flex flex-wrap items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="loadTempStationForEdit(${idx})" title="ກົດເພື່ອດຶງສະຖານີນີ້ຂຶ້ນມາແກ້ໄຂໃນຟອມ">
+                <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">#${idx + 1}</span>
+                <span class="font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg text-[11px] border border-indigo-100">${escAttr(st.code)}</span>
+                <span class="font-bold text-slate-800 truncate">${escAttr(st.name)}</span>
+                ${st.province ? `<span class="text-[10.5px] text-slate-500">(${escAttr(st.province)})</span>` : ''}
+                ${st.section ? `<span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200/60">📂 ${escAttr(st.section)}</span>` : ''}
+                ${st.sampleDate ? `<span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-200/60">📅 ${escAttr(fmtSampleDate(st.sampleDate))}</span>` : ''}
+                <span class="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-semibold">🧪 ${filledParams} ຄ່າ</span>
+                ${qi ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold border ${qi.badgeClass}">🌊 ${qi.score !== '-' ? qi.score : ''} ${qi.label}</span>` : ''}
+                <span id="tempStCoordBadge_${idx}" class="px-2 py-0.5 rounded-lg text-[10px] font-bold border ${hasCoord ? 'bg-teal-50 text-teal-800 border-teal-200 font-mono' : 'bg-rose-50 text-rose-700 border-rose-200'}">
+                  ${hasCoord ? `📍 ${Number(st.lat).toFixed(4)}, ${Number(st.lng).toFixed(4)}` : '⚠️ ຍັງບໍ່ມີຈຸດພິກັດ'}
+                </span>
+                ${isEditingThis ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950">✏️ ກຳລັງແກ້ໄຂຢູ່</span>` : ''}
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="loadTempStationForEdit(${idx})" class="px-2.5 py-1 rounded-lg ${isEditingThis ? 'bg-amber-500 text-slate-950 font-black' : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold'} text-[11px] flex items-center gap-1 transition active:scale-95 cursor-pointer" title="ດຶງຂໍ້ມູນສະຖານີນີ້ຂຶ້ນມາແກ້ໄຂໃນຟອມ">
+                  <span>✏️</span> <span>${isEditingThis ? 'ກຳລັງແກ້ໄຂ' : 'ແກ້ໄຂ'}</span>
+                </button>
+                <button type="button" onclick="removeTempStation(${idx})" class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold flex items-center justify-center transition active:scale-95 shrink-0 cursor-pointer" title="ລົບສະຖານີນີ້">✕</button>
+              </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="loadTempStationForEdit(${idx})" class="px-2.5 py-1 rounded-lg ${isEditingThis ? 'bg-amber-500 text-slate-950 font-black' : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold'} text-[11px] flex items-center gap-1 transition active:scale-95 cursor-pointer" title="ດຶງຂໍ້ມູນສະຖານີນີ້ຂຶ້ນມາແກ້ໄຂໃນຟອມ">
-                <span>✏️</span> <span>${isEditingThis ? 'ກຳລັງແກ້ໄຂ' : 'ແກ້ໄຂ'}</span>
-              </button>
-              <button type="button" onclick="removeTempStation(${idx})" class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold flex items-center justify-center transition active:scale-95 shrink-0 cursor-pointer" title="ລົບສະຖານີນີ້">✕</button>
+
+            <!-- 🧭 ຊ່ອງເພີ່ມ / ແກ້ໄຂຈຸດພິກັດປະຈຳສະຖານີ (Inline Coordinate Entry Box) -->
+            <div class="bg-slate-50/90 border border-slate-200/90 rounded-xl p-2 grid grid-cols-1 md:grid-cols-12 gap-1.5 items-center" onclick="event.stopPropagation()">
+              <div class="md:col-span-5 flex items-center gap-1.5">
+                <span class="text-[10.5px] font-extrabold text-teal-800 shrink-0 flex items-center gap-1">
+                  <span>🧭</span> <span>ເພີ່ມ/ແກ້ໄຂຈຸດພິກັດ:</span>
+                </span>
+                <input type="text" id="tempStCoordSmart_${idx}" value="${escAttr(gpsDisplay)}"
+                  oninput="onTempStationSmartCoordInput(${idx}, this.value)"
+                  placeholder="ວາງພິກັດອົງສາ, UTM ຫຼື Lat,Lng..."
+                  class="w-full min-w-0 border border-slate-300 focus:border-teal-600 focus:ring-1 focus:ring-teal-500/30 rounded-lg px-2 py-1 text-[11px] font-mono bg-white text-slate-800 outline-none transition"
+                  title="ປ້ອນ ຫຼື ວາງພິກັດແບບອົງສາ (DMS), UTM (48N X Y) ຫຼື Lat, Lng ລະບົບຈະແປງຄ່າ Lat/Lng ໃຫ້ອັດຕະໂນມັດ">
+              </div>
+              <div class="md:col-span-4 grid grid-cols-2 gap-1.5">
+                <div class="flex items-center gap-1 bg-white border border-slate-300 focus-within:border-teal-600 rounded-lg px-2 py-1">
+                  <span class="text-[10px] font-bold text-slate-400 shrink-0">Lat:</span>
+                  <input type="text" inputmode="decimal" id="tempStCoordLat_${idx}" value="${escAttr(latDisplay)}"
+                    oninput="onTempStationLatLngInput(${idx})"
+                    placeholder="17.9757"
+                    class="w-full min-w-0 text-[11px] font-mono font-bold text-slate-800 outline-none bg-transparent">
+                </div>
+                <div class="flex items-center gap-1 bg-white border border-slate-300 focus-within:border-teal-600 rounded-lg px-2 py-1">
+                  <span class="text-[10px] font-bold text-slate-400 shrink-0">Lng:</span>
+                  <input type="text" inputmode="decimal" id="tempStCoordLng_${idx}" value="${escAttr(lngDisplay)}"
+                    oninput="onTempStationLatLngInput(${idx})"
+                    placeholder="102.6331"
+                    class="w-full min-w-0 text-[11px] font-mono font-bold text-slate-800 outline-none bg-transparent">
+                </div>
+              </div>
+              <div class="md:col-span-3 flex items-center justify-end gap-1">
+                <button type="button" onclick="useDeviceGpsForTempStation(${idx})" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-[10.5px] transition cursor-pointer shrink-0" title="ດຶງພິກັດປັດຈຸບັນຈາກ GPS ອຸປະກອນ">
+                  🎯 GPS
+                </button>
+                <button type="button" onclick="applyTempStationCoord(${idx}, true)" class="flex-1 px-2.5 py-1 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-bold text-[10.5px] shadow-2xs transition cursor-pointer flex items-center justify-center gap-1 shrink-0" title="ຢືນຢັນ ແລະ ບັນທຶກຈຸດພິກັດຂອງສະຖານີນີ້">
+                  <span>📍</span> <span>ບັນທຶກພິກັດ</span>
+                </button>
+              </div>
             </div>
           </div>
         `}).join('');
@@ -16040,6 +16118,202 @@
       }
 
       populateFormEditStationOptions();
+    }
+
+    // ຟັງຊັນຈັດການຊ່ອງເພີ່ມ/ແກ້ໄຂຈຸດພິກັດໂດຍກົງໃນລາຍການສະຖານີ (Inline Station Coordinate Handlers)
+    function refreshTempStationCoordBadgeUI(idx) {
+      const st = tempStations[idx];
+      if (!st) return;
+      const badge = document.getElementById(`tempStCoordBadge_${idx}`);
+      const hasCoord = hasValidStationCoord(st);
+      if (badge) {
+        badge.className = `px-2 py-0.5 rounded-lg text-[10px] font-bold border ${hasCoord ? 'bg-teal-50 text-teal-800 border-teal-200 font-mono' : 'bg-rose-50 text-rose-700 border-rose-200'}`;
+        badge.innerText = hasCoord ? `📍 ${Number(st.lat).toFixed(4)}, ${Number(st.lng).toFixed(4)}` : '⚠️ ຍັງບໍ່ມີຈຸດພິກັດ';
+      }
+      updateTempCoordSummaryBadge();
+      if (editingTempStationIdx === idx) {
+        const fLat = document.getElementById('lat');
+        const fLng = document.getElementById('lng');
+        const fGps = document.getElementById('gpsDms');
+        if (fLat) fLat.value = hasCoord ? st.lat : '';
+        if (fLng) fLng.value = hasCoord ? st.lng : '';
+        if (fGps) fGps.value = st.gps || '';
+      }
+    }
+
+    function onTempStationSmartCoordInput(idx, rawText) {
+      const st = tempStations[idx];
+      if (!st) return;
+      const txt = String(rawText || '').trim();
+      st.gps = txt;
+      const pair = parseCoordPair(txt);
+      if (pair && !isNaN(pair.lat) && !isNaN(pair.lng)) {
+        st.lat = pair.lat;
+        st.lng = pair.lng;
+        const latEl = document.getElementById(`tempStCoordLat_${idx}`);
+        const lngEl = document.getElementById(`tempStCoordLng_${idx}`);
+        if (latEl) latEl.value = pair.lat;
+        if (lngEl) lngEl.value = pair.lng;
+      }
+      refreshTempStationCoordBadgeUI(idx);
+    }
+
+    function onTempStationLatLngInput(idx) {
+      const st = tempStations[idx];
+      if (!st) return;
+      const latRaw = (document.getElementById(`tempStCoordLat_${idx}`)?.value || '').trim();
+      const lngRaw = (document.getElementById(`tempStCoordLng_${idx}`)?.value || '').trim();
+
+      // ຖ້າຜູ້ໃຊ້ວາງຄູ່ພິກັດລົງໃນຊ່ອງ Lat ຊ່ອງດຽວ (ເຊັ່ນ "17.9757, 102.6331") → ແຍກໃສ່ທັງ Lat ແລະ Lng ໃຫ້ອັດຕະໂນມັດ
+      const pairInLat = parseCoordPair(latRaw);
+      if (pairInLat && (!lngRaw || isNaN(parseCoordPart(lngRaw)))) {
+        st.lat = pairInLat.lat;
+        st.lng = pairInLat.lng;
+        st.gps = toDMS(pairInLat.lat, pairInLat.lng);
+        const latEl = document.getElementById(`tempStCoordLat_${idx}`);
+        const lngEl = document.getElementById(`tempStCoordLng_${idx}`);
+        const smartEl = document.getElementById(`tempStCoordSmart_${idx}`);
+        if (latEl) latEl.value = pairInLat.lat;
+        if (lngEl) lngEl.value = pairInLat.lng;
+        if (smartEl) smartEl.value = st.gps;
+        refreshTempStationCoordBadgeUI(idx);
+        return;
+      }
+
+      if (!latRaw && !lngRaw) {
+        st.lat = null;
+        st.lng = null;
+      } else {
+        const parsedLat = parseCoordPart(latRaw);
+        const parsedLng = parseCoordPart(lngRaw);
+        st.lat = !isNaN(parsedLat) ? parsedLat : null;
+        st.lng = !isNaN(parsedLng) ? parsedLng : null;
+        if (st.lat !== null && st.lng !== null) {
+          st.gps = toDMS(st.lat, st.lng);
+          const smartEl = document.getElementById(`tempStCoordSmart_${idx}`);
+          if (smartEl) smartEl.value = st.gps;
+        }
+      }
+      refreshTempStationCoordBadgeUI(idx);
+    }
+
+    async function applyTempStationCoord(idx, showFeedback = true) {
+      if (currentUserRole === 'VIEWER') {
+        return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
+      }
+      const st = tempStations[idx];
+      if (!st) return;
+
+      const smartVal = (document.getElementById(`tempStCoordSmart_${idx}`)?.value || '').trim();
+      const latRaw = (document.getElementById(`tempStCoordLat_${idx}`)?.value || '').trim();
+      const lngRaw = (document.getElementById(`tempStCoordLng_${idx}`)?.value || '').trim();
+
+      let lat = parseCoordPart(latRaw);
+      let lng = parseCoordPart(lngRaw);
+
+      if ((isNaN(lat) || isNaN(lng)) && smartVal) {
+        const pair = parseCoordPair(smartVal);
+        if (pair) {
+          lat = pair.lat;
+          lng = pair.lng;
+        }
+      }
+
+      if (isNaN(lat) || isNaN(lng)) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'ຈຸດພິກັດບໍ່ຖືກຕ້ອງ ຫຼື ຍັງບໍ່ໄດ້ປ້ອນ!',
+          text: 'ກະລຸນາປ້ອນຄ່າ Lat / Lng (ເຊັ່ນ 17.9757, 102.6331) ຫຼື ວາງພິກັດອົງສາ / UTM ໃສ່ຊ່ອງຈຸດພິກັດ'
+        });
+      }
+
+      st.lat = lat;
+      st.lng = lng;
+      st.gps = smartVal || toDMS(lat, lng);
+
+      const latEl = document.getElementById(`tempStCoordLat_${idx}`);
+      const lngEl = document.getElementById(`tempStCoordLng_${idx}`);
+      const smartEl = document.getElementById(`tempStCoordSmart_${idx}`);
+      if (latEl) latEl.value = lat;
+      if (lngEl) lngEl.value = lng;
+      if (smartEl) smartEl.value = st.gps;
+
+      refreshTempStationCoordBadgeUI(idx);
+      populateFormEditStationOptions();
+
+      // ຖ້າກຳລັງແກ້ໄຂຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (editingFormDatasetKey) → ບັນທຶກພິກັດລົງຖານຂໍ້ມູນ Firebase ທັນທີ!
+      if (editingFormDatasetKey) {
+        const editor = currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
+        const nowStr = new Date().toLocaleString('lo-LA');
+        const cleanStations = tempStations.map(s => {
+          const copy = { ...s, status: evalStatus(s.customs || {}) };
+          delete copy.fbKey;
+          return copy;
+        });
+        try {
+          await db.ref(`water_records/${editingFormDatasetKey}`).update({
+            stations: cleanStations,
+            lastUpdated: nowStr,
+            lastUpdatedBy: editor
+          });
+          await db.ref('activity_logs').push({
+            action: 'EDIT_STATION_COORD',
+            itemCode: `🧭 ອັບເດດຈຸດພິກັດ [${st.code || '-'}] ${st.name || '-'} -> (${lat}, ${lng})`,
+            performedBy: editor,
+            timestamp: nowStr,
+            userRole: currentUserRole
+          });
+          if (showFeedback) {
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: `📍 ບັນທຶກຈຸດພິກັດ [${st.code || ''}] ${st.name || ''} ລົງລະບົບແລ້ວ!`,
+              text: `Lat: ${lat}, Lng: ${lng}`,
+              showConfirmButton: false,
+              timer: 2200
+            });
+          }
+          return;
+        } catch (err) {
+          return Swal.fire({ icon: 'error', title: 'ບັນທຶກພິກັດບໍ່ສຳເລັດ', text: err.message });
+        }
+      }
+
+      if (showFeedback) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: `📍 ຕັ້ງຄ່າຈຸດພິກັດ [${st.code || ''}] ${st.name || ''} ແລ້ວ`,
+          text: `Lat: ${lat}, Lng: ${lng}`,
+          showConfirmButton: false,
+          timer: 1800
+        });
+      }
+    }
+
+    function useDeviceGpsForTempStation(idx) {
+      if (!navigator.geolocation) {
+        return Swal.fire({ icon: 'error', title: 'ບຣາວເຊີບໍ່ຮອງຮັບ GPS' });
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = Math.round(pos.coords.latitude * 1e6) / 1e6;
+          const lng = Math.round(pos.coords.longitude * 1e6) / 1e6;
+          const latEl = document.getElementById(`tempStCoordLat_${idx}`);
+          const lngEl = document.getElementById(`tempStCoordLng_${idx}`);
+          const smartEl = document.getElementById(`tempStCoordSmart_${idx}`);
+          if (latEl) latEl.value = lat;
+          if (lngEl) lngEl.value = lng;
+          if (smartEl) smartEl.value = toDMS(lat, lng);
+          applyTempStationCoord(idx, true);
+        },
+        err => {
+          Swal.fire({ icon: 'warning', title: 'ດຶງພິກັດ GPS ບໍ່ສຳເລັດ', text: err.message });
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
     }
 
     /* --- 🔧 ລະບົບປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ ຜ່ານຫ້ອງຟອມບັນທຶກ (Form Existing Data Update/Edit) --- */
