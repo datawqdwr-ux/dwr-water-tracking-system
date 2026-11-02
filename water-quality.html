@@ -871,19 +871,56 @@
 
             <!-- ແຖວທີ 2: ເລືອກຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ + ປຸ່ມດຶງຂໍ້ມູນມາແກ້ໄຂ -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
-              <div class="lg:col-span-7">
+              <div class="lg:col-span-6">
                 <label class="block text-[10.5px] font-bold text-slate-600 mb-1">📂 ເລືອກຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Existing Dataset in System):</label>
                 <select id="formEditDatasetSelect" onchange="onFormEditDatasetSelectChange(this.value)" class="w-full border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none transition cursor-pointer">
                   <option value="">-- ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການປັບປຸງ ຫຼື ແກ້ໄຂ --</option>
                 </select>
               </div>
-              <div class="lg:col-span-5 flex flex-wrap sm:flex-nowrap items-end gap-2 pt-1 lg:pt-5">
-                <button type="button" onclick="loadExistingDatasetToForm()" class="flex-1 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black text-xs px-3.5 py-2.5 rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+              <div class="lg:col-span-6 flex flex-wrap sm:flex-nowrap items-end gap-1.5 pt-1 lg:pt-5">
+                <button type="button" onclick="loadExistingDatasetToForm()" class="flex-1 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
                   <span>📥</span> <span>ດຶງຂໍ້ມູນມາແກ້ໄຂໃນຟອມ</span>
                 </button>
-                <button type="button" onclick="openSelectedDatasetFromEntryForm()" class="bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs px-3 py-2.5 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 cursor-pointer shrink-0" title="ເປີດເບິ່ງ ແລະ ແກ້ໄຂໃນໜ້າຕ່າງຕາຕະລາງ">
-                  <span>👁️</span> <span>ຕາຕະລາງແກ້ໄຂ</span>
+                <button type="button" onclick="triggerFormEditExcelUpload()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="ດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຊຸດຂໍ້ມູນໃນລະບົບ">
+                  <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
                 </button>
+                <button type="button" onclick="openSelectedDatasetFromEntryForm()" class="bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs px-2.5 py-2.5 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 cursor-pointer shrink-0" title="ເປີດເບິ່ງ ແລະ ແກ້ໄຂໃນໜ້າຕ່າງຕາຕະລາງ">
+                  <span>👁️</span> <span>ຕາຕະລາງ</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ແຖວທີ 2.5: ຊ່ອງດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບໂດຍກົງ -->
+            <div class="rounded-2xl border-2 border-dashed border-emerald-400/90 bg-gradient-to-r from-emerald-50/80 via-white to-teal-50/60 p-3 transition-all"
+                 id="formEditExcelDropZone"
+                 ondragover="event.preventDefault(); this.classList.add('border-emerald-600','bg-emerald-100/60')"
+                 ondragleave="this.classList.remove('border-emerald-600','bg-emerald-100/60')"
+                 ondrop="handleFormEditExcelDrop(event)">
+              <input type="file" id="formEditExcelFileInput" accept=".xlsx,.xls,.csv" multiple class="hidden" onchange="handleFormEditExcelFiles(this.files); this.value='';">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+                <div class="flex items-start sm:items-center gap-2.5 min-w-0 cursor-pointer" onclick="triggerFormEditExcelUpload()">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
+                    📊
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-xs font-black text-emerald-950">ດຶງຂໍ້ມູນເປັນໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນໃນລະບົບ</span>
+                      <span class="text-[9.5px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">.XLSX / .XLS / .CSV</span>
+                    </div>
+                    <p class="text-[10.5px] text-slate-600 mt-0.5">ກົດເລືອກໄຟລ໌ ຫຼື ລາກໄຟລ໌ Excel ມາວາງໃສ່ບ່ອນນີ້ ເພື່ອອັບເດດຄ່າວິເຄາະ, ເພີ່ມຈຸດພິກັດ ຫຼື ປ່ຽນແທນຂໍ້ມູນໃນຊຸດທີ່ເລືອກ (ດຶງເຂົ້າຟອມກ່ອນ ຫຼື ບັນທຶກທັນທີກໍໄດ້)</p>
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="triggerFormEditExcelUpload()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] shadow-sm transition cursor-pointer flex items-center gap-1 active:scale-95">
+                    <span>📂</span> <span>ເລືອກໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
+                  </button>
+                  <button type="button" onclick="exportSelectedDatasetForEditExcel()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 font-bold text-[11px] shadow-2xs transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດຊຸດຂໍ້ມູນທີ່ເລືອກອອກເປັນໄຟລ໌ Excel ເພື່ອແກ້ໄຂແລ້ວດຶງກັບເຂົ້າມາ">
+                    <span>📤</span> <span>ດາວໂຫຼດຊຸດນີ້ເປັນ Excel</span>
+                  </button>
+                  <button type="button" onclick="downloadExcelTemplate()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-[11px] transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດແບບຟອມ Excel ມາດຕະຖານ">
+                    <span>📄</span> <span>ແບບຟອມ</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -899,6 +936,9 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 shrink-0">
                   <span id="formEditActiveMeta" class="text-[10.5px] font-bold px-2.5 py-1 rounded-lg bg-indigo-900/90 text-indigo-200 border border-indigo-700">0 ສະຖານີ</span>
+                  <button type="button" onclick="triggerFormEditExcelUpload()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
+                    <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າຊຸດນີ້</span>
+                  </button>
                   <button type="button" onclick="cancelFormDatasetEdit()" class="px-2.5 py-1 rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
                     <span>🔄</span> <span>ຍົກເລີກແກ້ໄຂ / ປ້ອນຊຸດໃໝ່</span>
                   </button>
@@ -15515,8 +15555,11 @@
         cur.indCols.forEach(({ col, ind }) => customs[ind.key] = cleanExcelValue(row[col]));
         const extra = {};
         cur.unknownCols.forEach(({ col, header }) => extra[canonParam(header)] = cleanExcelValue(row[col]));
-        // ແຖວທີ່ບໍ່ມີຄ່າໂຕຊີ້ວັດເລີຍ (ເຊັ່ນ ແຖວທີ່ກຽມໄວ້ສຳລັບເດືອນໜ້າ) → ຂ້າມ
-        if (![...Object.values(customs), ...Object.values(extra)].some(v => v !== '-')) return;
+        const hasAnyIndVal = [...Object.values(customs), ...Object.values(extra)].some(v => v !== '-');
+        const hasRawCoordCell = (m.lat !== undefined && cellText(row[m.lat]) !== '') || (m.lng !== undefined && cellText(row[m.lng]) !== '') || Boolean(coordText) || (m.utmX !== undefined && cellText(row[m.utmX]) !== '');
+        const hasRawQwiCell = m.qwi !== undefined && cellText(row[m.qwi]) !== '';
+        // ແຖວທີ່ບໍ່ມີຄ່າໂຕຊີ້ວັດ ແລະ ບໍ່ມີພິກັດ/QWI ເລີຍ → ຂ້າມ
+        if (!hasAnyIndVal && !hasRawCoordCell && !hasRawQwiCell) return;
 
         if (!name) name = (village ? [village, river] : [river, district]).filter(Boolean).join(' - ') || (coordText && !parseCoordPair(coordText) ? coordText : '');
         if (!name) name = code;
@@ -16750,6 +16793,502 @@
         return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນກ່ອນ!', text: 'ເລືອກຊຸດຂໍ້ມູນຈາກລາຍການ ເພື່ອເປີດເບິ່ງ/ແກ້ໄຂແບບຕາຕະລາງ' });
       }
       openDatasetDetailModal(fbKey);
+    }
+
+    /* --- 📊 ດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າຊ່ອງປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ --- */
+    function triggerFormEditExcelUpload() {
+      if (currentUserRole === 'VIEWER') {
+        return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ບັນຊີຜູ້ເບິ່ງທົ່ວໄປບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້' });
+      }
+      const inp = document.getElementById('formEditExcelFileInput');
+      if (inp) inp.click();
+    }
+
+    function handleFormEditExcelDrop(e) {
+      e.preventDefault();
+      const dz = document.getElementById('formEditExcelDropZone');
+      if (dz) dz.classList.remove('border-emerald-600', 'bg-emerald-100/60');
+      const files = e.dataTransfer?.files;
+      if (files && files.length) handleFormEditExcelFiles(files);
+    }
+
+    function exportSelectedDatasetForEditExcel() {
+      const sel = document.getElementById('formEditDatasetSelect');
+      const fbKey = editingFormDatasetKey || (sel ? sel.value : '');
+      if (!fbKey) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນກ່ອນ!',
+          text: 'ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການດາວໂຫຼດອອກເປັນໄຟລ໌ Excel ເພື່ອນຳໄປແກ້ໄຂ'
+        });
+      }
+      if (typeof XLSX === 'undefined') {
+        return Swal.fire({ icon: 'error', title: 'ໂຫລດຕົວສ້າງ Excel ບໍ່ສຳເລັດ', text: 'ກະລຸນາກວດອິນເຕີເນັດ ແລ້ວ Refresh ໜ້າເວັບ' });
+      }
+      const item = waterData.find(d => d.fbKey === fbKey);
+      if (!item) {
+        return Swal.fire({ icon: 'error', title: 'ບໍ່ພົບຊຸດຂໍ້ມູນນີ້ໃນລະບົບ!' });
+      }
+      const stations = (editingFormDatasetKey === fbKey && tempStations.length > 0) ? tempStations : stationsOf(item);
+      const allInds = valueInds();
+      const indHeaders = allInds.map(i => `${i.name}${i.unit ? ' (' + i.unit + ')' : ''}`);
+      const headers = ['ວັນທີ', 'ລະຫັດສະຖານີ', 'ຊື່ສະຖານີ', 'ແຂວງ/ເມືອງ', 'ໂຄງການ/ກຸ່ມ', 'Lat', 'Lng', ...indHeaders, 'QWI'];
+
+      const rows = stations.map(st => [
+        st.sampleDate || '',
+        st.code || '',
+        st.name || '',
+        st.province || '',
+        st.section || '',
+        (st.lat !== null && st.lat !== undefined && !isNaN(st.lat)) ? Number(st.lat) : '',
+        (st.lng !== null && st.lng !== undefined && !isNaN(st.lng)) ? Number(st.lng) : '',
+        ...allInds.map(i => {
+          const v = st.customs ? st.customs[i.key] : undefined;
+          return (v !== undefined && v !== null && v !== '-') ? v : '';
+        }),
+        (st.qwi !== undefined && st.qwi !== null && st.qwi !== '-') ? st.qwi : ''
+      ]);
+
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+      ws['!cols'] = headers.map(h => ({ wch: Math.max(12, String(h).length + 4) }));
+      const wb = XLSX.utils.book_new();
+      const safeSheet = String(item.companyName || item.name || 'ຂໍ້ມູນ').replace(/[\\/?*[\]:]/g, '_').slice(0, 28) || 'ຂໍ້ມູນ';
+      XLSX.utils.book_append_sheet(wb, ws, safeSheet);
+      const safeFile = String(item.companyName || item.name || 'dataset').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60);
+      XLSX.writeFile(wb, `ແກ້ໄຂ_${safeFile}.xlsx`);
+    }
+
+    async function handleFormEditExcelFiles(fileList) {
+      const files = [...(fileList || [])].filter(f => /\.(xlsx|xls|csv)$/i.test(f.name));
+      if (!files.length) {
+        return Swal.fire({ icon: 'warning', title: 'ຮູບແບບໄຟລ໌ບໍ່ຖືກຕ້ອງ', text: 'ຮອງຮັບສະເພາະ .xlsx, .xls ແລະ .csv' });
+      }
+      if (currentUserRole === 'VIEWER') {
+        return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນແກ້ໄຂຂໍ້ມູນ' });
+      }
+      if (typeof XLSX === 'undefined') {
+        return Swal.fire({ icon: 'error', title: 'ໂຫລດຕົວອ່ານ Excel ບໍ່ສຳເລັດ', text: 'ກະລຸນາກວດອິນເຕີເນັດ ແລ້ວ Refresh ໜ້າເວັບ' });
+      }
+
+      Swal.fire({ title: files.length === 1 ? 'ກຳລັງອ່ານໄຟລ໌ Excel...' : `ກຳລັງອ່ານ ${files.length} ໄຟລ໌...`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const allBlocks = [];
+      const errors = [];
+      for (const file of files) {
+        let wb;
+        try {
+          wb = XLSX.read(await file.arrayBuffer(), { type: 'array', cellNF: true });
+        } catch (err) {
+          errors.push(`${file.name}: ອ່ານໄຟລ໌ບໍ່ໄດ້`);
+          continue;
+        }
+        let sheetNames = wb.SheetNames;
+        if (wb.SheetNames.length > 1) {
+          const opts = { '__ALL__': `📚 ທຸກ Sheet (${wb.SheetNames.length})` };
+          wb.SheetNames.forEach(n => opts[n] = n);
+          const { value, isConfirmed } = await Swal.fire({
+            title: `📑 ເລືອກ Sheet ຈາກ ${file.name}`,
+            input: 'select', inputOptions: opts, inputValue: '__ALL__',
+            showCancelButton: true, confirmButtonText: 'ຕໍ່ໄປ', cancelButtonText: 'ຂ້າມໄຟລ໌ນີ້'
+          });
+          if (!isConfirmed) continue;
+          sheetNames = value === '__ALL__' ? wb.SheetNames : [value];
+        }
+        const blocks = parseSheetBlocksMulti(wb, sheetNames, file.name);
+        allBlocks.push(...blocks);
+      }
+      Swal.close();
+
+      if (errors.length) {
+        Swal.fire({ icon: 'warning', title: 'ບາງໄຟລ໌ອ່ານບໍ່ໄດ້', text: errors.join('\n'), timer: 2500 });
+      }
+      if (!allBlocks.length) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'ບໍ່ພົບຕາຕະລາງສະຖານີທີ່ລະບົບອ່ານໄດ້',
+          html: `ແຖວຫົວຕາຕະລາງຕ້ອງມີຖັນ <b>ລະຫັດ/ຊື່ສະຖານີ</b> ແລະ <b>ຖັນໂຕຊີ້ວັດ ຫຼື ພິກັດ Lat/Lng</b>.<br><br>ທ່ານສາມາດກົດປຸ່ມ <b>"📤 ດາວໂຫຼດຊຸດນີ້ເປັນ Excel"</b> ເພື່ອເອົາໄຟລ໌ຕົ້ນສະບັບໄປແກ້ໄຂແລ້ວດຶງກັບເຂົ້າມາໄດ້ເລີຍ.`,
+          showCancelButton: true, confirmButtonText: '📄 ດາວໂຫລດແບບຟອມ', cancelButtonText: 'ປິດ'
+        }).then(r => { if (r.isConfirmed) downloadExcelTemplate(); });
+      }
+
+      const fileNames = [...new Set(allBlocks.map(b => b.fileName))];
+      const displayNames = fileNames.length === 1 ? fileNames[0] : `${fileNames.length} ໄຟລ໌`;
+      showFormEditExcelModal(displayNames, allBlocks);
+    }
+
+    function showFormEditExcelModal(fileName, blocks) {
+      const good = blocks.filter(b => b.parsed && b.parsed.length);
+      const totalSt = good.reduce((n, b) => n + b.parsed.length, 0);
+
+      // ກວດຫາຊຸດຂໍ້ມູນເປົ້າໝາຍທີ່ເລືອກໄວ້ ຫຼື ກົງກັບຊື່ໃນໄຟລ໌ Excel
+      const selEl = document.getElementById('formEditDatasetSelect');
+      let defaultTargetKey = editingFormDatasetKey || (selEl ? selEl.value : '') || '';
+      if (!defaultTargetKey && good.length > 0) {
+        const candidateTitle = good[0].title || good[0].sheet || fileName.replace(/\.(xlsx|xls|csv)$/i, '');
+        const matched = findDatasetByTitle(candidateTitle, 'COMPANY') || findDatasetByTitle(candidateTitle, 'GOV');
+        if (matched) defaultTargetKey = matched.fbKey;
+      }
+
+      // ກວດຫາຖັນໂຕຊີ້ວັດໃໝ່ທີ່ຍັງບໍ່ມີໃນລະບົບ
+      const unknownMap = new Map();
+      good.forEach(b => b.unknownCols.forEach(u => {
+        const c = canonParam(u.header);
+        if (!unknownMap.has(c)) unknownMap.set(c, u.header);
+      }));
+      const numericRatio = canon => {
+        const vals = good.flatMap(b => b.parsed.map(st => st.extra[canon])).filter(v => v !== undefined && v !== '-' && v !== '');
+        if (!vals.length) return 0;
+        return vals.filter(v => typeof v === 'number' || /^\s*[<>≤≥]?\s*-?\d+(\.\d+)?\s*$/.test(String(v)) || String(v).toUpperCase() === 'ND').length / vals.length;
+      };
+      const unknownInfo = [...unknownMap.entries()].map(([canon, header]) => ({ canon, header, numeric: numericRatio(canon) >= 0.5 }));
+
+      // ສ້າງລາຍການຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ
+      const datasetOptsHtml = [
+        `<option value="__LOAD_FORM_ONLY__" ${!defaultTargetKey && !waterData.length ? 'selected' : ''}>📝 ດຶງເຂົ້າຟອມບັນທຶກປັດຈຸບັນ (ບໍ່ເລືອກຊຸດເດີມ / ຕັ້ງຊື່ໃນຟອມ)</option>`,
+        ...waterData.map((item, idx) => {
+          const cat = getRecordDataCategory(item);
+          const icon = cat === 'GOV' ? '🏛️ [2.ອົງການລັດ]' : '🏢 [1.ບໍລິສັດ]';
+          const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+          const sts = stationsOf(item);
+          const selAttr = item.fbKey === defaultTargetKey ? 'selected' : '';
+          return `<option value="${escAttr(item.fbKey)}" ${selAttr}>${idx + 1}. ${icon} ${escAttr(title)} (${sts.length} ສະຖານີ)</option>`;
+        })
+      ].join('');
+
+      // ສະແດງຕົວຢ່າງສະຖານີທີ່ອ່ານໄດ້ຈາກໄຟລ໌ Excel
+      const previewStations = good.flatMap(b => b.parsed).slice(0, 8);
+      const previewRowsHtml = previewStations.map((st, i) => {
+        const hasCoord = st.lat !== null && st.lng !== null && !isNaN(st.lat) && !isNaN(st.lng);
+        const indCount = Object.values(st.customs || {}).filter(v => v !== '-' && v !== '' && v !== undefined).length +
+                         Object.values(st.extra || {}).filter(v => v !== '-' && v !== '' && v !== undefined).length;
+        return `
+          <tr class="${i % 2 ? 'bg-slate-50' : 'bg-white'} border-b border-slate-200">
+            <td class="px-2 py-1 text-center font-mono text-slate-400">${i + 1}</td>
+            <td class="px-2 py-1 font-mono font-bold text-indigo-700">${escAttr(st.code || '-')}</td>
+            <td class="px-2 py-1 font-semibold text-slate-800">${escAttr(st.name || '-')}</td>
+            <td class="px-2 py-1 text-slate-600">${escAttr(st.province || '-')}</td>
+            <td class="px-2 py-1 text-indigo-800 font-mono">${escAttr(fmtSampleDate(st.sampleDate) || '-')}</td>
+            <td class="px-2 py-1 font-mono ${hasCoord ? 'text-teal-700 font-bold' : 'text-amber-600'}">${hasCoord ? `${Number(st.lat).toFixed(4)}, ${Number(st.lng).toFixed(4)}` : '⚠️ ບໍ່ມີພິກັດ'}</td>
+            <td class="px-2 py-1 text-center font-bold text-emerald-700">${indCount} ຄ່າ</td>
+          </tr>`;
+      }).join('');
+
+      const defaultRecorder = currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
+
+      const modalHtml = `
+        <div class="text-left text-xs space-y-3.5">
+          <div class="bg-gradient-to-r from-amber-50 via-white to-emerald-50 border border-amber-300 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-1.5">
+                <span>📊</span> <span>ໄຟລ໌ທີ່ດຶງເຂົ້າ: <span class="text-emerald-700">${escAttr(fileName)}</span></span>
+              </div>
+              <div class="text-[11px] text-slate-600 mt-0.5">ອ່ານພົບທັງໝົດ <b class="text-emerald-700">${totalSt} ສະຖານີ</b> (${good.length} ຕາຕະລາງ)</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-black text-[10.5px]">🔧 ໂໝດປັບປຸງ / ແກ້ໄຂຂໍ້ມູນ</span>
+          </div>
+
+          <!-- 1. ເລືອກຊຸດຂໍ້ມູນເປົ້າໝາຍໃນລະບົບ -->
+          <div class="bg-indigo-50/70 border-2 border-indigo-200 rounded-xl p-3 space-y-2">
+            <label class="block font-black text-indigo-950 text-xs">1️⃣ ເລືອກຊຸດຂໍ້ມູນໃນລະບົບທີ່ຕ້ອງການປັບປຸງ / ແກ້ໄຂດ້ວຍໄຟລ໌ Excel ນີ້:</label>
+            <select id="formEditExcelTargetKey" class="w-full border border-indigo-300 rounded-xl px-3 py-2 text-xs font-bold bg-white text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+              ${datasetOptsHtml}
+            </select>
+          </div>
+
+          <!-- 2. ເລືອກວິທີການປັບປຸງຂໍ້ມູນສະຖານີ -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+              <label class="block font-black text-slate-800 text-[11px] mb-1">2️⃣ ຮູບແບບການປັບປຸງສະຖານີ:</label>
+              <select id="formEditExcelUpdateMode" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
+                <option value="merge" selected>🔗 ລວມ & ອັບເດດເຂົ້າກັບສະຖານີເດີມ (ແນະນຳ)</option>
+                <option value="replace">🔄 ປ່ຽນແທນສະຖານີທັງໝົດໃນຊຸດນີ້ດ້ວຍໄຟລ໌ Excel</option>
+              </select>
+              <p class="text-[10px] text-slate-500 mt-1">• <b>ລວມ & ອັບເດດ:</b> ສະຖານີລະຫັດດຽວກັນຈະອັບເດດຄ່າວິເຄາະ/ພິກັດໃໝ່, ສະຖານີໃໝ່ຈະເພີ່ມຕໍ່ທ້າຍ.<br>• <b>ປ່ຽນແທນທັງໝົດ:</b> ໃຊ້ສະຖານີຈາກໄຟລ໌ Excel ນີ້ແທນລາຍການເດີມ.</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-2">
+              <div>
+                <label class="block font-black text-slate-800 text-[11px] mb-1">👤 ຜູ້ດຳເນີນການປັບປຸງ / ແກ້ໄຂ:</label>
+                <input type="text" id="formEditExcelRecorder" value="${escAttr(defaultRecorder)}" placeholder="ຊື່ຜູ້ແກ້ໄຂ..." class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 text-[10.5px] mb-0.5">📅 ວັນທີເກັບຕົວຢ່າງເລີ່ມຕົ້ນ (ສະເພາະແຖວທີ່ບໍ່ມີວັນທີ):</label>
+                <input type="month" id="formEditExcelDefaultDate" value="${escAttr((good[0]?.suggestDate || '').slice(0, 7))}" class="w-full border border-slate-300 rounded-lg px-2.5 py-1 text-xs bg-white text-slate-800 outline-none">
+              </div>
+            </div>
+          </div>
+
+          ${unknownMap.size ? `
+            <div class="border border-amber-300 bg-amber-50 rounded-xl p-2.5">
+              <p class="font-bold text-slate-800 mb-1">🆕 ພົບຖັນໂຕຊີ້ວັດໃໝ່ໃນໄຟລ໌ Excel — ຕິກອັນທີ່ຕ້ອງການເພີ່ມເຂົ້າລະບົບ:</p>
+              <div class="flex flex-wrap gap-x-3 gap-y-1 max-h-24 overflow-auto">
+                ${unknownInfo.map(u => {
+                  const n = newIndicatorFromHeader(u.header);
+                  return `<label class="flex items-center gap-1 cursor-pointer ${u.numeric ? '' : 'text-slate-500'}">
+                    <input type="checkbox" class="formEditExcelUnkChk" data-canon="${escAttr(u.canon)}" ${u.numeric ? 'checked' : ''}>
+                    <b>${escAttr(n.name)}</b>${n.unit ? ` (${escAttr(n.unit)})` : ''}
+                  </label>`;
+                }).join('')}
+              </div>
+            </div>` : ''}
+
+          <!-- 3. ຕາຕະລາງສະແດງຕົວຢ່າງຂໍ້ມູນ -->
+          <div class="border border-slate-300 rounded-xl overflow-hidden">
+            <div class="bg-slate-100 px-3 py-1.5 border-b border-slate-200 flex items-center justify-between text-[11px] font-bold text-slate-700">
+              <span>📋 ຕົວຢ່າງຂໍ້ມູນສະຖານີຈາກໄຟລ໌ Excel (${totalSt} ສະຖານີ)</span>
+              ${totalSt > 8 ? `<span class="text-slate-500 font-normal">ສະແດງ 8 ແຖວທຳອິດ</span>` : ''}
+            </div>
+            <div class="overflow-x-auto max-h-44">
+              <table class="min-w-full text-[11px] border-collapse">
+                <thead class="bg-slate-200 text-slate-700 font-bold">
+                  <tr>
+                    <th class="px-2 py-1 text-center">#</th>
+                    <th class="px-2 py-1 text-left">ລະຫັດ</th>
+                    <th class="px-2 py-1 text-left">ຊື່ສະຖານີ</th>
+                    <th class="px-2 py-1 text-left">ແຂວງ/ເມືອງ</th>
+                    <th class="px-2 py-1 text-left">📅 ວັນທີ</th>
+                    <th class="px-2 py-1 text-left">🧭 ພິກັດ (Lat, Lng)</th>
+                    <th class="px-2 py-1 text-center">🧪 ໂຕຊີ້ວັດ</th>
+                  </tr>
+                </thead>
+                <tbody>${previewRowsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const extractPopupValues = () => {
+        const targetKey = document.getElementById('formEditExcelTargetKey')?.value || '';
+        const updateMode = document.getElementById('formEditExcelUpdateMode')?.value || 'merge';
+        const recorder = (document.getElementById('formEditExcelRecorder')?.value || '').trim() || currentUserName || 'Admin';
+        const fallbackDate = (document.getElementById('formEditExcelDefaultDate')?.value || '').trim();
+        const addCanons = [...document.querySelectorAll('.formEditExcelUnkChk')].filter(c => c.checked).map(c => c.dataset.canon);
+        return { targetKey, updateMode, recorder, fallbackDate, addCanons };
+      };
+
+      let chosenAction = null;
+      let popupVals = null;
+
+      Swal.fire({
+        title: '📊 ດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel ເຂົ້າປັບປຸງ / ແກ້ໄຂຂໍ້ມູນ',
+        html: modalHtml,
+        width: 860,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: '📥 ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (ແນະນຳ)',
+        confirmButtonColor: '#d97706',
+        denyButtonText: '💾 ອັບເດດລົງຖານຂໍ້ມູນລະບົບທັນທີ',
+        denyButtonColor: '#059669',
+        cancelButtonText: 'ຍົກເລີກ',
+        preConfirm: () => {
+          chosenAction = 'load_to_form';
+          popupVals = extractPopupValues();
+          return true;
+        },
+        preDeny: () => {
+          const vals = extractPopupValues();
+          if (!vals.targetKey || vals.targetKey === '__LOAD_FORM_ONLY__') {
+            Swal.showValidationMessage('ກະລຸນາເລືອກຊຸດຂໍ້ມູນໃນລະບົບທີ່ຕ້ອງການອັບເດດທັນທີ ຫຼື ກົດປຸ່ມສີສົ້ມ "📥 ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ"');
+            return false;
+          }
+          chosenAction = 'save_immediately';
+          popupVals = vals;
+          return true;
+        }
+      }).then(async res => {
+        if (res.isDismissed || !chosenAction || !popupVals) return;
+        await applyFormEditExcelData(good, unknownMap, popupVals, chosenAction);
+      });
+    }
+
+    async function applyFormEditExcelData(goodBlocks, unknownMap, { targetKey, updateMode, recorder, fallbackDate, addCanons }, actionMode) {
+      let configChanged = false;
+      goodBlocks.forEach(b => b.indCols.forEach(({ ind }) => {
+        if (!customIndicators.some(c => c.key === ind.key)) {
+          customIndicators.push({ ...ind, noForm: true, source: 'excel' });
+          configChanged = true;
+        }
+      }));
+
+      const newKeyByCanon = {};
+      if (addCanons && addCanons.length > 0) {
+        let n = 0;
+        unknownMap.forEach((header, canon) => {
+          if (!addCanons.includes(canon)) return;
+          const { name, unit } = newIndicatorFromHeader(header);
+          const newInd = { key: 'custom_' + (Date.now() + n++), name, unit, noForm: true, source: 'excel' };
+          customIndicators.push(newInd);
+          masterIndicators.push(newInd);
+          newKeyByCanon[canon] = newInd.key;
+          configChanged = true;
+        });
+      }
+
+      if (configChanged) {
+        db.ref('system_config/indicators').set(customIndicators);
+        db.ref('system_config/master_indicators').set(masterIndicators);
+        if (!currentSelectedIndicator && customIndicators[0]) currentSelectedIndicator = customIndicators[0].key;
+        renderSettingsList();
+        renderThresholdFields();
+      }
+
+      let idSeed = Date.now();
+      const incomingStations = goodBlocks.flatMap(b => b.parsed.map(st => {
+        const customs = { ...(st.customs || {}) };
+        Object.entries(newKeyByCanon).forEach(([canon, key]) => {
+          if (st.extra && canon in st.extra) customs[key] = st.extra[canon];
+        });
+        const info = {};
+        unknownMap.forEach((header, canon) => {
+          if (newKeyByCanon[canon] || !st.extra || !(canon in st.extra)) return;
+          const v = st.extra[canon];
+          if (v !== '-' && v !== '' && v !== undefined) info[safeInfoKey(header)] = v;
+        });
+        const sDate = st.sampleDate || fallbackDate || b.suggestDate || '';
+        return {
+          id: idSeed++,
+          code: st.code || '',
+          name: st.name || '',
+          province: st.province || '',
+          lat: st.lat,
+          lng: st.lng,
+          sampleDate: sDate,
+          section: st.section || b.section || '',
+          locationNote: st.locationNote || '',
+          gps: st.gps || (st.lat !== null && st.lng !== null && !isNaN(st.lat) && !isNaN(st.lng) ? toDMS(st.lat, st.lng) : ''),
+          qwi: (st.qwi !== undefined && st.qwi !== null) ? st.qwi : '',
+          ...(Object.keys(info).length ? { info } : {}),
+          customs,
+          status: evalStatus(customs)
+        };
+      }));
+
+      const targetItem = (targetKey && targetKey !== '__LOAD_FORM_ONLY__') ? waterData.find(d => d.fbKey === targetKey) : null;
+
+      // ກໍລະນີທີ 1: ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (load_to_form)
+      if (actionMode === 'load_to_form' || !targetItem) {
+        if (targetItem && editingFormDatasetKey !== targetItem.fbKey) {
+          loadExistingDatasetToForm(targetItem.fbKey);
+        } else if (!targetItem && !document.getElementById('companyName')?.value.trim()) {
+          const autoTitle = goodBlocks[0]?.title || goodBlocks[0]?.sheet || '';
+          const compEl = document.getElementById('companyName');
+          if (compEl && autoTitle) compEl.value = autoTitle;
+        }
+        const recEl = document.getElementById('recorderName');
+        if (recEl && !recEl.value.trim()) recEl.value = recorder;
+
+        let addedCount = incomingStations.length;
+        let updatedCount = 0;
+        if (updateMode === 'replace' || tempStations.length === 0) {
+          tempStations = incomingStations;
+        } else {
+          const merged = mergeStations(tempStations, incomingStations);
+          tempStations = merged.stations;
+          addedCount = merged.added;
+          updatedCount = merged.updated;
+        }
+
+        renderTempList();
+        syncFormEditModeUI();
+        if (tempStations.length > 0) {
+          loadTempStationForEdit(0, false);
+        } else {
+          renderFormCustomInputs();
+        }
+
+        const listBox = document.getElementById('tempListContainer');
+        if (listBox) listBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        Swal.fire({
+          icon: 'success',
+          title: '📥 ດຶງຂໍ້ມູນຈາກ Excel ເຂົ້າຟອມແກ້ໄຂສຳເລັດ!',
+          html: `<div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            ${targetItem ? `ຊຸດຂໍ້ມູນ: <b class="text-indigo-700">${escAttr(targetItem.companyName || targetItem.name)}</b><br>` : ''}
+            ${updateMode === 'replace'
+              ? `🔄 ປ່ຽນແທນລາຍການສະຖານີໃນຟອມທັງໝົດ <b>${tempStations.length} ສະຖານີ</b>`
+              : `🔗 ລວມເຂົ້າຟອມແລ້ວ: ເພີ່ມໃໝ່ <b class="text-emerald-700">${addedCount}</b> · ອັບເດດ <b class="text-amber-700">${updatedCount}</b> (ລວມທັງໝົດ <b>${tempStations.length} ສະຖານີ</b>)`}
+            <br><span class="text-[11px] text-slate-500">ກວດສອບ ຫຼື ແກ້ໄຂເພີ່ມເຕີມໃນຟອມ ແລ້ວກົດປຸ່ມ <b>"💾 ບັນທຶກການປັບປຸງລົງລະບົບ"</b> ໄດ້ເລີຍ</span>
+          </div>`,
+          confirmButtonText: '✏️ ກວດສອບໃນຟອມ',
+          confirmButtonColor: '#d97706',
+          showDenyButton: Boolean(targetItem),
+          denyButtonText: '💾 ບັນທຶກລົງລະບົບເລີຍ',
+          denyButtonColor: '#059669'
+        }).then(r => {
+          if (r.isDenied) saveAllBatch();
+        });
+        return;
+      }
+
+      // ກໍລະນີທີ 2: ອັບເດດລົງຖານຂໍ້ມູນລະບົບທັນທີ (save_immediately)
+      Swal.fire({ title: 'ກຳລັງອັບເດດຂໍ້ມູນຈາກ Excel ລົງລະບົບ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        const nowStr = new Date().toLocaleString('lo-LA');
+        const nowTs = Date.now();
+        const existingSts = stationsOf(targetItem).map(st => {
+          const copy = { ...st };
+          delete copy.fbKey;
+          return copy;
+        });
+
+        let finalStations = [];
+        let addedCount = incomingStations.length;
+        let updatedCount = 0;
+        if (updateMode === 'replace') {
+          finalStations = incomingStations;
+        } else {
+          const merged = mergeStations(existingSts, incomingStations);
+          finalStations = merged.stations;
+          addedCount = merged.added;
+          updatedCount = merged.updated;
+        }
+
+        const cleanStations = finalStations.map(st => {
+          const copy = { ...st, status: evalStatus(st.customs || {}) };
+          delete copy.fbKey;
+          return copy;
+        });
+
+        const updatePayload = {
+          stations: cleanStations,
+          lastUpdated: nowStr,
+          lastUpdatedBy: recorder,
+          lastUpdatedTs: nowTs
+        };
+
+        await db.ref(`water_records/${targetItem.fbKey}`).update(updatePayload);
+        upsertRecordInMemory(targetItem.fbKey, { ...targetItem, ...updatePayload });
+        loadExistingDatasetToForm(targetItem.fbKey);
+        populateFormEditDatasetOptions();
+        renderNow();
+
+        await db.ref('activity_logs').push({
+          action: 'UPDATE_FROM_EXCEL',
+          itemCode: `${targetItem.companyName || targetItem.name} (${updateMode === 'replace' ? 'ປ່ຽນແທນ ' + cleanStations.length + ' ສະຖານີ' : '+' + addedCount + ' ໃໝ່, ' + updatedCount + ' ອັບເດດ'} · ຈາກ Excel)`,
+          performedBy: recorder,
+          timestamp: nowStr,
+          userRole: currentUserRole
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'ອັບເດດຂໍ້ມູນຈາກ Excel ລົງລະບົບສຳເລັດ!',
+          html: `<div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            ຊຸດຂໍ້ມູນ: <b class="text-indigo-700">${escAttr(targetItem.companyName || targetItem.name)}</b><br>
+            ${updateMode === 'replace'
+              ? `🔄 ປ່ຽນແທນຂໍ້ມູນທັງໝົດ <b>${cleanStations.length} ສະຖານີ</b> ຮຽບຮ້ອຍແລ້ວ`
+              : `🔗 ເພີ່ມໃໝ່ <b class="text-emerald-700">${addedCount}</b> · ອັບເດດ <b class="text-amber-700">${updatedCount}</b> (ລວມທັງໝົດ <b>${cleanStations.length} ສະຖານີ</b>)`}
+          </div>`,
+          confirmButtonText: '👁️ ເບິ່ງຂໍ້ມູນທີ່ອັບເດດ',
+          confirmButtonColor: '#059669',
+          showDenyButton: true,
+          denyButtonText: '✏️ ແກ້ໄຂຕໍ່ໃນຟອມ',
+          denyButtonColor: '#4f46e5'
+        }).then(r => {
+          if (r.isConfirmed) setTimeout(() => jumpToRecords([targetItem.fbKey]), 200);
+        });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'ອັບເດດຂໍ້ມູນບໍ່ສຳເລັດ', text: err.message });
+      }
     }
 
     function loadTempStationForEdit(idx, scroll = true) {
