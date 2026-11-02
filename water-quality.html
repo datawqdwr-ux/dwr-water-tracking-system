@@ -14458,24 +14458,54 @@
     const sameDate = (a, b) => String(a.sampleDate || '') === String(b.sampleDate || '');
     const sameSection = (a, b) => normTitle(a.section) === normTitle(b.section);
 
-    // ລວມສະຖານີ: ລະຫັດ + ພິກັດ ຄືກັນ → ອັບເດດຄ່າ; ນອກນັ້ນ → ເພີ່ມໃໝ່ (ຖ້າລະຫັດຊ້ຳແຕ່ຄົນລະຈຸດ ຈະຕໍ່ທ້າຍ -2, -3)
+    // ລວມສະຖານີ: ລະຫັດ + ກຸ່ມ + ວັນທີ ຄືກັນ → ອັບເດດຄ່າ; ນອກນັ້ນ → ເພີ່ມໃໝ່
     function mergeStations(existing, incoming) {
       const out = existing.map(s => ({ ...s, customs: { ...(s.customs || {}) } }));
       let added = 0, updated = 0;
       incoming.forEach(st => {
-        // ລະຫັດ + ພິກັດ + ວັນທີເກັບຕົວຢ່າງ ຄືກັນ → ແຖວດຽວກັນ (ຄົນລະເດືອນ = ຄົນລະແຖວ)
-        const idx = out.findIndex(e => normCode(e.code) === normCode(st.code) && sameSection(e, st) && sameCoord(e, st) && sameDate(e, st));
+        const stCode = normCode(st.code);
+        const stName = normCode(st.name);
+        // ກວດຫາສະຖານີເດີມ:
+        // 1) ລະຫັດ + ກຸ່ມ + ພິກັດ + ວັນທີ ກົງກັນ
+        let idx = out.findIndex(e => stCode && normCode(e.code) === stCode && sameSection(e, st) && sameCoord(e, st) && sameDate(e, st));
+        // 2) ຖ້າບໍ່ພົບ (ເຊັ່ນ ໄຟລ໌ໃໝ່ມີການອັບເດດ/ເພີ່ມພິກັດ Lat/Lng ໃສ່ລະຫັດສະຖານີເດີມ ໃນວັນທີດຽວກັນ) → ຈັບຄູ່ຕາມ ລະຫັດ + ກຸ່ມ + ວັນທີ
+        if (idx < 0 && stCode) {
+          idx = out.findIndex(e => normCode(e.code) === stCode && sameSection(e, st) && sameDate(e, st));
+        }
+        // 3) ຖ້າບໍ່ມີລະຫັດ ແຕ່ຊື່ສະຖານີ + ກຸ່ມ + ວັນທີ ກົງກັນ
+        if (idx < 0 && !stCode && stName) {
+          idx = out.findIndex(e => !normCode(e.code) && normCode(e.name) === stName && sameSection(e, st) && sameDate(e, st));
+        }
+
         if (idx >= 0) {
-          const customs = { ...out[idx].customs };
-          Object.entries(st.customs || {}).forEach(([k, v]) => { if (v !== '-' && v !== '' && v !== undefined) customs[k] = v; });
-          const qwi = (st.qwi !== undefined && st.qwi !== '' && st.qwi !== '-') ? st.qwi : out[idx].qwi;
-          out[idx] = { ...out[idx], name: st.name || out[idx].name, province: st.province || out[idx].province,
-                       lat: hasCoord(out[idx]) ? out[idx].lat : st.lat, lng: hasCoord(out[idx]) ? out[idx].lng : st.lng, customs, qwi, status: evalStatus(customs) };
+          const customs = { ...(out[idx].customs || {}) };
+          Object.entries(st.customs || {}).forEach(([k, v]) => {
+            if (v !== '-' && v !== '' && v !== undefined && v !== null) customs[k] = v;
+          });
+          const qwi = (st.qwi !== undefined && st.qwi !== '' && st.qwi !== '-' && st.qwi !== null) ? st.qwi : out[idx].qwi;
+          const nextLat = hasCoord(st) ? st.lat : out[idx].lat;
+          const nextLng = hasCoord(st) ? st.lng : out[idx].lng;
+          const nextGps = st.gps || (hasCoord(st) ? toDMS(st.lat, st.lng) : (out[idx].gps || ''));
+          const nextInfo = (out[idx].info || st.info) ? { ...(out[idx].info || {}), ...(st.info || {}) } : undefined;
+          out[idx] = {
+            ...out[idx],
+            name: st.name || out[idx].name,
+            province: st.province || out[idx].province,
+            sampleDate: st.sampleDate || out[idx].sampleDate || '',
+            section: st.section || out[idx].section || '',
+            lat: nextLat,
+            lng: nextLng,
+            gps: nextGps,
+            ...(nextInfo ? { info: nextInfo } : {}),
+            customs,
+            qwi,
+            status: evalStatus(customs)
+          };
           updated++;
         } else {
           let code = st.code;
-          // ລະຫັດຊ້ຳ ແຕ່ຄົນລະຈຸດ → ຕໍ່ທ້າຍ -2 (ລະຫັດດຽວກັນ ຄົນລະເດືອນ ແມ່ນປົກກະຕິ ບໍ່ຕ້ອງປ່ຽນ)
-          if (out.some(e => normCode(e.code) === normCode(code) && sameSection(e, st) && !sameCoord(e, st))) {
+          // ລະຫັດຊ້ຳ ແຕ່ຄົນລະຈຸດ ແລະ ວັນທີດຽວກັນ → ຕໍ່ທ້າຍ -2 (ລະຫັດດຽວກັນ ຄົນລະເດືອນ ແມ່ນປົກກະຕິ ບໍ່ຕ້ອງປ່ຽນ)
+          if (code && out.some(e => normCode(e.code) === normCode(code) && sameSection(e, st) && sameDate(e, st) && !sameCoord(e, st))) {
             let n = 2;
             while (out.some(e => normCode(e.code) === normCode(`${st.code}-${n}`))) n++;
             code = `${st.code}-${n}`;
@@ -14487,27 +14517,52 @@
       return { stations: out, added, updated };
     }
 
+    // ອັບເດດ ຫຼື ເພີ່ມຊຸດຂໍ້ມູນເຂົ້າໃນ waterData ໃນໜ່ວຍຄວາມຈຳທັນທີ ເພື່ອໃຫ້ໜ້າຈໍສະແດງຜົນການປ່ຽນແປງທັນທີ
+    function upsertRecordInMemory(fbKey, rawPayload) {
+      if (!fbKey || !rawPayload) return null;
+      const normalized = normalizeRecord(fbKey, rawPayload);
+      const existingIdx = waterData.findIndex(d => d.fbKey === fbKey);
+      if (existingIdx >= 0) {
+        waterData[existingIdx] = normalized;
+      } else {
+        waterData.unshift(normalized);
+      }
+      waterData.sort((a, b) => (b.lastUpdatedTs || b.id || 0) - (a.lastUpdatedTs || a.id || 0));
+      valueCountCache = null;
+      dataLoaded = true;
+      return normalized;
+    }
+
     // ບັນທຶກເຂົ້າຊຸດເດີມ (merge) ຫຼື ສ້າງຊຸດໃໝ່ (new)
-    function saveToDataset({ title, stations, projectLocation = '', date, recorder, mode, source = '', govVerification = null, otherVerification = null, dataCategory = '' }) {
+    async function saveToDataset({ title, stations, projectLocation = '', date, recorder, mode, source = '', govVerification = null, otherVerification = null, dataCategory = '' }) {
       const now = new Date().toLocaleString('lo-LA');
+      const nowTs = Date.now();
       const finalCategory = (dataCategory === 'COMPANY' || dataCategory === 'GOV') ? dataCategory : getFormDataCategory();
       const target = mode === 'merge' ? findDatasetByTitle(title, finalCategory) : null;
       const parsed = parseCompanyTitle(title);
       // ສະຖານີທີ່ຍັງບໍ່ມີກຸ່ມ → ໃຊ້ຊື່ໂຄງການຈາກຫົວຂໍ້ ເປັນກຸ່ມຕາຕະລາງ
-      stations = stations.map(st => ({
-        ...st,
-        section: st.section || parsed.section || '',
-        qwi: (st.qwi !== undefined && st.qwi !== null) ? st.qwi : ''
-      }));
+      stations = stations.map(st => {
+        const copy = {
+          ...st,
+          section: st.section || parsed.section || '',
+          qwi: (st.qwi !== undefined && st.qwi !== null) ? st.qwi : '',
+          status: evalStatus(st.customs || {})
+        };
+        delete copy.fbKey;
+        return copy;
+      });
       if (mode === 'merge' || parsed.section) title = parsed.company || title;
 
       if (!target) {
         const newRecordPayload = {
-          id: Date.now() + Math.floor(Math.random() * 1000),
+          id: nowTs + Math.floor(Math.random() * 1000),
           companyName: title,
           dataCategory: finalCategory,
           projectLocation,
           date: date || now,
+          lastUpdated: now,
+          lastUpdatedBy: recorder,
+          lastUpdatedTs: nowTs,
           recordedBy: recorder,
           stations
         };
@@ -14517,44 +14572,56 @@
         if (otherVerification && (otherVerification.org || otherVerification.docNo || otherVerification.date)) {
           newRecordPayload.otherVerification = otherVerification;
         }
-        return db.ref('water_records').push(newRecordPayload).then(ref => {
-          db.ref('activity_logs').push({ action: 'CREATE', itemCode: `[${finalCategory === 'GOV' ? 'ອົງການລັດ' : 'ບໍລິສັດ'}] ${title} (${stations.length} ສະຖານີ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
-          return { type: 'new', title, added: stations.length, updated: 0, fbKey: ref.key, dataCategory: finalCategory };
-        });
+        const ref = await db.ref('water_records').push(newRecordPayload);
+        upsertRecordInMemory(ref.key, newRecordPayload);
+        render();
+        db.ref('activity_logs').push({ action: 'CREATE', itemCode: `[${finalCategory === 'GOV' ? 'ອົງການລັດ' : 'ບໍລິສັດ'}] ${title} (${stations.length} ສະຖານີ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
+        return { type: 'new', title, added: stations.length, updated: 0, fbKey: ref.key, dataCategory: finalCategory };
       }
 
-      let result = null;
-      return db.ref(`water_records/${target.fbKey}`).transaction(rec => {
-        if (!rec) return rec;
-        // ແຖວເດີມທີ່ຍັງບໍ່ມີກຸ່ມ → ໃຊ້ຊື່ໂຄງການຈາກຫົວຂໍ້ເດີມຂອງຊຸດ (ເພື່ອແຍກຕາຕະລາງຍ່ອຍໃຫ້ຖືກ)
-        const oldSec = parseCompanyTitle(rec.companyName || rec.name).section;
-        const existing = stationsOf(rec).map(st => st.section ? st : { ...st, section: oldSec });
-        const r = mergeStations(existing, stations);
-        result = r;
-        if (!Array.isArray(rec.stations)) {
-          // ແປງ record ຮູບແບບເກົ່າ ໃຫ້ເປັນຊຸດທີ່ມີ stations
-          ['code', 'name', 'province', 'lat', 'lng', 'customs', 'status'].forEach(k => delete rec[k]);
-          rec.companyName = rec.companyName || title;
-        }
-        rec.stations = r.stations;
-        if (!rec.dataCategory) rec.dataCategory = finalCategory;
-        if (!rec.projectLocation && projectLocation) rec.projectLocation = projectLocation;
-        if (govVerification && (govVerification.agency || govVerification.docNo || govVerification.date)) {
-          rec.govVerification = govVerification;
-        }
-        if (otherVerification && (otherVerification.org || otherVerification.docNo || otherVerification.date)) {
-          rec.otherVerification = otherVerification;
-        }
-        rec.lastUpdated = now;
-        rec.lastUpdatedBy = recorder;
-        rec.lastUpdatedTs = Date.now();
-        rec.companyName = parsed.company || rec.companyName || title; // ຊື່ຊຸດ = ຊື່ບໍລິສັດ (ຕັດ ໂຄງການ/ໄຕມາດ ອອກ)
-        return rec;
-      }).then(({ committed }) => {
-        if (!committed || !result) throw new Error('ລວມຂໍ້ມູນບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່');
-        db.ref('activity_logs').push({ action: 'MERGE', itemCode: `${target.companyName || title} (+${result.added} ໃໝ່, ${result.updated} ອັບເດດ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
-        return { type: 'merge', title: parsed.company || target.companyName || title, added: result.added, updated: result.updated, fbKey: target.fbKey, dataCategory: finalCategory };
+      // ດຶງຂໍ້ມູນປັດຈຸບັນຂອງຊຸດເປົ້າໝາຍ ແລະ ລວມສະຖານີໂດຍກົງ (ຫຼີກລ່ຽງບັນຫາ transaction ຄືນຄ່າ null)
+      const currentTarget = waterData.find(d => d.fbKey === target.fbKey) || target;
+      const oldSec = parseCompanyTitle(currentTarget.companyName || currentTarget.name || '').section;
+      const existing = stationsOf(currentTarget).map(st => {
+        const copy = st.section ? { ...st } : { ...st, section: oldSec };
+        delete copy.fbKey;
+        return copy;
       });
+      const r = mergeStations(existing, stations);
+      const finalCompanyName = parsed.company || currentTarget.companyName || title;
+      const updatePayload = {
+        companyName: finalCompanyName,
+        dataCategory: currentTarget.dataCategory || finalCategory,
+        projectLocation: currentTarget.projectLocation || projectLocation || '',
+        stations: r.stations.map(st => {
+          const copy = { ...st, status: evalStatus(st.customs || {}) };
+          delete copy.fbKey;
+          return copy;
+        }),
+        lastUpdated: now,
+        lastUpdatedBy: recorder,
+        lastUpdatedTs: nowTs
+      };
+      if (govVerification && (govVerification.agency || govVerification.docNo || govVerification.date)) {
+        updatePayload.govVerification = govVerification;
+      }
+      if (otherVerification && (otherVerification.org || otherVerification.docNo || otherVerification.date)) {
+        updatePayload.otherVerification = otherVerification;
+      }
+
+      const fbUpdates = { ...updatePayload };
+      if (!Array.isArray(currentTarget.stations)) {
+        ['code', 'name', 'province', 'lat', 'lng', 'customs', 'status'].forEach(k => { fbUpdates[k] = null; });
+      }
+
+      await db.ref(`water_records/${target.fbKey}`).update(fbUpdates);
+      const mergedForMem = { ...currentTarget, ...updatePayload };
+      ['code', 'name', 'province', 'lat', 'lng', 'customs', 'status'].forEach(k => delete mergedForMem[k]);
+      upsertRecordInMemory(target.fbKey, mergedForMem);
+      render();
+
+      db.ref('activity_logs').push({ action: 'MERGE', itemCode: `${finalCompanyName} (+${r.added} ໃໝ່, ${r.updated} ອັບເດດ${source})`, performedBy: recorder, timestamp: now, userRole: currentUserRole });
+      return { type: 'merge', title: finalCompanyName, added: r.added, updated: r.updated, fbKey: target.fbKey, dataCategory: finalCategory };
     }
 
     // ກ່ອງຖາມ: ມີຊຸດຊື່ນີ້ແລ້ວ → ລວມ ຫຼື ສ້າງໃໝ່?
@@ -14568,7 +14635,7 @@
         title: '🔗 ມີຊຸດຂໍ້ມູນນີ້ຢູ່ແລ້ວ',
         html: `ມີ <b>"${escAttr(target.companyName || target.name)}"</b> ຢູ່ໃນໝວດ <b>${catMeta.icon} ${catMeta.fullLabel}</b> ແລ້ວ (${stationsOf(target).length} ສະຖານີ).<br><br>
                ຈະເອົາ <b>${count}</b> ສະຖານີໃໝ່ນີ້ <b>ລວມເຂົ້າຊຸດເດີມ</b> ບໍ່?<br>
-               <span class="text-xs text-slate-500">ສະຖານີທີ່ລະຫັດ ແລະ ພິກັດຄືກັນ ຈະຖືກອັບເດດຄ່າ, ສະຖານີອື່ນຈະຖືກເພີ່ມຕໍ່ທ້າຍ</span>`,
+               <span class="text-xs text-slate-500">ສະຖານີທີ່ລະຫັດ ແລະ ວັນທີຄືກັນ ຈະຖືກອັບເດດຄ່າ/ພິກັດ, ສະຖານີອື່ນຈະຖືກເພີ່ມຕໍ່ທ້າຍ</span>`,
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: '🔗 ລວມເຂົ້າຊຸດເດີມ',
@@ -14590,8 +14657,22 @@
       if (si) si.value = '';
       const sf = document.getElementById('statusFilter');
       if (sf) sf.value = 'ALL';
+      const df = document.getElementById('datasetFilter');
+      if (df) df.value = 'ALL';
+      const yf = document.getElementById('yearTableFilter');
+      if (yf) yf.value = 'ALL';
+      // ຖ້າຕົວກອງປະເພດຂໍ້ມູນບໍ່ກົງກັບຊຸດທີ່ບັນທຶກ → ປັບເປັນ ALL ເພື່ອໃຫ້ເຫັນທັນທີ
+      if (activeDataCategoryFilter !== 'ALL') {
+        const hasDiffCat = keys.some(k => {
+          const item = waterData.find(d => d.fbKey === k);
+          return item && getRecordDataCategory(item) !== activeDataCategoryFilter;
+        });
+        if (hasDiffCat && typeof setDataCategoryFilter === 'function') {
+          setDataCategoryFilter('ALL');
+        }
+      }
       keys.forEach(k => expandedRows[k] = true);
-      render();
+      renderNow();
       setTimeout(() => {
         if (typeof scrollToTableRow === 'function') {
           scrollToTableRow(keys[0]);
@@ -14671,29 +14752,51 @@
         const r = mergeStations(stations, withSection(d, false));
         stations = r.stations; added += r.added; updated += r.updated;
       });
+      const nowStr = new Date().toLocaleString('lo-LA');
+      const nowTs = Date.now();
+      const cleanStations = stations.map(st => {
+        const copy = { ...st, status: evalStatus(st.customs || {}) };
+        delete copy.fbKey;
+        return copy;
+      });
+      const finalCompanyName = tParsed.company || tTitle || 'ບໍ່ລະບຸ';
+      const finalLoc = target.projectLocation || sources.map(d => d.projectLocation).find(Boolean) || '';
       const updates = {};
-      updates[`water_records/${target.fbKey}/stations`] = stations;
+      updates[`water_records/${target.fbKey}/stations`] = cleanStations;
       if (!Array.isArray(target.stations)) {
         ['code', 'name', 'province', 'lat', 'lng', 'customs', 'status'].forEach(k => { if (target[k] !== undefined) updates[`water_records/${target.fbKey}/${k}`] = null; });
       }
-      updates[`water_records/${target.fbKey}/companyName`] = tParsed.company || tTitle || 'ບໍ່ລະບຸ';
-      if (!target.projectLocation) {
-        const loc = sources.map(d => d.projectLocation).find(Boolean);
-        if (loc) updates[`water_records/${target.fbKey}/projectLocation`] = loc;
+      updates[`water_records/${target.fbKey}/companyName`] = finalCompanyName;
+      if (!target.projectLocation && finalLoc) {
+        updates[`water_records/${target.fbKey}/projectLocation`] = finalLoc;
       }
-      updates[`water_records/${target.fbKey}/lastUpdated`] = new Date().toLocaleString('lo-LA');
-      updates[`water_records/${target.fbKey}/lastUpdatedTs`] = Date.now();
+      updates[`water_records/${target.fbKey}/lastUpdated`] = nowStr;
+      updates[`water_records/${target.fbKey}/lastUpdatedTs`] = nowTs;
       updates[`water_records/${target.fbKey}/lastUpdatedBy`] = who;
       sources.forEach(d => { updates[`water_records/${d.fbKey}`] = null; });
       await db.ref().update(updates);
+
+      const srcKeys = new Set(sources.map(d => d.fbKey));
+      waterData = waterData.filter(d => !srcKeys.has(d.fbKey));
+      upsertRecordInMemory(target.fbKey, {
+        ...target,
+        companyName: finalCompanyName,
+        projectLocation: finalLoc,
+        stations: cleanStations,
+        lastUpdated: nowStr,
+        lastUpdatedTs: nowTs,
+        lastUpdatedBy: who
+      });
+      render();
+
       await db.ref('activity_logs').push({
         action: 'MERGE',
-        itemCode: `${sources.map(d => d.companyName || d.name).join(', ')} → ${target.companyName || target.name} (+${added} ໃໝ່, ${updated} ອັບເດດ)`,
+        itemCode: `${sources.map(d => d.companyName || d.name).join(', ')} → ${finalCompanyName} (+${added} ໃໝ່, ${updated} ອັບເດດ)`,
         performedBy: who,
-        timestamp: new Date().toLocaleString('lo-LA'),
+        timestamp: nowStr,
         userRole: currentUserRole
       });
-      return { added, updated, total: stations.length };
+      return { added, updated, total: cleanStations.length };
     }
 
     async function mergeDatasetInto(srcKey, dstKey) {
@@ -15747,8 +15850,14 @@
           </div>`;
       }).join('');
 
+      const editingItemForExcel = (!targetTitle && editingFormDatasetKey) ? waterData.find(d => d.fbKey === editingFormDatasetKey) : null;
+      if (editingItemForExcel && !targetTitle) {
+        targetTitle = editingItemForExcel.companyName || editingItemForExcel.name || '';
+        window.__excelUnified = targetTitle;
+      }
       const skippedAll = blocks.flatMap(b => b.skipped);
-      const defaultExcelCat = getFormDataCategory();
+      const defaultExcelCat = editingItemForExcel ? getRecordDataCategory(editingItemForExcel) : getFormDataCategory();
+      const defaultExcelRecorder = currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
       const html = `
         <div class="text-left text-xs space-y-3">
           <div class="bg-slate-50 border rounded-lg p-2 leading-relaxed">
@@ -15759,12 +15868,18 @@
             <br><span class="text-indigo-700">ຕາຕະລາງທີ່ <b>ຫົວຂໍ້ຄືກັບຊຸດທີ່ມີຢູ່ແລ້ວ</b> ຈະຖືກລວມເຂົ້າຊຸດເດີມ · ຕາຕະລາງທີ່ຫົວຂໍ້ຊ້ຳກັນໃນໄຟລ໌ຈະລວມເປັນຊຸດດຽວ</span>
           </div>
 
-          <div class="border-2 border-indigo-200 bg-indigo-50/60 rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2">
-            <span class="font-bold text-indigo-950 text-xs">🗂️ ຈັດເຂົ້າປະເພດຂໍ້ມູນ (ແຍກ 2 ປະເພດ):</span>
-            <select id="excelDataCategory" onchange="for (let k = 0; k < ${good.length}; k++) updateExcelBlockTarget(k)" class="border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
-              <option value="COMPANY" ${defaultExcelCat === 'COMPANY' ? 'selected' : ''}>🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
-              <option value="GOV" ${defaultExcelCat === 'GOV' ? 'selected' : ''}>🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
-            </select>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-2 border-indigo-200 bg-indigo-50/60 rounded-xl p-2.5">
+            <div class="flex flex-col gap-1">
+              <label class="font-bold text-indigo-950 text-[11px]">🗂️ ຈັດເຂົ້າປະເພດຂໍ້ມູນ (ແຍກ 2 ປະເພດ):</label>
+              <select id="excelDataCategory" onchange="for (let k = 0; k < ${good.length}; k++) updateExcelBlockTarget(k)" class="border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
+                <option value="COMPANY" ${defaultExcelCat === 'COMPANY' ? 'selected' : ''}>🏢 1. ຂໍ້ມູນສະເພາະບໍລິສັດ ຫຼື ກິດຈະການ</option>
+                <option value="GOV" ${defaultExcelCat === 'GOV' ? 'selected' : ''}>🏛️ 2. ຂໍ້ມູນຈາກພາກສ່ວນອົງການຈັດຕັ້ງລັດ</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="font-bold text-indigo-950 text-[11px]">👤 ຜູ້ບັນທຶກ / ຜູ້ນຳເຂົ້າຂໍ້ມູນ:</label>
+              <input type="text" id="excelRecorderName" value="${escAttr(defaultExcelRecorder)}" placeholder="ຊື່ຜູ້ບັນທຶກ..." class="border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white text-slate-800 outline-none">
+            </div>
           </div>
 
           ${good.length > 1 ? `
@@ -15775,7 +15890,7 @@
               </label>
               <div id="excelUnifiedWrap" class="flex items-center gap-2">
                 <span class="text-[11px] text-slate-600 shrink-0">🏢 ຊື່ຊຸດຂໍ້ມູນ:</span>
-                <input type="text" id="excelUnifiedTitle" value="${escAttr(unifiedTitle)}" oninput="for (let k = 0; k < ${good.length}; k++) updateExcelBlockTarget(k)" class="flex-1 border rounded px-2 py-1 text-xs bg-white">
+                <input type="text" id="excelUnifiedTitle" value="${escAttr(targetTitle || unifiedTitle)}" oninput="for (let k = 0; k < ${good.length}; k++) updateExcelBlockTarget(k)" class="flex-1 border rounded px-2 py-1 text-xs bg-white">
               </div>
               <p class="text-[10px] text-slate-500">ຫົວຂໍ້ຂອງແຕ່ລະຕາຕະລາງ (ເຊັ່ນ ຊື່ຫ້ອງທົດລອງ, ໂຄງການ) ຈະກາຍເປັນ <b>📂 ຫົວຂໍ້ຍ່ອຍ</b> ໃນຊຸດນີ້. ບໍ່ຕິກ = ແຍກເປັນຫຼາຍຊຸດ.</p>
             </div>` : ''}
@@ -15835,15 +15950,9 @@
             });
           }
           if (chosen.some(x => !x.title)) { Swal.showValidationMessage('ກະລຸນາລະບຸຊື່ຊຸດຂໍ້ມູນໃຫ້ຄົບ'); return false; }
-          const recorder = currentUserName || document.getElementById('recorderName').value.trim();
-          if (!recorder) { Swal.showValidationMessage('ກະລຸນາພິມຊື່ຜູ້ບັນທຶກໃນຟອມກ່ອນ'); return false; }
-          const risky = chosen.filter((x, k) => x.mode === 'merge' && !x.blockDate && x.block.missingDate && findDatasetByTitle(x.title, excelCategory));
-          if (risky.length && !window.__excelOverwriteOk) {
-            window.__excelOverwriteOk = true;
-            Swal.showValidationMessage(`⚠️ ${risky.length} ຕາຕະລາງ ບໍ່ມີວັນທີ ແລະ ຈະຂຽນທັບຂໍ້ມູນເດີມ. ເລືອກເດືອນກ່ອນ — ຫຼື ກົດບັນທຶກອີກເທື່ອ ຖ້າຕັ້ງໃຈອັບເດດຄ່າເກົ່າແທ້`);
-            return false;
-          }
-          window.__excelOverwriteOk = false;
+          const recorder = (document.getElementById('excelRecorderName')?.value || '').trim() || currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
+          const recEl = document.getElementById('recorderName');
+          if (recEl && !recEl.value.trim()) recEl.value = recorder;
           const addCanons = [...document.querySelectorAll('.excelUnkChk')].filter(c => c.checked).map(c => c.dataset.canon);
           return { chosen, addCanons, recorder, dataCategory: excelCategory };
         }
@@ -16197,6 +16306,49 @@
       refreshTempStationCoordBadgeUI(idx);
     }
 
+    // ຊິງຄ໌ຄ່າພິກັດທີ່ຜູ້ໃຊ້ພິມໃສ່ຊ່ອງພິກັດຍ່ອຍ (tempStCoordLat_*, tempStCoordLng_*, tempStCoordSmart_*) ເຂົ້າໃນ tempStations ທຸກແຖວ
+    function syncAllInlineTempStationCoords() {
+      tempStations.forEach((st, idx) => {
+        if (!st) return;
+        const latEl = document.getElementById(`tempStCoordLat_${idx}`);
+        const lngEl = document.getElementById(`tempStCoordLng_${idx}`);
+        const smartEl = document.getElementById(`tempStCoordSmart_${idx}`);
+        if (!latEl && !lngEl && !smartEl) return;
+
+        const latRaw = (latEl?.value || '').trim();
+        const lngRaw = (lngEl?.value || '').trim();
+        const smartVal = (smartEl?.value || '').trim();
+
+        let lat = parseCoordPart(latRaw);
+        let lng = parseCoordPart(lngRaw);
+        if ((isNaN(lat) || isNaN(lng)) && latRaw) {
+          const pairInLat = parseCoordPair(latRaw);
+          if (pairInLat) { lat = pairInLat.lat; lng = pairInLat.lng; }
+        }
+        if ((isNaN(lat) || isNaN(lng)) && smartVal) {
+          const pair = parseCoordPair(smartVal);
+          if (pair) { lat = pair.lat; lng = pair.lng; }
+        }
+        if (!isNaN(lat) && !isNaN(lng)) {
+          st.lat = lat;
+          st.lng = lng;
+          st.gps = smartVal || toDMS(lat, lng);
+          if (editingTempStationIdx === idx) {
+            const fLat = document.getElementById('lat');
+            const fLng = document.getElementById('lng');
+            const fGps = document.getElementById('gpsDms');
+            if (fLat) fLat.value = lat;
+            if (fLng) fLng.value = lng;
+            if (fGps) fGps.value = st.gps;
+          }
+        } else if (!latRaw && !lngRaw && !smartVal) {
+          st.lat = null;
+          st.lng = null;
+          st.gps = '';
+        }
+      });
+    }
+
     async function applyTempStationCoord(idx, showFeedback = true) {
       if (currentUserRole === 'VIEWER') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
@@ -16210,6 +16362,14 @@
 
       let lat = parseCoordPart(latRaw);
       let lng = parseCoordPart(lngRaw);
+
+      if ((isNaN(lat) || isNaN(lng)) && latRaw) {
+        const pairInLat = parseCoordPair(latRaw);
+        if (pairInLat) {
+          lat = pairInLat.lat;
+          lng = pairInLat.lng;
+        }
+      }
 
       if ((isNaN(lat) || isNaN(lng)) && smartVal) {
         const pair = parseCoordPair(smartVal);
@@ -16241,10 +16401,11 @@
       refreshTempStationCoordBadgeUI(idx);
       populateFormEditStationOptions();
 
-      // ຖ້າກຳລັງແກ້ໄຂຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (editingFormDatasetKey) → ບັນທຶກພິກັດລົງຖານຂໍ້ມູນ Firebase ທັນທີ!
+      // ຖ້າກຳລັງແກ້ໄຂຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (editingFormDatasetKey) → ບັນທຶກພິກັດລົງຖານຂໍ້ມູນ Firebase ແລະ ອັບເດດ waterData ທັນທີ!
       if (editingFormDatasetKey) {
         const editor = currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
         const nowStr = new Date().toLocaleString('lo-LA');
+        const nowTs = Date.now();
         const cleanStations = tempStations.map(s => {
           const copy = { ...s, status: evalStatus(s.customs || {}) };
           delete copy.fbKey;
@@ -16254,8 +16415,20 @@
           await db.ref(`water_records/${editingFormDatasetKey}`).update({
             stations: cleanStations,
             lastUpdated: nowStr,
-            lastUpdatedBy: editor
+            lastUpdatedBy: editor,
+            lastUpdatedTs: nowTs
           });
+          const existingItem = waterData.find(d => d.fbKey === editingFormDatasetKey);
+          if (existingItem) {
+            upsertRecordInMemory(editingFormDatasetKey, {
+              ...existingItem,
+              stations: cleanStations,
+              lastUpdated: nowStr,
+              lastUpdatedBy: editor,
+              lastUpdatedTs: nowTs
+            });
+            render();
+          }
           await db.ref('activity_logs').push({
             action: 'EDIT_STATION_COORD',
             itemCode: `🧭 ອັບເດດຈຸດພິກັດ [${st.code || '-'}] ${st.name || '-'} -> (${lat}, ${lng})`,
@@ -16781,14 +16954,41 @@
     async function saveAllBatch() {
       if (currentUserRole === 'VIEWER') return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!' });
 
-      // ຖ້າຜູ້ໃຊ້ກຳລັງເປີດແກ້ໄຂສະຖານີຄ້າງໄວ້ໃນຟອມ ແລ້ວກົດບັນທຶກຊຸດຂໍ້ມູນເລີຍ → ອັບເດດສະຖານີນັ້ນເຂົ້າ tempStations ກ່ອນອັດຕະໂນມັດ
+      // 1. ຊິງຄ໌ຄ່າພິກັດຈາກຊ່ອງປ້ອນພິກັດຍ່ອຍທຸກແຖວເຂົ້າໃນ tempStations ກ່ອນ
+      syncAllInlineTempStationCoords();
+
+      // 2. ຖ້າຜູ້ໃຊ້ກຳລັງເປີດແກ້ໄຂສະຖານີຄ້າງໄວ້ໃນຟອມ → ອັບເດດສະຖານີນັ້ນເຂົ້າ tempStations ກ່ອນອັດຕະໂນມັດ
       if (editingTempStationIdx >= 0 && editingTempStationIdx < tempStations.length) {
         const codeVal = (document.getElementById('code')?.value || '').trim();
         const nameVal = (document.getElementById('name')?.value || '').trim();
         if (codeVal && nameVal) {
-          tempStations[editingTempStationIdx] = buildStationDataFromFormInputs(tempStations[editingTempStationIdx]);
+          const prevSt = tempStations[editingTempStationIdx];
+          const updatedSt = buildStationDataFromFormInputs(prevSt);
+          // ຖ້າໃນຟອມຫຼັກບໍ່ມີພິກັດ ແຕ່ໃນແຖວຍ່ອຍມີພິກັດ → ຮັກສາພິກັດຈາກແຖວຍ່ອຍໄວ້
+          if ((updatedSt.lat === null || isNaN(updatedSt.lat)) && hasValidStationCoord(prevSt)) {
+            updatedSt.lat = prevSt.lat;
+            updatedSt.lng = prevSt.lng;
+            updatedSt.gps = prevSt.gps || toDMS(prevSt.lat, prevSt.lng);
+          }
+          tempStations[editingTempStationIdx] = updatedSt;
           editingTempStationIdx = -1;
           editingStationExtraIndKeys = new Set();
+        }
+      } else {
+        // 3. ຖ້າຜູ້ໃຊ້ພິມຂໍ້ມູນສະຖານີໃໝ່ໄວ້ໃນຟອມ (ລະຫັດ + ຊື່ສະຖານີ) ແຕ່ລືມກົດປຸ່ມ "➕ ເພີ່ມສະຖານີ" ກ່ອນກົດບັນທຶກຊຸດຂໍ້ມູນ → ດຶງເຂົ້າ tempStations ໃຫ້ອັດຕະໂນມັດ
+        const codeVal = (document.getElementById('code')?.value || '').trim();
+        const nameVal = (document.getElementById('name')?.value || '').trim();
+        if (codeVal && nameVal) {
+          const pendingSt = buildStationDataFromFormInputs();
+          const isDuplicatePending = tempStations.some(s =>
+            normCode(s.code) === normCode(pendingSt.code) &&
+            normCode(s.name) === normCode(pendingSt.name) &&
+            (s.sampleDate || '') === (pendingSt.sampleDate || '') &&
+            JSON.stringify(s.customs || {}) === JSON.stringify(pendingSt.customs || {})
+          );
+          if (!isDuplicatePending) {
+            tempStations.push(pendingSt);
+          }
         }
       }
 
@@ -16819,6 +17019,7 @@
           const targetFbKey = editingFormDatasetKey;
           const inputDatetime = document.getElementById('customDatetime').value;
           const nowStr = new Date().toLocaleString('lo-LA');
+          const nowTs = Date.now();
           const recordDate = inputDatetime ? new Date(inputDatetime).toLocaleString('lo-LA') : (existingItem.date || nowStr);
 
           Swal.fire({ title: 'ກຳລັງບັນທຶກການປັບປຸງຂໍ້ມູນ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -16828,7 +17029,7 @@
               delete copy.fbKey;
               return copy;
             });
-            await db.ref(`water_records/${targetFbKey}`).update({
+            const updatePayload = {
               companyName,
               dataCategory,
               projectLocation,
@@ -16836,10 +17037,15 @@
               date: recordDate,
               lastUpdated: nowStr,
               lastUpdatedBy: recorderName,
+              lastUpdatedTs: nowTs,
               govVerification,
               otherVerification,
               stations: cleanStations
-            });
+            };
+            await db.ref(`water_records/${targetFbKey}`).update(updatePayload);
+            upsertRecordInMemory(targetFbKey, { ...existingItem, ...updatePayload });
+            renderNow();
+
             await db.ref('activity_logs').push({
               action: 'UPDATE_DATASET_FORM',
               itemCode: `[${dataCategory === 'GOV' ? 'ອົງການລັດ' : 'ບໍລິສັດ'}] ປັບປຸງຂໍ້ມູນ: ${companyName} (${cleanStations.length} ສະຖານີ)`,
@@ -16855,11 +17061,12 @@
               icon: 'success',
               title: 'ບັນທຶກການປັບປຸງຂໍ້ມູນສຳເລັດ!',
               html: `<div class="text-xs sm:text-sm text-slate-700 leading-relaxed">ອັບເດດຊຸດຂໍ້ມູນ <b class="text-indigo-700">${escAttr(companyName)}</b> (${cleanStations.length} ສະຖານີ) ລົງໃນລະບົບຮຽບຮ້ອຍແລ້ວ</div>`,
-              confirmButtonText: '✏️ ຢູ່ໜ້າຟອມຕໍ່',
+              confirmButtonText: '👁️ ເບິ່ງຂໍ້ມູນທີ່ອັບເດດ',
+              confirmButtonColor: '#059669',
               showDenyButton: true,
-              denyButtonText: '👁️ ເບິ່ງຂໍ້ມູນທີ່ອັບເດດ',
-              denyButtonColor: '#059669'
-            }).then(r => setTimeout(() => r.isDenied ? jumpToRecords([targetFbKey]) : scrollToFormTop(), 250));
+              denyButtonText: '✏️ ຢູ່ໜ້າຟອມຕໍ່',
+              denyButtonColor: '#4f46e5'
+            }).then(r => setTimeout(() => r.isConfirmed ? jumpToRecords([targetFbKey]) : scrollToFormTop(), 200));
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'ບັນທຶກການປັບປຸງບໍ່ສຳເລັດ', text: err.message });
           }
@@ -16901,10 +17108,12 @@
         syncFormEditModeUI();
         populateFormEditDatasetOptions();
         applyRecorderLock();
+        renderNow();
         Swal.fire({
           icon: 'success', title: 'ບັນທຶກຂໍ້ມູນສຳເລັດ!', html: mergeResultText([res]),
-          confirmButtonText: '✏️ ປ້ອນຂໍ້ມູນຕໍ່', showDenyButton: true, denyButtonText: '👁️ ເບິ່ງຂໍ້ມູນທີ່ບັນທຶກ', denyButtonColor: '#059669'
-        }).then(r => setTimeout(() => r.isDenied ? jumpToRecords([res.fbKey]) : scrollToFormTop(), 300));
+          confirmButtonText: '👁️ ເບິ່ງຂໍ້ມູນທີ່ບັນທຶກ', confirmButtonColor: '#059669',
+          showDenyButton: true, denyButtonText: '✏️ ປ້ອນຂໍ້ມູນຕໍ່', denyButtonColor: '#4f46e5'
+        }).then(r => setTimeout(() => r.isConfirmed ? jumpToRecords([res.fbKey]) : scrollToFormTop(), 250));
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'ບັນທຶກບໍ່ສຳເລັດ', text: err.message });
       }
@@ -18380,9 +18589,13 @@
       markersGroup.clearLayers();
       markerIndex = {};
       const tbody = document.getElementById('dataTable');
-      // ເກັບຄ່າທີ່ກຳລັງພິມຢູ່ໃນຊ່ອງແກ້ໄຂ ເພື່ອບໍ່ໃຫ້ຫາຍເມື່ອຕາຕະລາງຖືກ render ໃໝ່
+      const modalContainer = document.getElementById('modalDatasetContent');
+      // ເກັບຄ່າທີ່ກຳລັງພິມຢູ່ໃນຊ່ອງແກ້ໄຂ (ທັງໃນຕາຕະລາງຫຼັກ ແລະ ໃນໜ້າຕ່າງ Modal) ເພື່ອບໍ່ໃຫ້ຫາຍເມື່ອຖືກ render ໃໝ່
       const draftEditValues = {};
       tbody.querySelectorAll('[data-edit-field]').forEach(el => { draftEditValues[el.id] = el.value; });
+      if (modalContainer && activeDetailModalFbKey) {
+        modalContainer.querySelectorAll('[data-edit-field]').forEach(el => { draftEditValues[el.id] = el.value; });
+      }
       tbody.innerHTML = '';
 
       updateTableDropdownFilters();
@@ -18949,8 +19162,9 @@
       }
 
       Object.keys(draftEditValues).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = draftEditValues[id];
+        document.querySelectorAll(`[id="${CSS.escape(id)}"]`).forEach(el => {
+          el.value = draftEditValues[id];
+        });
       });
 
       renderMapSelectors();
@@ -19125,22 +19339,46 @@
         </div>`;
     }
 
+    // ດຶງ Element ຊ່ອງແກ້ໄຂຈາກໜ້າຕ່າງ Modal ກ່ອນ (ຖ້າເປີດຢູ່) ເພື່ອປ້ອງກັນບັນຫາ ID ຊ້ຳກັບແຖວໃນຕາຕະລາງຫຼັກ
+    function getActiveEditInputEl(fullId) {
+      const modal = document.getElementById('datasetDetailModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        const inModal = modal.querySelector(`[id="${CSS.escape(fullId)}"]`);
+        if (inModal) return inModal;
+      }
+      return document.getElementById(fullId);
+    }
+
     function openStationEdit(fbKey, idx) {
       editingStation = { fbKey, idx };
       editingMaster = null;
-      render();
+      renderNow();
+      setTimeout(() => {
+        const firstInput = getActiveEditInputEl(`edit_${fbKey}_${idx}_code`);
+        if (firstInput) {
+          firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInput.focus({ preventScroll: true });
+        }
+      }, 100);
     }
 
     function openMasterEdit(fbKey) {
       editingMaster = fbKey;
       editingStation = null;
-      render();
+      renderNow();
+      setTimeout(() => {
+        const firstInput = getActiveEditInputEl(`editm_${fbKey}_company`);
+        if (firstInput) {
+          firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInput.focus({ preventScroll: true });
+        }
+      }, 100);
     }
 
     function cancelEdit() {
       editingStation = null;
       editingMaster = null;
-      render();
+      renderNow();
     }
 
     function saveStationEdit(fbKey, idx) {
@@ -19151,7 +19389,8 @@
       if (!item) return Swal.fire({ icon: 'error', title: 'ບໍ່ພົບຂໍ້ມູນ!' });
 
       const p = `edit_${fbKey}_${idx}_`;
-      const get = f => (document.getElementById(p + f)?.value ?? '').trim();
+      const getEl = f => getActiveEditInputEl(p + f);
+      const get = f => (getEl(f)?.value ?? '').trim();
 
       const editor = currentUserName || get('editor');
       const code = get('code');
@@ -19159,11 +19398,12 @@
       // ມີແຕ່ຊ່ອງອົງສາ → ແປງເປັນ Lat/Lng
       const gpsPair = parseCoordPair(get('gps'));
       if (gpsPair && get('lat') === '' && get('lng') === '') {
-        document.getElementById(p + 'lat').value = gpsPair.lat;
-        document.getElementById(p + 'lng').value = gpsPair.lng;
+        const latEl = getEl('lat');
+        const lngEl = getEl('lng');
+        if (latEl) latEl.value = gpsPair.lat;
+        if (lngEl) lngEl.value = gpsPair.lng;
       }
       const noCoord = get('lat') === '' && get('lng') === '';
-      // ບໍ່ມີ Lat/Lng ແຕ່ມີພິກັດອົງສາໃນຊ່ອງໂຕຊີ້ວັດ (ເຊັ່ນ location) → ໃຊ້ອັນນັ້ນ
       let lat = noCoord ? null : parseCoordPart(get('lat'));
       let lng = noCoord ? null : parseCoordPart(get('lng'));
       const pr = !noCoord && parseCoordPair(get('lat'));
@@ -19175,7 +19415,12 @@
 
       const oldStation = item.stations ? item.stations[idx] : item;
       const customs = { ...(oldStation.customs || {}) };
-      customIndicators.forEach(i => { if (document.getElementById(p + 'ind_' + i.key)) customs[i.key] = parseIndicatorValue(get('ind_' + i.key)); });
+      const allEditInds = [...new Map([...customIndicators, ...valueInds()].map(i => [i.key, i])).values()];
+      allEditInds.forEach(i => {
+        if (getEl('ind_' + i.key)) {
+          customs[i.key] = parseIndicatorValue(get('ind_' + i.key));
+        }
+      });
 
       const qwiVal = get('qwi');
       const qwi = qwiVal !== '' ? (isNaN(parseFloat(qwiVal)) ? qwiVal : parseFloat(qwiVal)) : '';
@@ -19194,26 +19439,50 @@
       };
       delete updated.fbKey;
 
+      const nowStr = new Date().toLocaleString('lo-LA');
+      const nowTs = Date.now();
       let savePromise;
+      let updatedRecordInMem;
       if (item.stations) {
-        const newStations = item.stations.map((s, k) => k === idx ? updated : s);
-        savePromise = db.ref(`water_records/${fbKey}/stations`).set(newStations);
+        const newStations = item.stations.map((s, k) => {
+          const copy = k === idx ? updated : { ...s };
+          delete copy.fbKey;
+          return copy;
+        });
+        const updatePayload = {
+          stations: newStations,
+          lastUpdated: nowStr,
+          lastUpdatedBy: editor,
+          lastUpdatedTs: nowTs
+        };
+        savePromise = db.ref(`water_records/${fbKey}`).update(updatePayload);
+        updatedRecordInMem = { ...item, ...updatePayload };
       } else {
-        // ຂໍ້ມູນຮູບແບບເກົ່າ (ບໍ່ມີ stations) → ອັບເດດທີ່ຕົວ record ໂດຍກົງ
         const { code, name, province, lat, lng, customs, status, qwi } = updated;
-        savePromise = db.ref(`water_records/${fbKey}`).update({ code, name, province, lat, lng, customs, status, qwi });
+        const updatePayload = {
+          code, name, province, lat, lng, customs, status, qwi,
+          lastUpdated: nowStr,
+          lastUpdatedBy: editor,
+          lastUpdatedTs: nowTs
+        };
+        savePromise = db.ref(`water_records/${fbKey}`).update(updatePayload);
+        updatedRecordInMem = { ...item, ...updatePayload };
       }
 
       savePromise.then(() => {
+        upsertRecordInMemory(fbKey, updatedRecordInMem);
+        if (editingFormDatasetKey === fbKey) {
+          loadExistingDatasetToForm(fbKey);
+        }
         db.ref('activity_logs').push({
           action: 'EDIT_STATION',
           itemCode: `${item.companyName || item.name || ''} -> [${code}] ${name}`,
           performedBy: editor,
-          timestamp: new Date().toLocaleString('lo-LA'),
+          timestamp: nowStr,
           userRole: currentUserRole
         });
         editingStation = null;
-        render();
+        renderNow();
         Swal.fire({ icon: 'success', title: 'ແກ້ໄຂຂໍ້ມູນສຳເລັດ!', text: `ດຳເນີນການໂດຍ: ${editor}`, timer: 1500, showConfirmButton: false });
       }).catch(err => Swal.fire({ icon: 'error', title: 'ບັນທຶກບໍ່ສຳເລັດ', text: err.message }));
     }
@@ -19226,7 +19495,8 @@
       if (!item) return Swal.fire({ icon: 'error', title: 'ບໍ່ພົບຂໍ້ມູນ!' });
 
       const p = `editm_${fbKey}_`;
-      const get = f => (document.getElementById(p + f)?.value ?? '').trim();
+      const getEl = f => getActiveEditInputEl(p + f);
+      const get = f => (getEl(f)?.value ?? '').trim();
 
       const editor = currentUserName || get('editor');
       const companyName = get('company');
@@ -19244,25 +19514,36 @@
       const otherDate = get('otherDate');
       const otherDoc = get('otherDoc');
       const dataCategory = get('dataCategory') === 'GOV' ? 'GOV' : 'COMPANY';
+      const nowStr = new Date().toLocaleString('lo-LA');
+      const nowTs = Date.now();
 
-      db.ref(`water_records/${fbKey}`).update({
+      const updatePayload = {
         dataCategory,
         companyName,
         projectLocation: get('location'),
         recordedBy,
         date: get('date') || item.date || '',
+        lastUpdated: nowStr,
+        lastUpdatedBy: editor,
+        lastUpdatedTs: nowTs,
         govVerification: { agency: govAgency, date: govDate, docNo: govDoc },
         otherVerification: { org: otherOrg, date: otherDate, docNo: otherDoc }
-      }).then(() => {
+      };
+
+      db.ref(`water_records/${fbKey}`).update(updatePayload).then(() => {
+        upsertRecordInMemory(fbKey, { ...item, ...updatePayload });
+        if (editingFormDatasetKey === fbKey) {
+          loadExistingDatasetToForm(fbKey);
+        }
         db.ref('activity_logs').push({
           action: 'EDIT_MASTER',
           itemCode: companyName,
           performedBy: editor,
-          timestamp: new Date().toLocaleString('lo-LA'),
+          timestamp: nowStr,
           userRole: currentUserRole
         });
         editingMaster = null;
-        render();
+        renderNow();
         Swal.fire({ icon: 'success', title: 'ແກ້ໄຂຂໍ້ມູນຫຼັກສຳເລັດ!', text: `ດຳເນີນການໂດຍ: ${editor}`, timer: 1500, showConfirmButton: false });
       }).catch(err => Swal.fire({ icon: 'error', title: 'ບັນທຶກບໍ່ສຳເລັດ', text: err.message }));
     }
