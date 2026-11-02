@@ -796,6 +796,9 @@
           <button type="button" onclick="focusFormExistingEditBox()" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20">
             <span>🔧</span> <span>ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
           </button>
+          <button type="button" onclick="focusFormDatasetCombineBox()" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/20">
+            <span>🔗</span> <span>ເລືອກຊຸດຂໍ້ມູນເຂົ້າໃນຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
+          </button>
           <button type="button" onclick="setFormDataCategory('COMPANY')" class="px-3 py-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white border border-indigo-400/40 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm">
             <span>🏢</span> <span>ປ້ອນຂໍ້ມູນປະເພດ 1 (ບໍລິສັດ)</span>
           </button>
@@ -961,6 +964,152 @@
                     <span>💾</span> <span>ບັນທຶກການປັບປຸງລົງລະບົບ</span>
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== 🔗 ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ) ==================== -->
+          <div id="formDatasetCombineBox" class="bg-gradient-to-br from-teal-50/90 via-white to-indigo-50/50 p-4 rounded-2xl border-2 border-teal-400/90 shadow-sm space-y-3.5 transition-all">
+            <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-teal-200/80">
+              <div class="flex items-start sm:items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white flex items-center justify-center text-base font-black shadow-sm shadow-teal-600/25 shrink-0">
+                  🔗
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-xs sm:text-sm font-black text-slate-900">ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ)</h3>
+                    <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">🛡️ ປ້ອງກັນຂໍ້ມູນທັບຊ້ອນອັດຕະໂນມັດ</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600 mt-0.5">ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງ (1 ຫຼື ຫຼາຍຊຸດ) ເພື່ອນຳເອົາຂໍ້ມູນເຂົ້າໄປໃນຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການ ໂດຍລະບົບຈະກວດກາ ແລະ ກັ່ນຕອງບໍ່ໃຫ້ສະຖານີ ຫຼື ຄ່າວິເຄາະທັບຊ້ອນກັນ</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span id="formCombineSelectedBadge" class="text-[10.5px] font-bold px-2.5 py-1 rounded-xl bg-white text-teal-800 border border-teal-200 shadow-2xs">📤 ເລືອກແລ້ວ 0 ຊຸດ</span>
+                <button type="button" onclick="toggleFormCombineBoxBody()" id="formCombineCollapseBtn" class="px-2.5 py-1 rounded-xl bg-white hover:bg-teal-50 text-slate-700 border border-slate-300 text-[11px] font-bold transition cursor-pointer">
+                  ▼ ຫຍໍ້/ຂະຫຍາຍ
+                </button>
+              </div>
+            </div>
+
+            <div id="formDatasetCombineBody" class="space-y-3.5">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+                <!-- ຟາກຊ້າຍ (6 ຖັນ): 1️⃣ ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ຕ້ອງການເອົາເຂົ້າ (Source Datasets) -->
+                <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-teal-200/90 p-3 space-y-2.5 shadow-2xs flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-1.5">
+                      <label class="text-xs font-black text-teal-950 flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-md bg-teal-600 text-white text-[11px] font-black inline-flex items-center justify-center">1</span>
+                        <span>ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການດຶງເอาໄປລວມ (Source Dataset)</span>
+                      </label>
+                      <div class="flex items-center gap-1">
+                        <button type="button" onclick="selectAllFormCombineSources(true)" class="px-2 py-0.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-bold transition cursor-pointer">☑️ ເລືອກທັງໝົດ</button>
+                        <button type="button" onclick="selectAllFormCombineSources(false)" class="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] font-bold transition cursor-pointer">🧹 ລ້າງ</button>
+                      </div>
+                    </div>
+
+                    <!-- ຕົວກອງປະເພດ + ຄົ້ນຫາຊຸດຂໍ້ມູນຕົ້ນທາງ -->
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <button type="button" id="formCombineCatBtn_ALL" onclick="setFormCombineFilterCategory('ALL')" class="px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer">🗂️ ທັງໝົດ</button>
+                      <button type="button" id="formCombineCatBtn_COMPANY" onclick="setFormCombineFilterCategory('COMPANY')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer">🏢 1. ບໍລິສັດ</button>
+                      <button type="button" id="formCombineCatBtn_GOV" onclick="setFormCombineFilterCategory('GOV')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer">🏛️ 2. ອົງການລັດ</button>
+                      <input type="text" id="formCombineSourceSearchInput" oninput="populateFormCombineDatasetUI()" autocomplete="off" placeholder="🔍 ຄົ້ນຫາຊື່ຊຸດຂໍ້ມູນ ຫຼື ສະຖານີ..." class="flex-1 min-w-[140px] border border-slate-300 focus:border-teal-500 rounded-lg px-2.5 py-1 text-[11px] bg-white outline-none">
+                    </div>
+
+                    <!-- Dropdown ເລືອກດ່ວນ 1 ຊຸດ -->
+                    <div>
+                      <select id="formCombineQuickSourceSelect" onchange="onFormCombineQuickSourceChange(this.value)" class="w-full border border-teal-300 focus:border-teal-600 bg-teal-50/40 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer">
+                        <option value="">-- ⚡ ເລືອກດ່ວນ 1 ຊຸດຂໍ້ມູນຈາກລາຍການ ຫຼື ຕິກເລືອກຫຼາຍຊຸດລຸ່ມນີ້ --</option>
+                      </select>
+                    </div>
+
+                    <!-- ລາຍການ Checkbox ເລືອກໄດ້ຫຼາຍຊຸດຂໍ້ມູນ -->
+                    <div id="formCombineSourceList" class="max-h-44 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/70 space-y-1.5 text-xs">
+                      <div class="text-slate-400 text-center py-3 text-[11px]">ກຳລັງໂຫຼດລາຍການຊຸດຂໍ້ມູນ...</div>
+                    </div>
+                  </div>
+                  <div class="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
+                    <span>💡 ສາມາດຕິກເລືອກ 1 ຊຸດ ຫຼື ຫຼາຍຊຸດພ້ອມກັນໄດ້</span>
+                    <span id="formCombineSourceStationCount" class="font-bold text-teal-800">ລວມ 0 ສະຖານີ</span>
+                  </div>
+                </div>
+
+                <!-- ຟາກຂວາ (6 ຖັນ): 2️⃣ ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ & 3️⃣ ຕັ້ງຄ່າບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ -->
+                <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-indigo-200/90 p-3 space-y-3 shadow-2xs flex flex-col justify-between">
+                  <div class="space-y-2.5">
+                    <div>
+                      <label class="text-xs font-black text-indigo-950 flex items-center gap-1.5 mb-1">
+                        <span class="w-5 h-5 rounded-md bg-indigo-600 text-white text-[11px] font-black inline-flex items-center justify-center">2</span>
+                        <span>ເລືອກຊຸດຂໍ້ມູນປາຍທາງ ທີ່ຕ້ອງການເອົາຂໍ້ມູນເຂົ້າໃສ່ (Target Dataset)</span>
+                      </label>
+                      <select id="formCombineTargetSelect" onchange="onFormCombineTargetChange(this.value)" class="w-full border-2 border-indigo-300 focus:border-indigo-600 bg-indigo-50/30 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 outline-none cursor-pointer">
+                        <option value="">-- 🎯 ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ --</option>
+                      </select>
+                      <!-- ກ່ອງປ້ອນຊື່ຊຸດໃໝ່ (ສະແດງເມື່ອເລືອກ __NEW_DATASET__) -->
+                      <div id="formCombineNewDatasetBox" class="hidden mt-2 p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <div class="sm:col-span-2">
+                            <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🆕 ຊື່ຊຸດຂໍ້ມູນລວມໃໝ່:</label>
+                            <input type="text" id="formCombineNewTitleInput" oninput="updateFormCombinePreview()" placeholder="ລະບຸຊື່ບໍລິສັດ / ໂຄງການ / ຫົວຂໍ້ຊຸດຂໍ້ມູນໃໝ່..." class="w-full border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white outline-none">
+                          </div>
+                          <div>
+                            <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🗂️ ປະເພດຂໍ້ມູນ:</label>
+                            <select id="formCombineNewCategorySelect" onchange="updateFormCombinePreview()" class="w-full border border-indigo-300 rounded-lg px-2 py-1.5 text-xs font-bold bg-white outline-none">
+                              <option value="COMPANY">🏢 1. ບໍລິສັດ/ກິດຈະການ</option>
+                              <option value="GOV">🏛️ 2. ອົງການລັດ</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3️⃣ ກົດລະບຽບປ້ອງກັນການທັບຊ້ອນ (Anti-Overlap Rules) -->
+                    <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-2.5 space-y-2">
+                      <label class="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-md bg-emerald-600 text-white text-[11px] font-black inline-flex items-center justify-center">3</span>
+                        <span>ຮູບແບບການປ້ອງກັນຂໍ້ມູນທັບຊ້ອນ (Non-Overlapping Protection)</span>
+                      </label>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🛡️ ເມື່ອພົບສະຖານີທີ່ມີຢູ່ແລ້ວໃນຊຸດປາຍທາງ:</label>
+                          <select id="formCombineOverlapMode" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
+                            <option value="skip_and_fill" selected>🛡️ ບໍ່ທັບຄ່າເດີມ (ເພີ່ມສະຖານີໃໝ່ + ຕື່ມສະເພາະຊ່ອງທີ່ຫວ່າງ)</option>
+                            <option value="strict_skip">🚫 ຂ້າມສະຖານີທີ່ຊ້ຳກັນ 100% (ເອົາເຂົ້າສະເພາະສະຖານີໃໝ່)</option>
+                            <option value="merge_update">🔄 ອັບເດດຄ່າໃໝ່ໃສ່ສະຖານີເດີມ (ໂດຍບໍ່ສ້າງແຖວຊ້ຳ)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🔍 ເງື່ອນໄຂການກວດສອບຂໍ້ມູນຊ້ຳກັນ:</label>
+                          <select id="formCombineMatchRule" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
+                            <option value="code_or_name_and_date" selected>📅 ລະຫັດ/ຊື່ສະຖານີ + ວັນທີເກັບຕົວຢ່າງ ກົງກັນ</option>
+                            <option value="code_or_name_only">📍 ລະຫັດ ຫຼື ຊື່ສະຖານີ ກົງກັນ (ຫ້າມຊ້ຳລະຫັດສະຖານີ)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <label class="flex items-center gap-2 pt-1 text-[11px] font-semibold text-slate-700 cursor-pointer select-none">
+                        <input type="checkbox" id="formCombineRemoveSourceChk" onchange="updateFormCombinePreview()" class="accent-rose-600 rounded cursor-pointer">
+                        <span>🗑️ ລົບຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ເລືອກອອກ ຫຼັງຈາກຍ້າຍລວມເຂົ້າຊຸດປາຍທາງສຳເລັດ (ຍ້າຍລວມເປັນຊຸດດຽວ)</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- ແຖບສະຫຼຸບຜົນການກວດກາຂໍ້ມູນທັບຊ້ອນແບບສົດ (Live Anti-Overlap Preview) -->
+                  <div id="formCombinePreviewBanner" class="rounded-xl bg-slate-900 text-white p-2.5 text-[11px] flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-slate-300">👆 ກະລຸນາເລືອກ <b>ຊຸດຂໍ້ມູນຕົ້ນທາງ (1)</b> ແລະ <b>ຊຸດຂໍ້ມູນປາຍທາງ (2)</b> ເພື່ອຄຳນວນຈຳນວນສະຖານີທີ່ບໍ່ຊ້ຳກັນ</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ແຖວປຸ່ມກົດດຳເນີນການ -->
+              <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+                <button type="button" onclick="openFormCombinePreviewModal()" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-teal-50 text-teal-900 border border-teal-300 font-bold text-xs shadow-2xs transition cursor-pointer flex items-center gap-1.5">
+                  <span>👁️</span> <span>ກວດສອບລາຍການສະຖານີກ່ອນເອົາເຂົ້າ (Preview)</span>
+                </button>
+                <button type="button" onclick="executeFormDatasetCombine('load_to_form')" class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
+                  <span>📥</span> <span>ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (ບໍ່ທັບຊ້ອນ)</span>
+                </button>
+                <button type="button" onclick="executeFormDatasetCombine('save_now')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs shadow-lg shadow-teal-600/25 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
+                  <span>💾</span> <span>ເອົາເຂົ້າຊຸດຂໍ້ມູນທີ່ຕ້ອງການທັນທີ (ບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ)</span>
+                </button>
               </div>
             </div>
           </div>
@@ -16613,6 +16762,9 @@
       });
 
       sel.innerHTML = opts.join('');
+      if (typeof populateFormCombineDatasetUI === 'function') {
+        populateFormCombineDatasetUI();
+      }
     }
 
     function populateFormEditStationOptions() {
@@ -17288,6 +17440,746 @@
         });
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'ອັບເດດຂໍ້ມູນບໍ່ສຳເລັດ', text: err.message });
+      }
+    }
+
+    /* ==========================================================================
+       🔗 ຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ
+          (Non-Overlapping Dataset Selection & Combine Engine in Entry Form)
+       ========================================================================== */
+    let formCombineFilterCategory = 'ALL';
+    let formCombineSelectedSourceKeys = new Set();
+    let formCombineBoxCollapsed = false;
+
+    function focusFormDatasetCombineBox() {
+      if (typeof setAppView === 'function' && currentAppView !== 'entry') {
+        setAppView('entry');
+      }
+      if (formCombineBoxCollapsed) {
+        toggleFormCombineBoxBody(false);
+      }
+      populateFormCombineDatasetUI();
+      const box = document.getElementById('formDatasetCombineBox');
+      if (box) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        box.classList.add('ring-4', 'ring-teal-400/50');
+        setTimeout(() => box.classList.remove('ring-4', 'ring-teal-400/50'), 1800);
+      }
+    }
+
+    function toggleFormCombineBoxBody(forceCollapse) {
+      formCombineBoxCollapsed = typeof forceCollapse === 'boolean' ? forceCollapse : !formCombineBoxCollapsed;
+      const body = document.getElementById('formDatasetCombineBody');
+      const btn = document.getElementById('formCombineCollapseBtn');
+      if (body) body.classList.toggle('hidden', formCombineBoxCollapsed);
+      if (btn) btn.innerText = formCombineBoxCollapsed ? '▶ ຂະຫຍາຍຊ່ອງລວມຊຸດຂໍ້ມູນ' : '▼ ຫຍໍ້/ຂະຫຍາຍ';
+    }
+
+    function setFormCombineFilterCategory(cat) {
+      formCombineFilterCategory = (cat === 'COMPANY' || cat === 'GOV') ? cat : 'ALL';
+      const bAll = document.getElementById('formCombineCatBtn_ALL');
+      const bComp = document.getElementById('formCombineCatBtn_COMPANY');
+      const bGov = document.getElementById('formCombineCatBtn_GOV');
+
+      if (bAll) {
+        bAll.className = formCombineFilterCategory === 'ALL'
+          ? 'px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer'
+          : 'px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition cursor-pointer';
+      }
+      if (bComp) {
+        bComp.className = formCombineFilterCategory === 'COMPANY'
+          ? 'px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-indigo-600 text-white border border-indigo-600 transition cursor-pointer'
+          : 'px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer';
+      }
+      if (bGov) {
+        bGov.className = formCombineFilterCategory === 'GOV'
+          ? 'px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-sky-600 text-white border border-sky-600 transition cursor-pointer'
+          : 'px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer';
+      }
+      populateFormCombineDatasetUI();
+    }
+
+    function populateFormCombineDatasetUI() {
+      const listEl = document.getElementById('formCombineSourceList');
+      const quickSel = document.getElementById('formCombineQuickSourceSelect');
+      const targetSel = document.getElementById('formCombineTargetSelect');
+      if (!listEl || !targetSel) return;
+
+      // ລຶບ key ທີ່ບໍ່ມີຢູ່ໃນ waterData ແລ້ວ
+      const validKeys = new Set(waterData.map(d => d.fbKey));
+      [...formCombineSelectedSourceKeys].forEach(k => {
+        if (!validKeys.has(k)) formCombineSelectedSourceKeys.delete(k);
+      });
+
+      const searchQ = (document.getElementById('formCombineSourceSearchInput')?.value || '').trim().toLowerCase();
+      const filteredSources = waterData.filter(item => {
+        const cat = getRecordDataCategory(item);
+        if (formCombineFilterCategory !== 'ALL' && cat !== formCombineFilterCategory) return false;
+        if (!searchQ) return true;
+        const idxStr = item._searchIndex || [
+          item.companyName || '',
+          item.name || '',
+          item.projectLocation || '',
+          item.date || '',
+          ...stationsOf(item).map(s => `${s.code || ''} ${s.name || ''} ${s.province || ''} ${s.sampleDate || ''}`)
+        ].join(' ').toLowerCase();
+        return idxStr.includes(searchQ);
+      });
+
+      // 1. ອັບເດດ Quick Source Select
+      if (quickSel) {
+        const prevQuick = quickSel.value || '';
+        const qOpts = [`<option value="">-- ⚡ ເລືອກດ່ວນ 1 ຊຸດຂໍ້ມູນຈາກລາຍການ (${filteredSources.length} ຊຸດ) ຫຼື ຕິກເລືອກຫຼາຍຊຸດລຸ່ມນີ້ --</option>`];
+        filteredSources.forEach((item, i) => {
+          const cat = getRecordDataCategory(item);
+          const icon = cat === 'GOV' ? '🏛️ [2.ອົງການລັດ]' : '🏢 [1.ບໍລິສັດ]';
+          const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+          const sts = stationsOf(item);
+          const selAttr = (formCombineSelectedSourceKeys.size === 1 && formCombineSelectedSourceKeys.has(item.fbKey)) || prevQuick === item.fbKey ? 'selected' : '';
+          qOpts.push(`<option value="${escAttr(item.fbKey)}" ${selAttr}>${i + 1}. ${icon} ${escAttr(title)} (${sts.length} ສະຖານີ)</option>`);
+        });
+        quickSel.innerHTML = qOpts.join('');
+      }
+
+      // 2. ອັບເດດລາຍການ Checkbox Source Datasets
+      if (filteredSources.length === 0) {
+        listEl.innerHTML = `<div class="text-slate-400 text-center py-4 text-[11px]">ບໍ່ພົບຊຸດຂໍ້ມູນທີ່ກົງກັບການຄົ້ນຫາ</div>`;
+      } else {
+        listEl.innerHTML = filteredSources.map((item, i) => {
+          const cat = getRecordDataCategory(item);
+          const isGov = cat === 'GOV';
+          const catBadge = isGov
+            ? `<span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-200 text-[9.5px] font-bold shrink-0">🏛️ ອົງການລັດ</span>`
+            : `<span class="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 text-[9.5px] font-bold shrink-0">🏢 ບໍລິສັດ</span>`;
+          const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+          const sts = stationsOf(item);
+          const dRange = sampleDateRange(sts) || item.date || '';
+          const checked = formCombineSelectedSourceKeys.has(item.fbKey);
+          return `
+            <label class="flex items-center justify-between gap-2 p-2 rounded-xl border ${checked ? 'bg-teal-50/90 border-teal-500 ring-1 ring-teal-400/40' : 'bg-white border-slate-200/90 hover:border-teal-300'} cursor-pointer transition select-none">
+              <div class="flex items-center gap-2 min-w-0">
+                <input type="checkbox" class="form-combine-src-chk accent-teal-600 w-3.5 h-3.5 rounded cursor-pointer shrink-0" value="${escAttr(item.fbKey)}" ${checked ? 'checked' : ''} onchange="onFormCombineSourceToggle('${escAttr(item.fbKey)}', this.checked)">
+                <span class="text-[10.5px] font-mono text-slate-400 shrink-0">${i + 1}.</span>
+                ${catBadge}
+                <span class="font-bold text-slate-800 truncate text-xs" title="${escAttr(title)}">${escAttr(title)}</span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${dRange ? `<span class="text-[9.5px] text-slate-500 hidden sm:inline">${escAttr(dRange)}</span>` : ''}
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-teal-100/80 text-teal-900 border border-teal-200">${sts.length} ສະຖານີ</span>
+              </div>
+            </label>
+          `;
+        }).join('');
+      }
+
+      // 3. ອັບເດດ Target Dataset Select
+      const prevTarget = targetSel.value || editingFormDatasetKey || '';
+      const targetOpts = [
+        `<option value="">-- 🎯 ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ --</option>`,
+        `<option value="__FORM_TEMP__" ${prevTarget === '__FORM_TEMP__' ? 'selected' : ''}>📝 ດຶງເຂົ້າລາຍການສະຖານີໃນຟອມປັດຈຸບັນ (${tempStations.length} ສະຖານີໃນຟອມ)</option>`,
+        `<option value="__NEW_DATASET__" ${prevTarget === '__NEW_DATASET__' ? 'selected' : ''}>🆕 ສ້າງເປັນຊຸດຂໍ້ມູນລວມໃໝ່ (ຕັ້ງຊື່ຊຸດຂໍ້ມູນໃໝ່ໂດຍບໍ່ທັບຊ້ອນ)</option>`
+      ];
+
+      waterData.forEach((item, idx) => {
+        const cat = getRecordDataCategory(item);
+        const icon = cat === 'GOV' ? '🏛️ [2.ອົງການລັດ]' : '🏢 [1.ບໍລິສັດ]';
+        const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+        const sts = stationsOf(item);
+        const isOnlySource = formCombineSelectedSourceKeys.size === 1 && formCombineSelectedSourceKeys.has(item.fbKey);
+        const selAttr = item.fbKey === prevTarget ? 'selected' : '';
+        const note = isOnlySource ? ' [ຊຸດດຽວກັບຕົ້ນທາງ]' : '';
+        targetOpts.push(`<option value="${escAttr(item.fbKey)}" ${selAttr}>${idx + 1}. ${icon} ${escAttr(title)} (${sts.length} ສະຖານີ)${note}</option>`);
+      });
+
+      targetSel.innerHTML = targetOpts.join('');
+      onFormCombineTargetChange(targetSel.value, true);
+      updateFormCombinePreview();
+    }
+
+    function onFormCombineQuickSourceChange(fbKey) {
+      formCombineSelectedSourceKeys.clear();
+      if (fbKey) {
+        formCombineSelectedSourceKeys.add(fbKey);
+      }
+      populateFormCombineDatasetUI();
+    }
+
+    function onFormCombineSourceToggle(fbKey, isChecked) {
+      if (!fbKey) return;
+      if (isChecked) formCombineSelectedSourceKeys.add(fbKey);
+      else formCombineSelectedSourceKeys.delete(fbKey);
+      populateFormCombineDatasetUI();
+    }
+
+    function selectAllFormCombineSources(selectAll) {
+      const searchQ = (document.getElementById('formCombineSourceSearchInput')?.value || '').trim().toLowerCase();
+      if (!selectAll) {
+        formCombineSelectedSourceKeys.clear();
+      } else {
+        waterData.forEach(item => {
+          const cat = getRecordDataCategory(item);
+          if (formCombineFilterCategory !== 'ALL' && cat !== formCombineFilterCategory) return;
+          if (searchQ) {
+            const idxStr = (item._searchIndex || `${item.companyName || ''} ${item.name || ''}`).toLowerCase();
+            if (!idxStr.includes(searchQ)) return;
+          }
+          formCombineSelectedSourceKeys.add(item.fbKey);
+        });
+      }
+      populateFormCombineDatasetUI();
+    }
+
+    function onFormCombineTargetChange(val, skipPreview = false) {
+      const newBox = document.getElementById('formCombineNewDatasetBox');
+      if (newBox) {
+        newBox.classList.toggle('hidden', val !== '__NEW_DATASET__');
+      }
+      if (!skipPreview) updateFormCombinePreview();
+    }
+
+    // ຟັງຊັນຫຼັກສຳລັບລວມສະຖານີໂດຍບໍ່ໃຫ້ມີການທັບຊ້ອນ (Non-Overlapping Station Combine Engine)
+    function combineStationsWithoutOverlap(existingStations, incomingStations, overlapMode = 'skip_and_fill', matchRule = 'code_or_name_and_date') {
+      const out = (existingStations || []).map((s, idx) => ({
+        ...s,
+        id: s.id || (Date.now() + idx),
+        customs: { ...(s.customs || {}) },
+        info: s.info ? { ...s.info } : undefined
+      }));
+
+      let added = 0;
+      let filled = 0;
+      let updated = 0;
+      let skipped = 0;
+      const details = [];
+
+      const findMatchIndex = (list, candidate) => {
+        const cCode = normCode(candidate.code);
+        const cName = normCode(candidate.name);
+
+        return list.findIndex(e => {
+          const eCode = normCode(e.code);
+          const eName = normCode(e.name);
+
+          // ກວດວ່າແມ່ນສະຖານີດຽວກັນຫຼືບໍ່ (ລະຫັດກົງກັນ ຫຼື ຊື່ສະຖານີກົງກັນເມື່ອລະຫັດວ່າງ/ກົງກັນ)
+          let sameIdentity = false;
+          if (cCode && eCode) {
+            sameIdentity = (cCode === eCode);
+          } else if (cName && eName) {
+            sameIdentity = (cName === eName);
+          }
+          // ຖ້າລະຫັດຕ່າງກັນ ແຕ່ຊື່ສະຖານີຄືກັນທຸກຕົວອັກສອນ ແລະ ພິກັດດຽວກັນ ໃນໂໝດ code_or_name_only
+          if (!sameIdentity && matchRule === 'code_or_name_only' && cName && eName && cName === eName && sameCoord(e, candidate)) {
+            sameIdentity = true;
+          }
+          if (!sameIdentity) return false;
+
+          if (matchRule === 'code_or_name_only') {
+            return true;
+          }
+          // ຄ່າເລີ່ມຕົ້ນ: code_or_name_and_date -> ກວດວັນທີເກັບຕົວຢ່າງ + ກຸ່ມໂຄງການຍ່ອຍ
+          const dateMatch = sameDate(e, candidate);
+          const secMatch = !e.section || !candidate.section || sameSection(e, candidate);
+          return dateMatch && secMatch;
+        });
+      };
+
+      (incomingStations || []).forEach((st, idx) => {
+        const idxMatch = findMatchIndex(out, st);
+
+        if (idxMatch < 0) {
+          // ສະຖານີໃໝ່ທີ່ບໍ່ຊ້ຳກັບຊຸດປາຍທາງເລີຍ -> ເພີ່ມເຂົ້າ
+          const cleanNew = {
+            ...st,
+            id: st.id || (Date.now() + 1000 + idx),
+            customs: { ...(st.customs || {}) },
+            ...(st.info ? { info: { ...st.info } } : {}),
+            status: evalStatus(st.customs || {})
+          };
+          delete cleanNew.fbKey;
+          out.push(cleanNew);
+          added++;
+          details.push({ action: 'ADDED', station: cleanNew, note: '➕ ສະຖານີໃໝ່ (ບໍ່ຊ້ຳ)' });
+          return;
+        }
+
+        // ພົບສະຖານີທີ່ມີຢູ່ແລ້ວໃນຊຸດປາຍທາງ (ປ້ອງກັນບໍ່ໃຫ້ເພີ່ມແຖວຊ້ຳເດັດຂາດ)
+        const targetSt = out[idxMatch];
+
+        if (overlapMode === 'strict_skip') {
+          skipped++;
+          details.push({ action: 'SKIPPED', station: st, note: '🚫 ຂ້າມ (ມີຢູ່ໃນຊຸດປາຍທາງແລ້ວ)' });
+          return;
+        }
+
+        if (overlapMode === 'skip_and_fill') {
+          // ບໍ່ທັບຄ່າເດີມ! ຕື່ມສະເພາະຊ່ອງທີ່ຊຸດປາຍທາງຍັງຫວ່າງຢູ່ເທົ່ານັ້ນ
+          let anyFilled = false;
+          const nextCustoms = { ...(targetSt.customs || {}) };
+          Object.entries(st.customs || {}).forEach(([k, v]) => {
+            const curVal = nextCustoms[k];
+            const isCurEmpty = curVal === undefined || curVal === null || curVal === '' || curVal === '-';
+            const isNewValid = v !== undefined && v !== null && v !== '' && v !== '-';
+            if (isCurEmpty && isNewValid) {
+              nextCustoms[k] = v;
+              anyFilled = true;
+            }
+          });
+
+          let nextLat = targetSt.lat;
+          let nextLng = targetSt.lng;
+          let nextGps = targetSt.gps || '';
+          if (!hasCoord(targetSt) && hasCoord(st)) {
+            nextLat = st.lat;
+            nextLng = st.lng;
+            nextGps = st.gps || toDMS(st.lat, st.lng);
+            anyFilled = true;
+          }
+
+          let nextQwi = targetSt.qwi;
+          if ((nextQwi === undefined || nextQwi === null || nextQwi === '' || nextQwi === '-') && (st.qwi !== undefined && st.qwi !== null && st.qwi !== '' && st.qwi !== '-')) {
+            nextQwi = st.qwi;
+            anyFilled = true;
+          }
+
+          const nextProv = targetSt.province || st.province || '';
+          if (!targetSt.province && st.province) anyFilled = true;
+
+          if (anyFilled) {
+            out[idxMatch] = {
+              ...targetSt,
+              province: nextProv,
+              lat: nextLat,
+              lng: nextLng,
+              gps: nextGps,
+              qwi: nextQwi,
+              customs: nextCustoms,
+              status: evalStatus(nextCustoms)
+            };
+            filled++;
+            details.push({ action: 'FILLED', station: out[idxMatch], note: '🛡️ ຕື່ມສະເພາະຄ່າ/ພິກັດທີ່ຫວ່າງ (ບໍ່ທັບຄ່າເດີມ)' });
+          } else {
+            skipped++;
+            details.push({ action: 'SKIPPED', station: st, note: '🛡️ ຂ້າມ (ຂໍ້ມູນຄົບແລ້ວ · ບໍ່ທັບຊ້ອນ)' });
+          }
+          return;
+        }
+
+        // ໂໝດ merge_update: ອັບເດດຄ່າວິເຄາະໃໝ່ໃສ່ສະຖານີເດີມໂດຍບໍ່ສ້າງແຖວຊ້ຳ
+        const nextCustoms = { ...(targetSt.customs || {}) };
+        Object.entries(st.customs || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null && v !== '' && v !== '-') {
+            nextCustoms[k] = v;
+          }
+        });
+        const nextLat = hasCoord(st) ? st.lat : targetSt.lat;
+        const nextLng = hasCoord(st) ? st.lng : targetSt.lng;
+        const nextGps = st.gps || (hasCoord(st) ? toDMS(st.lat, st.lng) : (targetSt.gps || ''));
+        const nextQwi = (st.qwi !== undefined && st.qwi !== null && st.qwi !== '' && st.qwi !== '-') ? st.qwi : targetSt.qwi;
+        out[idxMatch] = {
+          ...targetSt,
+          name: st.name || targetSt.name,
+          province: st.province || targetSt.province,
+          sampleDate: st.sampleDate || targetSt.sampleDate || '',
+          section: st.section || targetSt.section || '',
+          lat: nextLat,
+          lng: nextLng,
+          gps: nextGps,
+          qwi: nextQwi,
+          customs: nextCustoms,
+          status: evalStatus(nextCustoms)
+        };
+        updated++;
+        details.push({ action: 'UPDATED', station: out[idxMatch], note: '🔄 ອັບເດດຄ່າໃສ່ສະຖານີເດີມ (ບໍ່ສ້າງແຖວຊ້ຳ)' });
+      });
+
+      return {
+        stations: out,
+        added,
+        filled,
+        updated,
+        skipped,
+        totalOverlapped: filled + updated + skipped,
+        details
+      };
+    }
+
+    function computeFormCombineSimulation() {
+      const targetKey = document.getElementById('formCombineTargetSelect')?.value || '';
+      const overlapMode = document.getElementById('formCombineOverlapMode')?.value || 'skip_and_fill';
+      const matchRule = document.getElementById('formCombineMatchRule')?.value || 'code_or_name_and_date';
+      const removeSource = Boolean(document.getElementById('formCombineRemoveSourceChk')?.checked);
+
+      // ຊຸດຕົ້ນທາງທີ່ເລືອກ (ຕັດຊຸດທີ່ກົງກັບຊຸດປາຍທາງອອກອັດຕະໂນມັດ ເພື່ອບໍ່ໃຫ້ເອົາຊຸດດຽວກັນລວມໃສ່ໂຕເອງ)
+      const rawSourceRecords = waterData.filter(d => formCombineSelectedSourceKeys.has(d.fbKey));
+      const effectiveSourceRecords = rawSourceRecords.filter(d => d.fbKey !== targetKey);
+
+      // ດຶງສະຖານີຈາກຊຸດຕົ້ນທາງທັງໝົດ
+      const incomingStations = [];
+      effectiveSourceRecords.forEach(rec => {
+        const recTitle = rec.companyName || rec.name || '';
+        const parsed = parseCompanyTitle(recTitle);
+        stationsOf(rec).forEach(st => {
+          incomingStations.push({
+            ...st,
+            section: st.section || parsed.section || '',
+            _fromDatasetTitle: recTitle
+          });
+        });
+      });
+
+      let targetTitle = '';
+      let existingStations = [];
+      let targetRecord = null;
+
+      if (targetKey === '__FORM_TEMP__') {
+        targetTitle = document.getElementById('companyName')?.value.trim() || 'ລາຍການສະຖານີໃນຟອມປັດຈຸບັນ';
+        existingStations = tempStations.map(s => ({ ...s }));
+      } else if (targetKey === '__NEW_DATASET__') {
+        targetTitle = document.getElementById('formCombineNewTitleInput')?.value.trim() || (effectiveSourceRecords[0]?.companyName || 'ຊຸດຂໍ້ມູນລວມໃໝ່');
+        existingStations = [];
+      } else if (targetKey) {
+        targetRecord = waterData.find(d => d.fbKey === targetKey) || null;
+        if (targetRecord) {
+          targetTitle = targetRecord.companyName || targetRecord.name || 'ບໍ່ລະບຸຊື່';
+          existingStations = stationsOf(targetRecord).map(s => ({ ...s }));
+        }
+      }
+
+      const sim = combineStationsWithoutOverlap(existingStations, incomingStations, overlapMode, matchRule);
+
+      return {
+        targetKey,
+        targetRecord,
+        targetTitle,
+        overlapMode,
+        matchRule,
+        removeSource,
+        rawSourceRecords,
+        effectiveSourceRecords,
+        existingCount: existingStations.length,
+        incomingCount: incomingStations.length,
+        sim
+      };
+    }
+
+    function updateFormCombinePreview() {
+      const selBadge = document.getElementById('formCombineSelectedBadge');
+      const srcStCountEl = document.getElementById('formCombineSourceStationCount');
+      const banner = document.getElementById('formCombinePreviewBanner');
+
+      const state = computeFormCombineSimulation();
+      const rawStCount = state.rawSourceRecords.reduce((acc, r) => acc + stationsOf(r).length, 0);
+
+      if (selBadge) {
+        selBadge.innerText = `📤 ເລືອກແລ້ວ ${state.rawSourceRecords.length} ຊຸດ (${rawStCount} ສະຖານີ)`;
+      }
+      if (srcStCountEl) {
+        srcStCountEl.innerText = `ເລືອກ ${state.rawSourceRecords.length} ຊຸດ · ລວມ ${rawStCount} ສະຖານີ`;
+      }
+      if (!banner) return;
+
+      if (state.rawSourceRecords.length === 0) {
+        banner.innerHTML = `<span class="text-slate-300">👆 ກະລຸນາຕິກເລືອກ <b>ຊຸດຂໍ້ມູນຕົ້ນທາງ (ຂັ້ນຕອນທີ 1)</b> ຢ່າງໜ້ອຍ 1 ຊຸດ ເພື່ອນຳເອົາຂໍ້ມູນໄປລວມ</span>`;
+        return;
+      }
+      if (!state.targetKey) {
+        banner.innerHTML = `<span class="text-amber-300">🎯 ເລືອກຕົ້ນທາງແລ້ວ <b>${state.rawSourceRecords.length} ຊຸດ (${rawStCount} ສະຖານີ)</b> — ກະລຸນາເລືອກ <b>ຊຸດຂໍ້ມູນປາຍທາງ (ຂັ້ນຕອນທີ 2)</b></span>`;
+        return;
+      }
+      if (state.effectiveSourceRecords.length === 0) {
+        banner.innerHTML = `<span class="text-rose-300 font-bold">⚠️ ຊຸດຂໍ້ມູນຕົ້ນທາງ ແລະ ຊຸດຂໍ້ມູນປາຍທາງເປັນຊຸດດຽວກັນ — ກະລຸນາເລືອກຊຸດຂໍ້ມູນປາຍທາງອື່ນ</span>`;
+        return;
+      }
+
+      const { sim, existingCount, targetTitle } = state;
+      banner.innerHTML = `
+        <div class="w-full space-y-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-1">
+            <span class="font-bold text-teal-300 truncate">🎯 ປາຍທາງ: ${escAttr(targetTitle)} (ເດີມ ${existingCount} ສະຖານີ)</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-black text-[10px]">
+              📊 ຫຼັງເອົາເຂົ້າລວມເປັນ ${sim.stations.length} ສະຖານີ
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-[10.5px]">
+            <span class="px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-700 font-bold">➕ ເພີ່ມໃໝ່ (ບໍ່ຊ້ຳ): +${sim.added} ສະຖານີ</span>
+            ${sim.filled > 0 ? `<span class="px-2 py-0.5 rounded-md bg-teal-950 text-teal-300 border border-teal-700 font-bold">🛡️ ຕື່ມຊ່ອງຫວ່າງ: ${sim.filled} ສະຖານີ</span>` : ''}
+            ${sim.updated > 0 ? `<span class="px-2 py-0.5 rounded-md bg-amber-950 text-amber-300 border border-amber-700 font-bold">🔄 ອັບເດດຄ່າ: ${sim.updated} ສະຖານີ</span>` : ''}
+            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-600 font-bold">🚫 ປ້ອງກັນຊ້ຳ/ຂ້າມ: ${sim.skipped} ສະຖານີ</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function openFormCombinePreviewModal() {
+      const state = computeFormCombineSimulation();
+      if (state.rawSourceRecords.length === 0) {
+        return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງກ່ອນ!', text: 'ຕິກເລືອກຊຸດຂໍ້ມູນໃນຂັ້ນຕອນທີ 1 ຢ່າງໜ້ອຍ 1 ຊຸດ' });
+      }
+      if (!state.targetKey) {
+        return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນປາຍທາງກ່ອນ!', text: 'ເລືອກຊຸດຂໍ້ມູນປາຍທາງໃນຂັ້ນຕອນທີ 2' });
+      }
+      if (state.effectiveSourceRecords.length === 0) {
+        return Swal.fire({ icon: 'warning', title: 'ຊຸດຕົ້ນທາງ ແລະ ປາຍທາງຊ້ຳກັນ!', text: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນປາຍທາງອື່ນທີ່ບໍ່ແມ່ນຊຸດດຽວກັບຕົ້ນທາງ' });
+      }
+
+      const { sim, targetTitle, existingCount, effectiveSourceRecords } = state;
+      const rowsHtml = sim.details.slice(0, 60).map((d, i) => {
+        const st = d.station || {};
+        const badgeClass = d.action === 'ADDED'
+          ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+          : d.action === 'FILLED'
+            ? 'bg-teal-100 text-teal-800 border-teal-300'
+            : d.action === 'UPDATED'
+              ? 'bg-amber-100 text-amber-800 border-amber-300'
+              : 'bg-slate-100 text-slate-600 border-slate-300';
+        return `
+          <tr class="border-b border-slate-200 ${i % 2 ? 'bg-slate-50/70' : 'bg-white'}">
+            <td class="p-2 text-center font-mono text-slate-400">${i + 1}</td>
+            <td class="p-2 font-mono font-bold text-indigo-700">${escAttr(st.code || '-')}</td>
+            <td class="p-2 font-semibold text-slate-800">${escAttr(st.name || '-')}</td>
+            <td class="p-2 text-slate-600">${escAttr(st.province || '-')}</td>
+            <td class="p-2 font-mono text-slate-700">${escAttr(fmtSampleDate(st.sampleDate) || '-')}</td>
+            <td class="p-2">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeClass}">${escAttr(d.note)}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      Swal.fire({
+        title: '🛡️ ກວດສອບລາຍການກ່ອນເອົາເຂົ້າຊຸດຂໍ້ມູນ (ປ້ອງກັນການທັບຊ້ອນ)',
+        width: 860,
+        html: `
+          <div class="text-left text-xs space-y-3">
+            <div class="bg-slate-100 rounded-xl p-3 space-y-1.5 border border-slate-200">
+              <div>📤 <b>ຊຸດຕົ້ນທາງທີ່ເລືອກ (${effectiveSourceRecords.length} ຊຸດ):</b> ${effectiveSourceRecords.map(r => `<span class="inline-block px-2 py-0.5 rounded bg-white border border-slate-300 font-bold text-slate-800 mr-1">${escAttr(r.companyName || r.name)} (${stationsOf(r).length})</span>`).join('')}</div>
+              <div>🎯 <b>ຊຸດຂໍ້ມູນປາຍທາງ:</b> <span class="font-black text-indigo-700">${escAttr(targetTitle)}</span> (ມີຢູ່ເດີມ <b>${existingCount}</b> ສະຖານີ → ຫຼັງລວມເປັນ <b class="text-emerald-700">${sim.stations.length} ສະຖານີ</b>)</div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+              <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div class="text-lg font-black text-emerald-700 font-mono">+${sim.added}</div>
+                <div class="text-[10.5px] font-bold text-emerald-900">➕ ສະຖານີໃໝ່ (ບໍ່ຊ້ຳ)</div>
+              </div>
+              <div class="p-2 rounded-xl bg-teal-50 border border-teal-200">
+                <div class="text-lg font-black text-teal-700 font-mono">${sim.filled}</div>
+                <div class="text-[10.5px] font-bold text-teal-900">🛡️ ຕື່ມສະເພາະຊ່ອງຫວ່າງ</div>
+              </div>
+              <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
+                <div class="text-lg font-black text-amber-700 font-mono">${sim.updated}</div>
+                <div class="text-[10.5px] font-bold text-amber-900">🔄 ອັບເດດຄ່າໃໝ່</div>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-100 border border-slate-300">
+                <div class="text-lg font-black text-slate-700 font-mono">${sim.skipped}</div>
+                <div class="text-[10.5px] font-bold text-slate-700">🚫 ຂ້າມເພາະຊ້ຳກັນ</div>
+              </div>
+            </div>
+            <div class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+              <table class="w-full text-[11px] border-collapse">
+                <thead class="bg-slate-200 text-slate-700 font-bold sticky top-0">
+                  <tr>
+                    <th class="p-2 text-center">#</th>
+                    <th class="p-2 text-left">ລະຫັດ</th>
+                    <th class="p-2 text-left">ຊື່ສະຖານີ</th>
+                    <th class="p-2 text-left">ແຂວງ</th>
+                    <th class="p-2 text-left">ວັນທີ</th>
+                    <th class="p-2 text-left">ຜົນການກວດການທັບຊ້ອນ</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml || '<tr><td colspan="6" class="p-4 text-center text-slate-400">ບໍ່ມີສະຖານີ</td></tr>'}</tbody>
+              </table>
+            </div>
+          </div>
+        `,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: '💾 ເອົາເຂົ້າຊຸດຂໍ້ມູນປາຍທາງທັນທີ',
+        confirmButtonColor: '#0d9488',
+        denyButtonText: '📥 ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ',
+        denyButtonColor: '#d97706',
+        cancelButtonText: 'ປິດ'
+      }).then(res => {
+        if (res.isConfirmed) executeFormDatasetCombine('save_now');
+        else if (res.isDenied) executeFormDatasetCombine('load_to_form');
+      });
+    }
+
+    async function executeFormDatasetCombine(actionMode = 'save_now') {
+      if (currentUserRole === 'VIEWER') {
+        return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ບັນຊີຜູ້ເບິ່ງທົ່ວໄປບໍ່ສາມາດແກ້ໄຂ ຫຼື ລວມຊຸດຂໍ້ມູນໄດ້' });
+      }
+
+      const state = computeFormCombineSimulation();
+      if (state.rawSourceRecords.length === 0) {
+        return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງກ່ອນ!', text: 'ຕິກເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການເອົາເຂົ້າ ໃນຂັ້ນຕອນທີ 1' });
+      }
+      if (!state.targetKey) {
+        return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນປາຍທາງກ່ອນ!', text: 'ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ ໃນຂັ້ນຕອນທີ 2' });
+      }
+      if (state.effectiveSourceRecords.length === 0) {
+        return Swal.fire({ icon: 'warning', title: 'ຊຸດຕົ້ນທາງ ແລະ ປາຍທາງເປັນຊຸດດຽວກັນ!', text: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນປາຍທາງອື່ນ' });
+      }
+
+      const { sim, targetKey, targetRecord, targetTitle, effectiveSourceRecords, removeSource } = state;
+      const cleanStations = sim.stations.map((st, idx) => {
+        const copy = {
+          ...st,
+          id: st.id || (Date.now() + idx),
+          status: evalStatus(st.customs || {})
+        };
+        delete copy.fbKey;
+        delete copy._fromDatasetTitle;
+        return copy;
+      });
+
+      // ກໍລະນີທີ 1: ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (load_to_form ຫຼື __FORM_TEMP__)
+      if (actionMode === 'load_to_form' || targetKey === '__FORM_TEMP__') {
+        if (targetRecord) {
+          loadExistingDatasetToForm(targetRecord.fbKey);
+        } else if (targetKey === '__NEW_DATASET__') {
+          editingFormDatasetKey = null;
+          const compEl = document.getElementById('companyName');
+          if (compEl) compEl.value = targetTitle;
+          const newCat = document.getElementById('formCombineNewCategorySelect')?.value || 'COMPANY';
+          setFormDataCategory(newCat);
+        } else if (!document.getElementById('companyName')?.value.trim() && effectiveSourceRecords[0]) {
+          const compEl = document.getElementById('companyName');
+          if (compEl) compEl.value = effectiveSourceRecords[0].companyName || effectiveSourceRecords[0].name || '';
+        }
+
+        tempStations = cleanStations;
+        editingTempStationIdx = -1;
+        editingStationExtraIndKeys = new Set();
+        renderTempList();
+        syncFormEditModeUI();
+        if (tempStations.length > 0) {
+          loadTempStationForEdit(0, false);
+        }
+        updateFormCombinePreview();
+
+        const listBox = document.getElementById('tempListContainer');
+        if (listBox) listBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        Swal.fire({
+          icon: 'success',
+          title: '📥 ດຶງຊຸດຂໍ້ມູນເຂົ້າຟອມແລ້ວ (ບໍ່ມີການທັບຊ້ອນ)!',
+          html: `<div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            ເພີ່ມສະຖານີໃໝ່ທີ່ບໍ່ຊ້ຳ: <b class="text-emerald-700">+${sim.added} ສະຖານີ</b><br>
+            ${sim.filled > 0 ? `ຕື່ມຄ່າຫວ່າງໂດຍບໍ່ທັບຄ່າເດີມ: <b class="text-teal-700">${sim.filled} ສະຖານີ</b><br>` : ''}
+            ${sim.updated > 0 ? `ອັບເດດຄ່າໃໝ່: <b class="text-amber-700">${sim.updated} ສະຖານີ</b><br>` : ''}
+            ປ້ອງກັນການທັບຊ້ອນ (ຂ້າມແຖວຊ້ຳ): <b>${sim.skipped} ສະຖານີ</b><br>
+            ລວມທັງໝົດໃນຟອມ: <b class="text-indigo-700">${tempStations.length} ສະຖານີ</b>
+          </div>`,
+          confirmButtonText: '✏️ ກວດສອບໃນຟອມ',
+          confirmButtonColor: '#d97706',
+          showDenyButton: true,
+          denyButtonText: '💾 ບັນທຶກລົງລະບົບເລີຍ',
+          denyButtonColor: '#059669'
+        }).then(r => {
+          if (r.isDenied) saveAllBatch();
+        });
+        return;
+      }
+
+      // ກໍລະນີທີ 2: ບັນທຶກເຂົ້າຊຸດຂໍ້ມູນປາຍທາງໃນລະບົບທັນທີ (save_now)
+      const who = currentUserName || document.getElementById('recorderName')?.value.trim() || 'Admin';
+      const nowStr = new Date().toLocaleString('lo-LA');
+      const nowTs = Date.now();
+
+      Swal.fire({ title: 'ກຳລັງເອົາຊຸດຂໍ້ມູນເຂົ້າຊຸດປາຍທາງ (ປ້ອງກັນການທັບຊ້ອນ)...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        let finalTargetFbKey = '';
+        let finalTargetName = targetTitle;
+
+        if (targetKey === '__NEW_DATASET__') {
+          const newCat = document.getElementById('formCombineNewCategorySelect')?.value || getFormDataCategory();
+          const firstSrc = effectiveSourceRecords[0] || {};
+          const newPayload = {
+            id: nowTs + Math.floor(Math.random() * 1000),
+            companyName: finalTargetName,
+            dataCategory: newCat,
+            projectLocation: firstSrc.projectLocation || '',
+            date: nowStr,
+            lastUpdated: nowStr,
+            lastUpdatedBy: who,
+            lastUpdatedTs: nowTs,
+            recordedBy: who,
+            govVerification: firstSrc.govVerification || null,
+            otherVerification: firstSrc.otherVerification || null,
+            stations: cleanStations
+          };
+          const ref = await db.ref('water_records').push(newPayload);
+          finalTargetFbKey = ref.key;
+          upsertRecordInMemory(finalTargetFbKey, newPayload);
+        } else if (targetRecord) {
+          finalTargetFbKey = targetRecord.fbKey;
+          finalTargetName = targetRecord.companyName || targetRecord.name || targetTitle;
+          const firstSrcWithLoc = effectiveSourceRecords.find(r => r.projectLocation);
+          const updatePayload = {
+            companyName: finalTargetName,
+            projectLocation: targetRecord.projectLocation || (firstSrcWithLoc ? firstSrcWithLoc.projectLocation : ''),
+            stations: cleanStations,
+            lastUpdated: nowStr,
+            lastUpdatedBy: who,
+            lastUpdatedTs: nowTs
+          };
+          await db.ref(`water_records/${finalTargetFbKey}`).update(updatePayload);
+          upsertRecordInMemory(finalTargetFbKey, { ...targetRecord, ...updatePayload });
+        }
+
+        // ຖ້າຜູ້ໃຊ້ຕິກເລືອກໃຫ້ລົບຊຸດຕົ້ນທາງຫຼັງຍ້າຍລວມສຳເລັດ
+        if (removeSource && effectiveSourceRecords.length > 0) {
+          const delUpdates = {};
+          const srcKeySet = new Set();
+          effectiveSourceRecords.forEach(src => {
+            if (src.fbKey && src.fbKey !== finalTargetFbKey) {
+              delUpdates[`water_records/${src.fbKey}`] = null;
+              srcKeySet.add(src.fbKey);
+            }
+          });
+          if (Object.keys(delUpdates).length > 0) {
+            await db.ref().update(delUpdates);
+            waterData = waterData.filter(d => !srcKeySet.has(d.fbKey));
+          }
+        }
+
+        formCombineSelectedSourceKeys.clear();
+        if (finalTargetFbKey) {
+          loadExistingDatasetToForm(finalTargetFbKey);
+        }
+        populateFormEditDatasetOptions();
+        renderNow();
+
+        await db.ref('activity_logs').push({
+          action: 'COMBINE_DATASETS_NO_OVERLAP',
+          itemCode: `🔗 ລວມຊຸດຂໍ້ມູນ (${effectiveSourceRecords.map(r => r.companyName || r.name).join(', ')}) → ${finalTargetName} (+${sim.added} ໃໝ່, ຕື່ມຫວ່າງ ${sim.filled}, ຂ້າມຊ້ຳ ${sim.skipped})`,
+          performedBy: who,
+          timestamp: nowStr,
+          userRole: currentUserRole
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'ເອົາຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການສຳເລັດ!',
+          html: `<div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            ຊຸດຂໍ້ມູນປາຍທາງ: <b class="text-indigo-700">${escAttr(finalTargetName)}</b><br>
+            ➕ ເພີ່ມສະຖານີໃໝ່ທີ່ບໍ່ຊ້ຳ: <b class="text-emerald-700">+${sim.added} ສະຖານີ</b><br>
+            ${sim.filled > 0 ? `🛡️ ຕື່ມສະເພາະຄ່າຫວ່າງ (ບໍ່ທັບຄ່າເດີມ): <b class="text-teal-700">${sim.filled} ສະຖານີ</b><br>` : ''}
+            ${sim.updated > 0 ? `🔄 ອັບເດດຄ່າໃໝ່: <b class="text-amber-700">${sim.updated} ສະຖານີ</b><br>` : ''}
+            🚫 ປ້ອງກັນການທັບຊ້ອນ (ຂ້າມສະຖານີຊ້ຳ): <b>${sim.skipped} ສະຖານີ</b><br>
+            📊 ຈຳນວນສະຖານີລວມທັງໝົດ: <b class="text-slate-900">${cleanStations.length} ສະຖານີ</b>
+          </div>`,
+          confirmButtonText: '👁️ ເບິ່ງຊຸດຂໍ້ມູນໃນຕາຕະລາງ',
+          confirmButtonColor: '#059669',
+          showDenyButton: true,
+          denyButtonText: '✏️ ກວດສອບຕໍ່ໃນຟອມ',
+          denyButtonColor: '#4f46e5'
+        }).then(r => {
+          if (r.isConfirmed && finalTargetFbKey) {
+            setTimeout(() => jumpToRecords([finalTargetFbKey]), 200);
+          }
+        });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'ລວມຊຸດຂໍ້ມູນບໍ່ສຳເລັດ', text: err.message });
       }
     }
 
