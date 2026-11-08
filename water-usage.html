@@ -3695,7 +3695,7 @@ var WaterMap = ({
             });
             markersLayerRef.current?.addLayer(intakeMarker);
 
-            if (showConnections && validLL(projLat, projLng)) {
+            if (showConnections && showProjects && showIntakes && validLL(projLat, projLng)) {
               const polyline = L.polyline(
                 [
                   [projLat, projLng],
@@ -3738,8 +3738,30 @@ var WaterMap = ({
     const target = loc && validLL(loc.latitude, loc.longitude) ? loc : other;
     if (target && validLL(target.latitude, target.longitude)) mapRef.current.flyTo([target.latitude, target.longitude], 15, { duration: 0.8 });
   };
+  const setPointDisplayMode = (mode) => {
+    setFocusPointType(mode);
+    if (mode === "project") {
+      setShowProjects(true);
+      setShowIntakes(false);
+      setShowConnections(false);
+    } else if (mode === "intake") {
+      setShowProjects(false);
+      setShowIntakes(true);
+      setShowConnections(false);
+    } else {
+      setShowProjects(true);
+      setShowIntakes(true);
+      setShowConnections(true);
+    }
+    if (focusProjectId) {
+      const p = projects.find((x) => x.id === focusProjectId);
+      if (p) flyToPoint(p, mode);
+    }
+  };
+  const currentPointDisplayMode = showProjects && showIntakes ? "both" : showProjects ? "project" : "intake";
   const resetMapView = () => {
     setFocusProjectId(""); setFocusOnly(false); setPreviewProject(null);
+    setShowProjects(true); setShowIntakes(true); setShowConnections(true); setFocusPointType("both");
     if (gotoMarkerRef.current && mapRef.current) {
       mapRef.current.removeLayer(gotoMarkerRef.current);
       gotoMarkerRef.current = null;
@@ -3890,7 +3912,7 @@ var WaterMap = ({
           /* Company / Project selector */
           /* @__PURE__ */ jsxs2("select", {
             value: focusProjectId,
-            onChange: (e) => { const id = e.target.value; setFocusProjectId(id); const p = projects.find((x) => x.id === id); if (p) flyToPoint(p, "both"); else resetMapView(); },
+            onChange: (e) => { const id = e.target.value; setFocusProjectId(id); const p = projects.find((x) => x.id === id); if (p) flyToPoint(p, currentPointDisplayMode); else resetMapView(); },
             className: "flex-1 min-w-[190px] border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-sky-400",
             children: [
               /* @__PURE__ */ jsxs2("option", { value: "", children: ["🏢 ເລືອກໂຄງການ... (", projects.length, ")"] }),
@@ -3898,15 +3920,44 @@ var WaterMap = ({
             ]
           }),
 
-          /* Point selector */
-          focusProjectId && /* @__PURE__ */ jsxs2("select", {
-            value: focusPointType,
-            onChange: (e) => { setFocusPointType(e.target.value); const p = projects.find((x) => x.id === focusProjectId); if (p && e.target.value) flyToPoint(p, e.target.value); },
-            className: "flex-1 min-w-[140px] border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-sky-400",
+          /* Global Point Type Filter Selector (All / Project Only / Intake Only) */
+          /* @__PURE__ */ jsxs2("select", {
+            value: currentPointDisplayMode,
+            onChange: (e) => setPointDisplayMode(e.target.value),
+            className: "flex-1 min-w-[200px] border border-sky-300 rounded-lg px-2.5 py-1.5 bg-sky-50/70 font-bold text-sky-900 outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer",
+            title: "ເລືອກສະແດງສະເພາະຈຸດທີ່ຕັ້ງຂອງໂຄງການ ຫຼື ສະເພາະບ່ອນດູດນໍ້າ",
             children: [
-              /* @__PURE__ */ jsx2("option", { value: "both", children: "↔️ ທັງສອງຈຸດ" }),
-              /* @__PURE__ */ jsx2("option", { value: "project", children: "🟢 ທີ່ຕັ້ງໂຄງການ" }),
-              /* @__PURE__ */ jsx2("option", { value: "intake", children: "💧 ບ່ອນດູດນໍ້າ" })
+              /* @__PURE__ */ jsx2("option", { value: "both", children: "📍 ສະແດງທັງໝົດ (ທີ່ຕັ້ງໂຄງການ + ບ່ອນດູດນໍ້າ)" }),
+              /* @__PURE__ */ jsx2("option", { value: "project", children: "🟢 ສະແດງສະເພາະຈຸດທີ່ຕັ້ງຂອງໂຄງການ" }),
+              /* @__PURE__ */ jsx2("option", { value: "intake", children: "💧 ສະແດງສະເພາະບ່ອນດູດນໍ້າ" })
+            ]
+          }),
+
+          /* Quick Toggle Pill Buttons for Point Type */
+          /* @__PURE__ */ jsxs2("div", {
+            className: "inline-flex items-center rounded-lg border border-slate-300 bg-slate-100 p-0.5 gap-0.5",
+            children: [
+              /* @__PURE__ */ jsx2("button", {
+                type: "button",
+                onClick: () => setPointDisplayMode("both"),
+                className: `px-2.5 py-1 rounded-md font-bold transition cursor-pointer ${currentPointDisplayMode === "both" ? "bg-white text-slate-800 shadow-xs" : "text-slate-600 hover:text-slate-800"}`,
+                title: "ສະແດງທັງຈຸດທີ່ຕັ້ງໂຄງການ ແລະ ບ່ອນດູດນໍ້າ",
+                children: "↔️ ທັງສອງຈຸດ"
+              }),
+              /* @__PURE__ */ jsx2("button", {
+                type: "button",
+                onClick: () => setPointDisplayMode("project"),
+                className: `px-2.5 py-1 rounded-md font-bold transition cursor-pointer ${currentPointDisplayMode === "project" ? "bg-emerald-600 text-white shadow-xs" : "text-slate-600 hover:text-emerald-700"}`,
+                title: "ສະແດງສະເພາະຈຸດທີ່ຕັ້ງຂອງໂຄງການ",
+                children: "🟢 ສະເພາະທີ່ຕັ້ງໂຄງການ"
+              }),
+              /* @__PURE__ */ jsx2("button", {
+                type: "button",
+                onClick: () => setPointDisplayMode("intake"),
+                className: `px-2.5 py-1 rounded-md font-bold transition cursor-pointer ${currentPointDisplayMode === "intake" ? "bg-sky-600 text-white shadow-xs" : "text-slate-600 hover:text-sky-700"}`,
+                title: "ສະແດງສະເພາະບ່ອນດູດນໍ້າ",
+                children: "💧 ສະເພາະບ່ອນດູດນໍ້າ"
+              })
             ]
           }),
 
