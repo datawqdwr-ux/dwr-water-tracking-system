@@ -132,6 +132,17 @@
           </button>
         </div>
 
+        <!-- Live Visitor Counter Badge in Header -->
+        <button type="button" onclick="document.getElementById('visitorTrackingSection')?.scrollIntoView({behavior:'smooth'})" class="hidden md:flex items-center gap-2.5 bg-slate-950/85 hover:bg-slate-900 border border-emerald-500/35 hover:border-emerald-400/60 px-3.5 py-2 rounded-2xl text-xs sm:text-sm shadow-sm transition cursor-pointer" title="ຄລິກເພື່ອເບິ່ງສະຖິຕິຜູ້ເຂົ້າເບິ່ງລະບົບ">
+          <span class="relative flex h-2.5 w-2.5 shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span class="text-emerald-300 font-bold"><span data-i18n="onlineShort">ອອນລາຍ</span>: <strong id="headerOnlineCount">1</strong></span>
+          <span class="text-slate-600">|</span>
+          <span class="text-sky-300 font-bold">👁️ <span id="headerTotalViews">1</span></span>
+        </button>
+
         <!-- User Session Box -->
         <div id="sessionBox" class="flex items-center gap-2 sm:gap-3 bg-slate-855/90 border border-slate-700/80 px-3 sm:px-4 py-2 sm:py-2 rounded-2xl text-xs sm:text-base shadow-sm">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
@@ -168,9 +179,14 @@
             <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-rose-500/10 border border-rose-400/25 text-rose-400 flex items-center justify-center text-3xl sm:text-4xl shadow-inner group-hover:scale-105 group-hover:bg-rose-500/20 transition-all">
               🧪
             </div>
-            <span data-i18n="system1Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
-              ຄຸນນະພາບນ້ຳ
-            </span>
+            <div class="flex flex-col items-end gap-1.5">
+              <span data-i18n="system1Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
+                ຄຸນນະພາບນ້ຳ
+              </span>
+              <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1 bg-slate-950/70 px-2.5 py-0.5 rounded-full border border-slate-800">
+                👁️ <span data-i18n="viewsLabel">ເຂົ້າເບິ່ງ</span>: <strong id="cardViewsWaterQuality" class="text-rose-300">0</strong>
+              </span>
+            </div>
           </div>
 
           <!-- System Title / Name Only (Single Line & Centered - Full Sentence) -->
@@ -194,7 +210,7 @@
             </span>
           </div>
 
-          <a href="water-quality.html" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
+          <a href="water-quality.html" onclick="trackSystemNavigation('water-quality')" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
@@ -213,9 +229,14 @@
             <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-rose-500/10 border border-rose-400/25 text-rose-400 flex items-center justify-center text-3xl sm:text-4xl shadow-inner group-hover:scale-105 group-hover:bg-rose-500/20 transition-all">
               💧
             </div>
-            <span data-i18n="system2Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
-              ການນຳໃຊ້ນ້ຳ
-            </span>
+            <div class="flex flex-col items-end gap-1.5">
+              <span data-i18n="system2Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
+                ການນຳໃຊ້ນ້ຳ
+              </span>
+              <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1 bg-slate-950/70 px-2.5 py-0.5 rounded-full border border-slate-800">
+                👁️ <span data-i18n="viewsLabel">ເຂົ້າເບິ່ງ</span>: <strong id="cardViewsWaterUsage" class="text-sky-300">0</strong>
+              </span>
+            </div>
           </div>
 
           <!-- System Title / Name Only (Single Line & Centered - Full Sentence) -->
@@ -239,7 +260,7 @@
             </span>
           </div>
 
-          <a href="water-usage.html" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
+          <a href="water-usage.html" onclick="trackSystemNavigation('water-usage')" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
@@ -258,9 +279,14 @@
             <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-rose-500/10 border border-rose-400/25 text-rose-400 flex items-center justify-center text-3xl sm:text-4xl shadow-inner group-hover:scale-110 group-hover:bg-rose-500/20 transition-all">
               🏭
             </div>
-            <span data-i18n="system3Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
-              ການປ່ອຍນ້ຳເປື້ອນ
-            </span>
+            <div class="flex flex-col items-end gap-1.5">
+              <span data-i18n="system3Badge" class="px-3.5 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-xs sm:text-sm font-extrabold text-rose-300">
+                ການປ່ອຍນ້ຳເປື້ອນ
+              </span>
+              <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1 bg-slate-950/70 px-2.5 py-0.5 rounded-full border border-slate-800">
+                👁️ <span data-i18n="viewsLabel">ເຂົ້າເບິ່ງ</span>: <strong id="cardViewsWastewater" class="text-amber-300">0</strong>
+              </span>
+            </div>
           </div>
 
           <!-- System Title / Name Only (Single Line & Centered - Full Sentence) -->
@@ -284,7 +310,7 @@
             </span>
           </div>
 
-          <a href="wastewater.html" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
+          <a href="wastewater.html" onclick="trackSystemNavigation('wastewater')" class="w-full inline-flex items-center justify-center gap-3 py-4 sm:py-4.5 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white text-base sm:text-lg lg:text-xl font-bold shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transition-all duration-200 cursor-pointer group-hover:scale-[1.02]">
             <span data-i18n="enterSystemBtn">🔑 ເຂົ້າສູ່ລະບົບ</span>
             <span class="text-xl sm:text-2xl">→</span>
           </a>
@@ -294,8 +320,218 @@
 
     </div>
 
+    <!-- 👁️ VISITOR TRACKING & LIVE ANALYTICS SECTION -->
+    <section id="visitorTrackingSection" class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+      <div class="absolute inset-x-12 top-0 h-1 bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent rounded-full"></div>
 
-    </div>
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/90 pb-5">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl shadow-inner shrink-0">
+            👁️
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h3 data-i18n="visitorSectionTitle" class="text-lg sm:text-xl font-black text-white tracking-tight">
+                ລະບົບຕິດຕາມຜູ້ເຂົ້າເບິ່ງ (Visitor Tracking & Live Statistics)
+              </h3>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span data-i18n="liveTrackingBadge">ຕິດຕາມແບບ Real-time</span>
+              </span>
+            </div>
+            <p data-i18n="visitorSectionSub" class="text-xs sm:text-sm text-slate-400 mt-1">
+              ສະຖິຕິຈຳນວນຜູ້ເຂົ້າເບິ່ງລະບົບຂໍ້ມູນຊັບພະຍາກອນນໍ້າ ແລະ ປະຫວັດການເຂົ້າໃຊ້ງານທັງ 3 ລະບົບຍ່ອຍ
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 self-start sm:self-auto">
+          <button type="button" onclick="refreshVisitorStats(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold transition cursor-pointer flex items-center gap-1.5">
+            <span>🔄</span>
+            <span data-i18n="refreshStatsBtn">ອັບເດດຂໍ້ມູນ</span>
+          </button>
+          <button type="button" id="toggleVisitorLogBtn" onclick="toggleVisitorDetailsPanel()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition cursor-pointer flex items-center gap-1.5">
+            <span>📋</span>
+            <span data-i18n="viewVisitorLogBtn">ເບິ່ງລາຍລະອຽດຜູ້ເຂົ້າເບິ່ງ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 1: Active Online Now -->
+        <div class="bg-slate-950/80 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span data-i18n="kpiOnlineTitle" class="text-xs sm:text-sm font-bold text-slate-400">ກຳລັງອອນລາຍປັດຈຸບັນ</span>
+            <span class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base">🟢</span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span id="statActiveOnline" class="text-2xl sm:text-3xl font-black text-emerald-400">1</span>
+            <span data-i18n="unitPeople" class="text-xs text-slate-400 font-semibold">ຄົນ / ອຸປະກອນ</span>
+          </div>
+          <div class="mt-2 text-[11px] text-emerald-400/80 font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span data-i18n="kpiOnlineSub">ກຳລັງເປີດໃຊ້ງານຢູ່ໃນຂະນະນີ້</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Today's Visits -->
+        <div class="bg-slate-950/80 border border-sky-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span data-i18n="kpiTodayTitle" class="text-xs sm:text-sm font-bold text-slate-400">ເຂົ້າເບິ່ງມື້ນີ້</span>
+            <span class="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-base">📅</span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span id="statTodayViews" class="text-2xl sm:text-3xl font-black text-sky-300">1</span>
+            <span data-i18n="unitVisits" class="text-xs text-slate-400 font-semibold">ຄັ້ງ</span>
+          </div>
+          <div id="statTodayDateLabel" class="mt-2 text-[11px] text-slate-400 font-medium">
+            ວັນທີປັດຈຸບັນ
+          </div>
+        </div>
+
+        <!-- KPI 3: Monthly Visits & Unique Visitors -->
+        <div class="bg-slate-950/80 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span data-i18n="kpiMonthTitle" class="text-xs sm:text-sm font-bold text-slate-400">ເຂົ້າເບິ່ງເດືອນນີ້</span>
+            <span class="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-base">🗓️</span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span id="statMonthViews" class="text-2xl sm:text-3xl font-black text-indigo-300">1</span>
+            <span data-i18n="unitVisits" class="text-xs text-slate-400 font-semibold">ຄັ້ງ</span>
+          </div>
+          <div class="mt-2 text-[11px] text-slate-400 font-medium">
+            <span data-i18n="uniqueDevicesLabel">ອຸປະກອນຕົວຈິງສະສົມ</span>: <strong id="statUniqueVisitors" class="text-indigo-300">1</strong>
+          </div>
+        </div>
+
+        <!-- KPI 4: Total All-Time Visits -->
+        <div class="bg-slate-950/80 border border-rose-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span data-i18n="kpiTotalTitle" class="text-xs sm:text-sm font-bold text-slate-400">ຜູ້ເຂົ້າເບິ່ງສະສົມທັງໝົດ</span>
+            <span class="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-base">📊</span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span id="statTotalViews" class="text-2xl sm:text-3xl font-black text-rose-300">1</span>
+            <span data-i18n="unitVisits" class="text-xs text-slate-400 font-semibold">ຄັ້ງ</span>
+          </div>
+          <div class="mt-2 text-[11px] text-rose-300/80 font-medium" data-i18n="kpiTotalSub">
+            ລວມທຸກລະບົບຍ່ອຍທັງໝົດ
+          </div>
+        </div>
+      </div>
+
+      <!-- Views Breakdown by System Bar Strip -->
+      <div class="bg-slate-950/70 border border-slate-800/90 rounded-2xl p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <span data-i18n="breakdownTitle" class="text-xs sm:text-sm font-bold text-slate-300">📌 ອັດຕາສ່ວນການເຂົ້າເບິ່ງແຍກຕາມລະບົບ</span>
+          <span id="lastUpdatedTimeLabel" class="text-[11px] text-slate-400">ອັບເດດລ່າສຸດ: ມື້ນີ້</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-slate-300 truncate">🏛️ <span data-i18n="sysPortalName">ໜ້າຫຼັກລະບົບຂໍ້ມູນນໍ້າ</span></span>
+              <span id="sysCountPortal" class="text-emerald-400">1</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="sysBarPortal" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-slate-300 truncate">🧪 <span data-i18n="system1Badge">ຄຸນນະພາບນ້ຳ</span></span>
+              <span id="sysCountWaterQuality" class="text-rose-400">0</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="sysBarWaterQuality" class="h-full bg-rose-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-slate-300 truncate">💧 <span data-i18n="system2Badge">ການນຳໃຊ້ນ້ຳ</span></span>
+              <span id="sysCountWaterUsage" class="text-sky-400">0</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="sysBarWaterUsage" class="h-full bg-sky-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-1.5">
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-slate-300 truncate">🏭 <span data-i18n="system3Badge">ການປ່ອຍນ້ຳເປື້ອນ</span></span>
+              <span id="sysCountWastewater" class="text-amber-400">0</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="sysBarWastewater" class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expandable Detailed Visitor Log & 7-Day Trend Panel -->
+      <div id="visitorDetailsPanel" class="hidden pt-2 space-y-6 border-t border-slate-800/80">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left: 7-Day Visitor Trend Chart -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <h4 data-i18n="chart7DaysTitle" class="text-sm font-extrabold text-white flex items-center gap-2">
+                <span>📈</span>
+                <span>ສະຖິຕິຜູ້ເຂົ້າເບິ່ງ 7 ວັນຍ້ອນຫຼັງ</span>
+              </h4>
+              <p data-i18n="chart7DaysSub" class="text-xs text-slate-400 mt-1">ຈຳນວນຄັ້ງທີ່ເຂົ້າເບິ່ງລະບົບໃນແຕ່ລະວັນ</p>
+            </div>
+            <div id="visitor7DayChart" class="mt-6 h-44 flex items-end justify-between gap-2 pt-6 px-2 border-b border-slate-800">
+              <!-- Populated by JS -->
+            </div>
+            <div id="visitor7DayLabels" class="mt-2 flex items-center justify-between gap-2 px-2 text-[11px] text-slate-400 font-mono">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Right (2 cols): Recent Visitor Activity Table -->
+          <div class="lg:col-span-2 bg-slate-950/80 border border-slate-800 rounded-2xl p-5 flex flex-col">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div>
+                <h4 data-i18n="recentLogTitle" class="text-sm font-extrabold text-white flex items-center gap-2">
+                  <span>🕒</span>
+                  <span>ປະຫວັດຜູ້ເຂົ້າເບິ່ງລ່າສຸດ (Recent Visitors Log)</span>
+                </h4>
+                <p data-i18n="recentLogSub" class="text-xs text-slate-400 mt-0.5">ສະແດງລາຍຊື່ຜູ້ໃຊ້ງານ / ຜູ້ເຂົ້າເບິ່ງທົ່ວໄປ, ລະບົບທີ່ເຂົ້າເບິ່ງ ແລະ ອຸປະກອນ</p>
+              </div>
+              <select id="visitorLogFilterSelect" onchange="renderVisitorLogsTable()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-200 outline-none focus:border-emerald-500">
+                <option value="all">🌐 ທຸກລະບົບ (All Systems)</option>
+                <option value="portal">🏛️ ໜ້າຫຼັກລະບົບຂໍ້ມູນນໍ້າ</option>
+                <option value="water-quality">🧪 ລະບົບຄຸນນະພາບນໍ້າ</option>
+                <option value="water-usage">💧 ລະບົບການນໍາໃຊ້ນໍ້າ</option>
+                <option value="wastewater">🏭 ລະບົບປ່ອຍນໍ້າເປື້ອນ</option>
+              </select>
+            </div>
+
+            <div class="overflow-x-auto max-h-64 overflow-y-auto rounded-xl border border-slate-800/90">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-900/95 text-slate-400 sticky top-0 z-10 border-b border-slate-800">
+                  <tr>
+                    <th class="py-2.5 px-3 font-bold" data-i18n="colTime">ເວລາ</th>
+                    <th class="py-2.5 px-3 font-bold" data-i18n="colUser">ຜູ້ເຂົ້າເບິ່ງ</th>
+                    <th class="py-2.5 px-3 font-bold" data-i18n="colRole">ສິດໃຊ້ງານ</th>
+                    <th class="py-2.5 px-3 font-bold" data-i18n="colSystem">ລະບົບທີ່ເຂົ້າເບິ່ງ</th>
+                    <th class="py-2.5 px-3 font-bold" data-i18n="colDevice">ອຸປະກອນ / IP</th>
+                  </tr>
+                </thead>
+                <tbody id="visitorLogsTableBody" class="divide-y divide-slate-800/70 text-slate-300">
+                  <tr>
+                    <td colspan="5" class="py-6 text-center text-slate-500">ກຳລັງໂຫຼດຂໍ້ມູນຜູ້ເຂົ້າເບິ່ງ...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Unified Features & Security Strip (Larger Text) -->
     <div class="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-3xl p-7 sm:p-9 shadow-xl">
@@ -359,20 +595,22 @@
         <span data-i18n="footerDept" class="font-medium">ກົມຊັບພະຍາກອນນໍ້າ, ກະຊວງກະສິກໍາ ແລະ ສິ່ງແວດລ້ອມ (Department of Water Resources)</span>
       </div>
       <div class="flex items-center gap-5 text-slate-300 font-semibold">
-        <a href="water-quality.html" data-i18n="footerLink1" class="hover:text-rose-400 transition">ຄຸນນະພາບນໍ້າ</a>
+        <a href="water-quality.html" onclick="trackSystemNavigation('water-quality')" data-i18n="footerLink1" class="hover:text-rose-400 transition">ຄຸນນະພາບນໍ້າ</a>
         <span>•</span>
-        <a href="water-usage.html" data-i18n="footerLink2" class="hover:text-rose-400 transition">ການນໍາໃຊ້ນໍ້າ</a>
+        <a href="water-usage.html" onclick="trackSystemNavigation('water-usage')" data-i18n="footerLink2" class="hover:text-rose-400 transition">ການນໍາໃຊ້ນໍ້າ</a>
         <span>•</span>
-        <a href="wastewater.html" data-i18n="footerLink3" class="hover:text-rose-400 transition">ການປ່ອຍນໍ້າເປື້ອນ</a>
+        <a href="wastewater.html" onclick="trackSystemNavigation('wastewater')" data-i18n="footerLink3" class="hover:text-rose-400 transition">ການປ່ອຍນໍ້າເປື້ອນ</a>
       </div>
     </div>
   </footer>
 
-  <!-- Internationalization (I18N) & Session Sync Script -->
+  <!-- Internationalization (I18N), Session Sync & Real-time Visitor Tracking Script -->
   <script>
     (function () {
       const STORAGE_KEY = 'dwr_lang';
       const BACKUP_KEY = 'lang';
+      const VISITOR_ID_KEY = 'dwr_visitor_id_v1';
+      const LOCAL_VISITOR_BACKUP_KEY = 'dwr_visitor_stats_backup_v1';
 
       const I18N = {
         lo: {
@@ -384,6 +622,8 @@
           guestMode: "👁️ ໂໝດທົ່ວໄປ (Guest Mode)",
           signInBtn: "🔑 ເຂົ້າສູ່ລະບົບ",
           signOutBtn: "🚪 ອອກ",
+          onlineShort: "ອອນລາຍ",
+          viewsLabel: "ເຂົ້າເບິ່ງ",
           heroBadge: "ລະບົບຂໍ້ມູນຂ່າວສານຊັບພະຍາກອນນໍ້າແຫ່ງຊາດ (National Water Portal)",
           heroTitle: "ລະບົບຂໍ້ມູນຊັບພະຍາກອນນໍ້າ",
           heroDesc: "ການຕິດຕາມກວດກາ ແລະ ຄຸ້ມຄອງຂໍ້ມູນຄຸນນະພາບນໍ້າ, ການນໍາໃຊ້ນໍ້າ ແລະ ໂຄງການປ່ອຍນໍ້າເປື້ອນ ຂອງບັນດາໂຄງການ ຫຼື ກິດຈະການ.",
@@ -396,6 +636,31 @@
           loginSlot: "ຊ່ອງເຂົ້າສູ່ລະບົບ",
           readyStatus: "ພ້ອມໃຊ້ງານ",
           enterSystemBtn: "🔑 ເຂົ້າສູ່ລະບົບ",
+          visitorSectionTitle: "ລະບົບຕິດຕາມຜູ້ເຂົ້າເບິ່ງ (Visitor Tracking & Live Statistics)",
+          liveTrackingBadge: "ຕິດຕາມແບບ Real-time",
+          visitorSectionSub: "ສະຖິຕິຈຳນວນຜູ້ເຂົ້າເບິ່ງລະບົບຂໍ້ມູນຊັບພະຍາກອນນໍ້າ ແລະ ປະຫວັດການເຂົ້າໃຊ້ງານທັງ 3 ລະບົບຍ່ອຍ",
+          refreshStatsBtn: "ອັບເດດຂໍ້ມູນ",
+          viewVisitorLogBtn: "ເບິ່ງລາຍລະອຽດຜູ້ເຂົ້າເບິ່ງ",
+          kpiOnlineTitle: "ກຳລັງອອນລາຍປັດຈຸບັນ",
+          kpiOnlineSub: "ກຳລັງເປີດໃຊ້ງານຢູ່ໃນຂະນະນີ້",
+          kpiTodayTitle: "ເຂົ້າເບິ່ງມື້ນີ້",
+          kpiMonthTitle: "ເຂົ້າເບິ່ງເດືອນນີ້",
+          kpiTotalTitle: "ຜູ້ເຂົ້າເບິ່ງສະສົມທັງໝົດ",
+          kpiTotalSub: "ລວມທຸກລະບົບຍ່ອຍທັງໝົດ",
+          unitPeople: "ຄົນ / ອຸປະກອນ",
+          unitVisits: "ຄັ້ງ",
+          uniqueDevicesLabel: "ອຸປະກອນຕົວຈິງສະສົມ",
+          breakdownTitle: "📌 ອັດຕາສ່ວນການເຂົ້າເບິ່ງແຍກຕາມລະບົບ",
+          sysPortalName: "ໜ້າຫຼັກລະບົບຂໍ້ມູນນໍ້າ",
+          chart7DaysTitle: "📈 ສະຖິຕິຜູ້ເຂົ້າເບິ່ງ 7 ວັນຍ້ອນຫຼັງ",
+          chart7DaysSub: "ຈຳນວນຄັ້ງທີ່ເຂົ້າເບິ່ງລະບົບໃນແຕ່ລະວັນ",
+          recentLogTitle: "🕒 ປະຫວັດຜູ້ເຂົ້າເບິ່ງລ່າສຸດ (Recent Visitors Log)",
+          recentLogSub: "ສະແດງລາຍຊື່ຜູ້ໃຊ້ງານ / ຜູ້ເຂົ້າເບິ່ງທົ່ວໄປ, ລະບົບທີ່ເຂົ້າເບິ່ງ ແລະ ອຸປະກອນ",
+          colTime: "ເວລາ",
+          colUser: "ຜູ້ເຂົ້າເບິ່ງ",
+          colRole: "ສິດໃຊ້ງານ",
+          colSystem: "ລະບົບທີ່ເຂົ້າເບິ່ງ",
+          colDevice: "ອຸປະກອນ / IP",
           feat1Title: "ຖານຂໍ້ມູນດຽວກັນ",
           feat1Desc: "ທຸກລະບົບເຊື່ອມຕໍ່ຖານຂໍ້ມູນ Firebase Realtime & Firestore ແບບ Real-time ອັດຕະໂນມັດ",
           feat2Title: "ລະບົບບັນຊີດຽວ (SSO)",
@@ -419,6 +684,8 @@
           guestMode: "👁️ Guest Mode",
           signInBtn: "🔑 Sign In",
           signOutBtn: "🚪 Sign Out",
+          onlineShort: "Online",
+          viewsLabel: "Views",
           heroBadge: "National Water Resources Information System (National Water Portal)",
           heroTitle: "Water Resources Information System",
           heroDesc: "Monitoring and management portal for water quality, water resources utilization, and wastewater discharge projects.",
@@ -431,6 +698,31 @@
           loginSlot: "System Access Channel",
           readyStatus: "Ready / Online",
           enterSystemBtn: "🔑 Enter System",
+          visitorSectionTitle: "Visitor Tracking & Live Statistics",
+          liveTrackingBadge: "Real-time Tracking",
+          visitorSectionSub: "Live visitor counts and access activity logs across the Water Resources Information System",
+          refreshStatsBtn: "Refresh",
+          viewVisitorLogBtn: "View Visitor Details",
+          kpiOnlineTitle: "Online Now",
+          kpiOnlineSub: "Active sessions in real-time",
+          kpiTodayTitle: "Today's Visits",
+          kpiMonthTitle: "This Month's Visits",
+          kpiTotalTitle: "Total Cumulative Visits",
+          kpiTotalSub: "Across all portal systems",
+          unitPeople: "active users",
+          unitVisits: "visits",
+          uniqueDevicesLabel: "Unique devices",
+          breakdownTitle: "📌 Traffic Breakdown by System",
+          sysPortalName: "Main Water Portal",
+          chart7DaysTitle: "📈 Last 7 Days Visitor Trend",
+          chart7DaysSub: "Daily page views across the portal",
+          recentLogTitle: "🕒 Recent Visitors Log",
+          recentLogSub: "Recent user & guest visits, target system, and device info",
+          colTime: "Time",
+          colUser: "Visitor",
+          colRole: "Role",
+          colSystem: "System Visited",
+          colDevice: "Device / IP",
           feat1Title: "Unified Database",
           feat1Desc: "All systems automatically synchronize with Firebase Realtime & Firestore in real-time",
           feat2Title: "Single Sign-On (SSO)",
@@ -449,6 +741,53 @@
 
       function getCurrentLanguage() {
         return localStorage.getItem(STORAGE_KEY) || localStorage.getItem(BACKUP_KEY) || 'lo';
+      }
+
+      function getVisitorId() {
+        let vid = '';
+        try {
+          vid = localStorage.getItem(VISITOR_ID_KEY) || '';
+          if (!vid) {
+            vid = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem(VISITOR_ID_KEY, vid);
+          }
+        } catch (e) {
+          vid = 'v-anon-' + Math.random().toString(36).slice(2, 10);
+        }
+        return vid;
+      }
+
+      function getActiveUserIdentity() {
+        let user = null;
+        try {
+          const rawV2 = localStorage.getItem('lao_water_current_user_v2') || localStorage.getItem('lao_wastewater_current_user_v2');
+          if (rawV2) user = JSON.parse(rawV2);
+        } catch (e) {}
+
+        if (!user || user.id === 'guest' || user.role === 'guest') {
+          try {
+            const rawS = localStorage.getItem('waterSession') || sessionStorage.getItem('waterSession');
+            if (rawS) {
+              const parsed = JSON.parse(rawS);
+              user = {
+                fullName: parsed.name || 'ຜູ້ໃຊ້ງານ',
+                username: parsed.username || parsed.name || 'user',
+                role: parsed.role || 'VIEWER'
+              };
+            }
+          } catch (e) {}
+        }
+
+        if (user && user.id !== 'guest' && user.role !== 'guest') {
+          return {
+            userName: user.fullName || user.name || user.username || 'ຜູ້ໃຊ້ງານ',
+            userRole: String(user.role || 'USER').toUpperCase()
+          };
+        }
+        return {
+          userName: 'ຜູ້ເຂົ້າເບິ່ງທົ່ວໄປ (Guest)',
+          userRole: 'GUEST'
+        };
       }
 
       function updateSwitcherUI(lang) {
@@ -489,7 +828,6 @@
 
         const dict = I18N[lang] || I18N.lo;
 
-        // Update Page Title and Meta Description
         if (dict.pageTitle) {
           document.title = dict.pageTitle;
         }
@@ -498,7 +836,6 @@
           metaTag.setAttribute('content', dict.metaDesc);
         }
 
-        // Update all tagged elements
         document.querySelectorAll('[data-i18n]').forEach(el => {
           const key = el.getAttribute('data-i18n');
           if (dict[key]) {
@@ -508,6 +845,7 @@
 
         updateSwitcherUI(lang);
         refreshSessionUI();
+        if (latestVisitorStats) renderVisitorStatsUI(latestVisitorStats);
       };
 
       function refreshSessionUI() {
@@ -603,10 +941,253 @@
         }
       }
 
+      // ==================== VISITOR TRACKING CLIENT LOGIC ====================
+      let latestVisitorStats = null;
+
+      window.toggleVisitorDetailsPanel = function () {
+        const panel = document.getElementById('visitorDetailsPanel');
+        if (!panel) return;
+        panel.classList.toggle('hidden');
+      };
+
+      function formatSystemBadge(page) {
+        const lang = getCurrentLanguage();
+        if (page === 'water-quality') {
+          return `<span class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold">🧪 ${lang === 'en' ? 'Water Quality' : 'ຄຸນນະພາບນໍ້າ'}</span>`;
+        }
+        if (page === 'water-usage') {
+          return `<span class="px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 font-bold">💧 ${lang === 'en' ? 'Water Usage' : 'ການນໍາໃຊ້ນໍ້າ'}</span>`;
+        }
+        if (page === 'wastewater') {
+          return `<span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">🏭 ${lang === 'en' ? 'Wastewater' : 'ການປ່ອຍນໍ້າເປື້ອນ'}</span>`;
+        }
+        return `<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">🏛️ ${lang === 'en' ? 'Main Portal' : 'ໜ້າຫຼັກລະບົບຂໍ້ມູນນໍ້າ'}</span>`;
+      }
+
+      function formatRoleBadge(role) {
+        const r = String(role || 'GUEST').toUpperCase();
+        if (r === 'SUPER_ADMIN' || r === 'ADMIN') {
+          return `<span class="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">👑 ${r}</span>`;
+        }
+        if (r === 'STAFF' || r === 'OFFICER') {
+          return `<span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/30 font-bold">🛠️ STAFF</span>`;
+        }
+        if (r === 'VIEWER') {
+          return `<span class="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">👁️ VIEWER</span>`;
+        }
+        return `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-semibold">👁️ GUEST</span>`;
+      }
+
+      window.renderVisitorLogsTable = function () {
+        const tbody = document.getElementById('visitorLogsTableBody');
+        if (!tbody || !latestVisitorStats) return;
+        const filterVal = document.getElementById('visitorLogFilterSelect')?.value || 'all';
+        const logs = Array.isArray(latestVisitorStats.recentLogs) ? latestVisitorStats.recentLogs : [];
+        const filtered = filterVal === 'all' ? logs : logs.filter(item => item.page === filterVal);
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">ຍັງບໍ່ມີປະຫວັດຜູ້ເຂົ້າເບິ່ງໃນໝວດນີ້</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.slice(0, 25).map(item => {
+          const dt = new Date(Number(item.timestamp) || Date.now());
+          const timeStr = dt.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          const dateStr = dt.toLocaleDateString('lo-LA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          return `
+            <tr class="hover:bg-slate-900/60 transition">
+              <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400 whitespace-nowrap">${dateStr} · <strong class="text-slate-200">${timeStr}</strong></td>
+              <td class="py-2.5 px-3 font-bold text-white">${item.userName || 'ຜູ້ເຂົ້າເບິ່ງທົ່ວໄປ'}</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">${formatRoleBadge(item.userRole)}</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">${formatSystemBadge(item.page)}</td>
+              <td class="py-2.5 px-3 text-[11px] text-slate-400 whitespace-nowrap">${item.device || 'Web Browser'} <span class="text-slate-600">(${item.ip || 'local'})</span></td>
+            </tr>
+          `;
+        }).join('');
+      };
+
+      function renderVisitorStatsUI(data) {
+        if (!data) return;
+        latestVisitorStats = data;
+        try {
+          localStorage.setItem(LOCAL_VISITOR_BACKUP_KEY, JSON.stringify(data));
+        } catch (e) {}
+
+        const fmt = (n) => Number(n || 0).toLocaleString();
+        const total = Math.max(1, Number(data.totalViews) || 1);
+        const online = Math.max(1, Number(data.activeOnline) || 1);
+        const today = Math.max(1, Number(data.todayViews) || 1);
+        const month = Math.max(1, Number(data.monthViews) || 1);
+        const unique = Math.max(1, Number(data.uniqueVisitors) || 1);
+
+        const setEl = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = val;
+        };
+
+        setEl('headerOnlineCount', fmt(online));
+        setEl('headerTotalViews', fmt(total));
+        setEl('statActiveOnline', fmt(online));
+        setEl('statTodayViews', fmt(today));
+        setEl('statMonthViews', fmt(month));
+        setEl('statUniqueVisitors', fmt(unique));
+        setEl('statTotalViews', fmt(total));
+
+        const now = new Date();
+        setEl('statTodayDateLabel', `📅 ${now.toLocaleDateString('lo-LA', { day: '2-digit', month: '2-digit', year: 'numeric' })}`);
+        setEl('lastUpdatedTimeLabel', `🕒 ${now.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`);
+
+        const sv = data.systemViews || {};
+        const cPortal = Number(sv.portal) || 0;
+        const cWQ = Number(sv['water-quality']) || 0;
+        const cWU = Number(sv['water-usage']) || 0;
+        const cWW = Number(sv.wastewater) || 0;
+        const sumSys = Math.max(1, cPortal + cWQ + cWU + cWW);
+
+        setEl('cardViewsWaterQuality', fmt(cWQ));
+        setEl('cardViewsWaterUsage', fmt(cWU));
+        setEl('cardViewsWastewater', fmt(cWW));
+
+        setEl('sysCountPortal', `${fmt(cPortal)} (${Math.round((cPortal / sumSys) * 100)}%)`);
+        setEl('sysCountWaterQuality', `${fmt(cWQ)} (${Math.round((cWQ / sumSys) * 100)}%)`);
+        setEl('sysCountWaterUsage', `${fmt(cWU)} (${Math.round((cWU / sumSys) * 100)}%)`);
+        setEl('sysCountWastewater', `${fmt(cWW)} (${Math.round((cWW / sumSys) * 100)}%)`);
+
+        const setBar = (id, pct) => {
+          const el = document.getElementById(id);
+          if (el) el.style.width = `${Math.max(4, Math.min(100, pct))}%`;
+        };
+        setBar('sysBarPortal', (cPortal / sumSys) * 100);
+        setBar('sysBarWaterQuality', (cWQ / sumSys) * 100);
+        setBar('sysBarWaterUsage', (cWU / sumSys) * 100);
+        setBar('sysBarWastewater', (cWW / sumSys) * 100);
+
+        // Render 7-Day Bar Chart
+        const chartEl = document.getElementById('visitor7DayChart');
+        const labelsEl = document.getElementById('visitor7DayLabels');
+        if (chartEl && labelsEl && Array.isArray(data.last7Days)) {
+          const maxDay = Math.max(1, ...data.last7Days.map(d => Number(d.views) || 0));
+          chartEl.innerHTML = data.last7Days.map((d, idx) => {
+            const v = Number(d.views) || 0;
+            const heightPct = v > 0 ? Math.max(12, Math.round((v / maxDay) * 100)) : 4;
+            const isToday = idx === data.last7Days.length - 1;
+            return `
+              <div class="flex-1 flex flex-col items-center justify-end h-full group">
+                <span class="text-[10px] font-bold ${isToday ? 'text-emerald-300' : 'text-slate-400'} mb-1">${v}</span>
+                <div class="w-full max-w-[30px] rounded-t-lg transition-all duration-500 ${isToday ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-md shadow-emerald-500/20' : 'bg-slate-700 hover:bg-sky-500/80'}" style="height: ${heightPct}%"></div>
+              </div>
+            `;
+          }).join('');
+          labelsEl.innerHTML = data.last7Days.map((d, idx) => {
+            const isToday = idx === data.last7Days.length - 1;
+            return `<div class="flex-1 text-center ${isToday ? 'text-emerald-400 font-bold' : ''}">${d.label}</div>`;
+          }).join('');
+        }
+
+        renderVisitorLogsTable();
+      }
+
+      async function sendVisitorPing(page = 'portal', isHeartbeat = false) {
+        const identity = getActiveUserIdentity();
+        const payload = {
+          visitorId: getVisitorId(),
+          page,
+          userName: identity.userName,
+          userRole: identity.userRole,
+          heartbeat: isHeartbeat
+        };
+        try {
+          const res = await fetch('/api/visitors/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true
+          });
+          if (res.ok) {
+            const stats = await res.json();
+            renderVisitorStatsUI(stats);
+            return;
+          }
+        } catch (e) {}
+
+        // Offline / Fallback calculation if API is unreachable
+        try {
+          const raw = localStorage.getItem(LOCAL_VISITOR_BACKUP_KEY);
+          const backup = raw ? JSON.parse(raw) : {
+            totalViews: 1,
+            uniqueVisitors: 1,
+            todayViews: 1,
+            monthViews: 1,
+            activeOnline: 1,
+            systemViews: { portal: 1, 'water-quality': 0, 'water-usage': 0, wastewater: 0 },
+            last7Days: [],
+            recentLogs: []
+          };
+          if (!isHeartbeat) {
+            backup.totalViews = (Number(backup.totalViews) || 0) + 1;
+            backup.todayViews = (Number(backup.todayViews) || 0) + 1;
+            backup.monthViews = (Number(backup.monthViews) || 0) + 1;
+            backup.systemViews = backup.systemViews || {};
+            backup.systemViews[page] = (Number(backup.systemViews[page]) || 0) + 1;
+            backup.recentLogs = backup.recentLogs || [];
+            backup.recentLogs.unshift({
+              timestamp: Date.now(),
+              userName: identity.userName,
+              userRole: identity.userRole,
+              page,
+              device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? '📱 ມືຖື (Mobile)' : '💻 ຄອມພິວເຕີ (Desktop)',
+              ip: 'local'
+            });
+          }
+          renderVisitorStatsUI(backup);
+        } catch (err) {}
+      }
+
+      window.refreshVisitorStats = async function (showToast = false) {
+        try {
+          const res = await fetch('/api/visitors', { cache: 'no-store' });
+          if (res.ok) {
+            const stats = await res.json();
+            renderVisitorStatsUI(stats);
+            if (showToast && window.Swal) {
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: getCurrentLanguage() === 'en' ? 'Visitor stats updated' : 'ອັບເດດສະຖິຕິຜູ້ເຂົ້າເບິ່ງແລ້ວ',
+                showConfirmButton: false,
+                timer: 1400,
+                background: '#0f172a',
+                color: '#f8fafc'
+              });
+            }
+          }
+        } catch (e) {}
+      };
+
+      window.trackSystemNavigation = function (targetSystem) {
+        sendVisitorPing(targetSystem, false);
+      };
+
       // Initial boot
       window.refreshSessionUI = refreshSessionUI;
       const initialLang = getCurrentLanguage();
       setLanguage(initialLang);
+
+      // Record initial portal visit once per tab session, otherwise heartbeat
+      const sessionVisitedKey = 'dwr_portal_visited_session';
+      const alreadyVisitedThisTab = sessionStorage.getItem(sessionVisitedKey);
+      if (!alreadyVisitedThisTab) {
+        sessionStorage.setItem(sessionVisitedKey, '1');
+        sendVisitorPing('portal', false);
+      } else {
+        sendVisitorPing('portal', true);
+      }
+
+      // Periodic real-time heartbeat every 30 seconds
+      setInterval(() => {
+        sendVisitorPing('portal', true);
+      }, 30000);
 
       window.addEventListener('storage', function (e) {
         if (e.key === STORAGE_KEY || e.key === BACKUP_KEY) {

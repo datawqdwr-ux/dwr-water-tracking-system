@@ -42,6 +42,7 @@ const BLOCKED_PATTERNS = [
   /^\/\.git/i,
   /^\/\.gradle/i,
   /^\/\.dev\.pid$/i,
+  /^\/\.visitors-data\.json$/i,
   /^\/debug\.keystore$/i,
   /^\/server\.js$/i,
   /^\/package(-lock)?\.json$/i,
@@ -53,6 +54,196 @@ const BLOCKED_PATTERNS = [
 
 // Rate limiter store (IP -> { count, resetAt })
 const rateLimitMap = new Map();
+
+// ==================== VISITOR TRACKING ENGINE ====================
+const VISITORS_FILE = path.join(__dirname, '.visitors-data.json');
+const ONLINE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes for active online status
+
+function getLaoDateStr(ts = Date.now()) {
+  // UTC+7 (Vientiane, Laos)
+  const d = new Date(ts + 7 * 3600 * 1000);
+  return d.toISOString().slice(0, 10);
+}
+
+function getLaoMonthStr(ts = Date.now()) {
+  const d = new Date(ts + 7 * 3600 * 1000);
+  return d.toISOString().slice(0, 7);
+}
+
+function loadVisitorStore() {
+  try {
+    if (fs.existsSync(VISITORS_FILE)) {
+      const raw = JSON.parse(fs.readFileSync(VISITORS_FILE, 'utf8'));
+      if (raw && typeof raw === 'object') {
+        return {
+          totalViews: Number(raw.totalViews) || 0,
+          uniqueVisitorIds: Array.isArray(raw.uniqueVisitorIds) ? raw.uniqueVisitorIds : [],
+          systemViews: {
+            portal: Number(raw.systemViews?.portal) || 0,
+            'water-quality': Number(raw.systemViews?.['water-quality']) || 0,
+            'water-usage': Number(raw.systemViews?.['water-usage']) || 0,
+            wastewater: Number(raw.systemViews?.wastewater) || 0
+          },
+          dailyViews: raw.dailyViews && typeof raw.dailyViews === 'object' ? raw.dailyViews : {},
+          monthlyViews: raw.monthlyViews && typeof raw.monthlyViews === 'object' ? raw.monthlyViews : {},
+          recentLogs: Array.isArray(raw.recentLogs) ? raw.recentLogs.slice(0, 60) : []
+        };
+      }
+    }
+  } catch (e) {}
+  return {
+    totalViews: 0,
+    uniqueVisitorIds: [],
+    systemViews: {
+      portal: 0,
+      'water-quality': 0,
+      'water-usage': 0,
+      wastewater: 0
+    },
+    dailyViews: {},
+    monthlyViews: {},
+    recentLogs: []
+  };
+}
+
+const visitorStore = loadVisitorStore();
+// Map of visitorId -> { visitorId, userName, userRole, page, device, ip, lastSeen }
+const activeSessionsMap = new Map();
+
+function saveVisitorStore() {
+  try {
+    fs.writeFileSync(VISITORS_FILE, JSON.stringify(visitorStore, null, 2), 'utf8');
+  } catch (e) {}
+}
+
+// Sync initial visitor stats from Firebase RTDB on startup if local store is empty
+function syncVisitorsFromFirebase() {
+  try {
+    https.get(`${FIREBASE_RTDB_BASE}/dwr_portal_visitors.json`, (res) => {
+      let body = '';
+      res.on('data', (chunk) => { body += chunk; });
+      res.on('end', () => {
+        try {
+          const remote = JSON.parse(body);
+          if (remote && typeof remote === 'object' && Number(remote.totalViews) > visitorStore.totalViews) {
+            visitorStore.totalViews = Number(remote.totalViews) || visitorStore.totalViews;
+            if (Array.isArray(remote.uniqueVisitorIds)) {
+              const mergedIds = new Set([...visitorStore.uniqueVisitorIds, ...remote.uniqueVisitorIds]);
+              visitorStore.uniqueVisitorIds = Array.from(mergedIds).slice(-5000);
+            }
+            if (remote.systemViews && typeof remote.systemViews === 'object') {
+              for (const k of ['portal', 'water-quality', 'water-usage', 'wastewater']) {
+                visitorStore.systemViews[k] = Math.max(visitorStore.systemViews[k] || 0, Number(remote.systemViews[k]) || 0);
+              }
+            }
+            if (remote.dailyViews && typeof remote.dailyViews === 'object') {
+              for (const [k, v] of Object.entries(remote.dailyViews)) {
+                visitorStore.dailyViews[k] = Math.max(visitorStore.dailyViews[k] || 0, Number(v) || 0);
+              }
+            }
+            if (remote.monthlyViews && typeof remote.monthlyViews === 'object') {
+              for (const [k, v] of Object.entries(remote.monthlyViews)) {
+                visitorStore.monthlyViews[k] = Math.max(visitorStore.monthlyViews[k] || 0, Number(v) || 0);
+              }
+            }
+            if (Array.isArray(remote.recentLogs) && visitorStore.recentLogs.length === 0) {
+              visitorStore.recentLogs = remote.recentLogs.slice(0, 60);
+            }
+            saveVisitorStore();
+          }
+        } catch (e) {}
+      });
+    }).on('error', () => {});
+  } catch (e) {}
+}
+syncVisitorsFromFirebase();
+
+function pushVisitorsToFirebase() {
+  try {
+    const payload = JSON.stringify({
+      totalViews: visitorStore.totalViews,
+      uniqueVisitorIds: visitorStore.uniqueVisitorIds.slice(-1000),
+      systemViews: visitorStore.systemViews,
+      dailyViews: visitorStore.dailyViews,
+      monthlyViews: visitorStore.monthlyViews,
+      recentLogs: visitorStore.recentLogs.slice(0, 40),
+      updatedAt: Date.now()
+    });
+    const req = https.request(
+      `${FIREBASE_RTDB_BASE}/dwr_portal_visitors.json`,
+      { method: 'PUT', headers: { 'Content-Type': 'application/json' } },
+      () => {}
+    );
+    req.on('error', () => {});
+    req.write(payload);
+    req.end();
+  } catch (e) {}
+}
+
+function parseUserAgentSummary(ua = '') {
+  const s = String(ua);
+  const isMobile = /Mobile|Android|iPhone|iPad/i.test(s);
+  const deviceType = isMobile ? '📱 ມືຖື (Mobile)' : '💻 ຄອມພິວເຕີ (Desktop)';
+  let browser = 'Web Browser';
+  if (/Edg\//i.test(s)) browser = 'Edge';
+  else if (/Chrome\//i.test(s) && !/Chromium/i.test(s)) browser = 'Chrome';
+  else if (/Firefox\//i.test(s)) browser = 'Firefox';
+  else if (/Safari\//i.test(s) && !/Chrome\//i.test(s)) browser = 'Safari';
+  return `${deviceType} · ${browser}`;
+}
+
+function maskIpAddress(ip = '') {
+  const clean = String(ip || 'unknown').replace(/^::ffff:/, '');
+  const parts = clean.split('.');
+  if (parts.length === 4) {
+    return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
+  }
+  return clean.slice(0, 12) + '***';
+}
+
+function buildVisitorStatsPayload() {
+  const now = Date.now();
+  for (const [vid, sess] of activeSessionsMap.entries()) {
+    if (now - sess.lastSeen > ONLINE_TIMEOUT_MS) {
+      activeSessionsMap.delete(vid);
+    }
+  }
+  const todayKey = getLaoDateStr(now);
+  const monthKey = getLaoMonthStr(now);
+
+  // Build last 7 days array
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayStr = getLaoDateStr(now - i * 24 * 3600 * 1000);
+    last7Days.push({
+      date: dayStr,
+      label: dayStr.slice(5), // MM-DD
+      views: Number(visitorStore.dailyViews[dayStr]) || 0
+    });
+  }
+
+  const onlineList = Array.from(activeSessionsMap.values()).map((s) => ({
+    visitorId: s.visitorId.slice(0, 8),
+    userName: s.userName,
+    userRole: s.userRole,
+    page: s.page,
+    device: s.device,
+    lastSeen: s.lastSeen
+  }));
+
+  return {
+    totalViews: visitorStore.totalViews,
+    uniqueVisitors: visitorStore.uniqueVisitorIds.length,
+    todayViews: Number(visitorStore.dailyViews[todayKey]) || 0,
+    monthViews: Number(visitorStore.monthlyViews[monthKey]) || 0,
+    activeOnline: Math.max(1, activeSessionsMap.size),
+    onlineUsers: onlineList,
+    systemViews: visitorStore.systemViews,
+    last7Days,
+    recentLogs: visitorStore.recentLogs.slice(0, 30),
+    serverTime: now
+  };
+}
 
 function checkRateLimit(ip, maxRequests = 180, windowMs = 60_000) {
   const now = Date.now();
@@ -193,6 +384,77 @@ const server = http.createServer(async (req, res) => {
     if (!checkRateLimit(clientIp, isAuthRoute ? 30 : 180, 60_000)) {
       res.writeHead(429, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({ error: 'Too many requests. Please try again in a minute.' }));
+      return;
+    }
+
+    // 0. Visitor Tracking Endpoints (/api/visitors & /api/visitors/track)
+    if (pathname === '/api/visitors' && req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+      res.end(JSON.stringify(buildVisitorStatsPayload()));
+      return;
+    }
+
+    if ((pathname === '/api/visitors/track' || pathname === '/api/visitors') && req.method === 'POST') {
+      try {
+        const body = await readJsonBody(req);
+        const now = Date.now();
+        const visitorId = String(body.visitorId || crypto.createHash('md5').update(clientIp + (req.headers['user-agent'] || '')).digest('hex')).slice(0, 36);
+        const page = ['portal', 'water-quality', 'water-usage', 'wastewater'].includes(body.page) ? body.page : 'portal';
+        const userName = String(body.userName || 'ຜູ້ເຂົ້າເບິ່ງທົ່ວໄປ (Guest)').slice(0, 60);
+        const userRole = String(body.userRole || 'GUEST').slice(0, 30);
+        const isHeartbeat = Boolean(body.heartbeat);
+        const device = parseUserAgentSummary(req.headers['user-agent'] || '');
+        const maskedIp = maskIpAddress(clientIp);
+
+        activeSessionsMap.set(visitorId, {
+          visitorId,
+          userName,
+          userRole,
+          page,
+          device,
+          ip: maskedIp,
+          lastSeen: now
+        });
+
+        if (!visitorStore.uniqueVisitorIds.includes(visitorId)) {
+          visitorStore.uniqueVisitorIds.push(visitorId);
+          if (visitorStore.uniqueVisitorIds.length > 5000) {
+            visitorStore.uniqueVisitorIds.shift();
+          }
+        }
+
+        if (!isHeartbeat) {
+          const todayKey = getLaoDateStr(now);
+          const monthKey = getLaoMonthStr(now);
+          visitorStore.totalViews = (Number(visitorStore.totalViews) || 0) + 1;
+          visitorStore.dailyViews[todayKey] = (Number(visitorStore.dailyViews[todayKey]) || 0) + 1;
+          visitorStore.monthlyViews[monthKey] = (Number(visitorStore.monthlyViews[monthKey]) || 0) + 1;
+          visitorStore.systemViews[page] = (Number(visitorStore.systemViews[page]) || 0) + 1;
+
+          visitorStore.recentLogs.unshift({
+            id: `${now}-${visitorId.slice(0, 6)}`,
+            timestamp: now,
+            visitorId: visitorId.slice(0, 8),
+            userName,
+            userRole,
+            page,
+            device,
+            ip: maskedIp
+          });
+          if (visitorStore.recentLogs.length > 60) {
+            visitorStore.recentLogs = visitorStore.recentLogs.slice(0, 60);
+          }
+
+          saveVisitorStore();
+          pushVisitorsToFirebase();
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+        res.end(JSON.stringify(buildVisitorStatsPayload()));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
       return;
     }
 
