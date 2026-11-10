@@ -776,38 +776,44 @@
     <!-- ==================== 📝 ຫ້ອງຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ (Dedicated Water Quality Analysis Recording Form Room) ==================== -->
     <div id="entryFormSection" class="space-y-6 hidden">
       <!-- Top Room Banner -->
-      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 rounded-3xl border border-indigo-500/30 shadow-xl shadow-indigo-950/15 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div class="flex items-start sm:items-center gap-3.5">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-5 rounded-3xl border border-indigo-500/30 shadow-xl shadow-indigo-950/15 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div class="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/30 ring-1 ring-white/25 shrink-0">
             📝
           </div>
-          <div>
+          <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/25 text-indigo-200 border border-indigo-400/30 uppercase tracking-wider">Dedicated Entry Room</span>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> ພ້ອມບັນທຶກຂໍ້ມູນ (Live)
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/25 text-indigo-200 border border-indigo-400/30 uppercase tracking-wider whitespace-nowrap">Dedicated Entry Room</span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 whitespace-nowrap">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span> ພ້ອມບັນທຶກຂໍ້ມູນ (Live)
               </span>
             </div>
             <h2 class="text-base sm:text-xl font-black text-white mt-1 tracking-tight">ຫ້ອງຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ</h2>
-            <p class="text-xs text-slate-300 mt-0.5">ປ້ອນຂໍ້ມູນຜົນການວິເຄາະຄຸນນະພາບນ້ຳໃໝ່, ປັບປຸງ/ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ, ນຳເຂົ້າຈາກໄຟລ໌ Excel/CSV ແລະ ບັນທຶກລົງຖານຂໍ້ມູນແຍກຕາມ 2 ປະເພດຂໍ້ມູນ</p>
+            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed max-w-2xl">ປ້ອນຂໍ້ມູນຜົນການວິເຄາະຄຸນນະພາບນ້ຳໃໝ່, ປັບປຸງ/ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ, ນຳເຂົ້າຈາກໄຟລ໌ Excel/CSV ແລະ ບັນທຶກລົງຖານຂໍ້ມູນແຍກຕາມ 2 ປະເພດຂໍ້ມູນ</p>
           </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2 shrink-0">
-          <button type="button" onclick="focusFormExistingEditBox()" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20">
-            <span>🔧</span> <span>ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
-          </button>
-          <button type="button" onclick="focusFormDatasetCombineBox()" class="px-3 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/20">
-            <span>🔗</span> <span>ເລືອກຊຸດຂໍ້ມູນເຂົ້າໃນຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
-          </button>
-          <button type="button" onclick="setFormDataCategory('COMPANY')" class="px-3 py-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white border border-indigo-400/40 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm">
-            <span>🏢</span> <span>ປ້ອນຂໍ້ມູນປະເພດ 1 (ບໍລິສັດ)</span>
-          </button>
-          <button type="button" onclick="setFormDataCategory('GOV')" class="px-3 py-2 rounded-xl bg-sky-600/80 hover:bg-sky-500 text-white border border-sky-400/40 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm">
-            <span>🏛️</span> <span>ປ້ອນຂໍ້ມູນປະເພດ 2 (ອົງການລັດ)</span>
-          </button>
-          <button type="button" onclick="setAppView('records')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition cursor-pointer flex items-center gap-1.5">
-            <span>🗄️</span> <span>ໄປຫ້ອງຖານຂໍ້ມູນຜົນການວັດແທກ</span>
-          </button>
+        <div class="flex flex-col xl:items-end gap-2 shrink-0">
+          <!-- ແຖວທີ 1: ປຸ່ມຈັດການ/ແກ້ໄຂ ແລະ ລວມຊຸດຂໍ້ມູນ -->
+          <div class="flex flex-wrap items-center xl:justify-end gap-2">
+            <button type="button" onclick="focusFormExistingEditBox()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20 whitespace-nowrap">
+              <span>🔧</span> <span>ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
+            </button>
+            <button type="button" onclick="focusFormDatasetCombineBox()" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/20 whitespace-nowrap">
+              <span>🔗</span> <span>ເລືອກຊຸດຂໍ້ມູນເຂົ້າໃນຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
+            </button>
+          </div>
+          <!-- ແຖວທີ 2: ປຸ່ມເລືອກປະເພດຂໍ້ມູນ 1, 2 ແລະ ໄປຫ້ອງຖານຂໍ້ມູນ -->
+          <div class="flex flex-wrap items-center xl:justify-end gap-2">
+            <button type="button" onclick="setFormDataCategory('COMPANY')" class="px-3 py-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white border border-indigo-400/40 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+              <span>🏢</span> <span>ປ້ອນຂໍ້ມູນປະເພດ 1 (ບໍລິສັດ)</span>
+            </button>
+            <button type="button" onclick="setFormDataCategory('GOV')" class="px-3 py-2 rounded-xl bg-sky-600/80 hover:bg-sky-500 text-white border border-sky-400/40 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+              <span>🏛️</span> <span>ປ້ອນຂໍ້ມູນປະເພດ 2 (ອົງການລັດ)</span>
+            </button>
+            <button type="button" onclick="setAppView('records')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+              <span>🗄️</span> <span>ໄປຫ້ອງຖານຂໍ້ມູນຜົນການວັດແທກ</span>
+            </button>
+          </div>
         </div>
       </div>
 
