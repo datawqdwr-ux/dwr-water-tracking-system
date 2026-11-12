@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/dwr-3d-map.js"></script>
   <script>
   /* 🔒 Export Guard: ສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນທີ່ດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກໄດ້ */
   (function () {
@@ -2550,7 +2551,7 @@ var WaterMap = ({
   pickingMode,
   onOpenDirectMessage
 }) => {
-  let mapContainerRef = useRef2(null), mapRef = useRef2(null), markersLayerRef = useRef2(null), linesLayerRef = useRef2(null), activeTileLayerRef = useRef2(null), [currentLayer, setCurrentLayer] = useState2("streets"), [isFullscreen, setIsFullscreen] = useState2(!1), [filterProvince, setFilterProvince] = useState2("all"), [filterStatus, setFilterStatus] = useState2("all"), [filterQuality, setFilterQuality] = useState2("all"), [showConnections, setShowConnections] = useState2(!0), [showProjects, setShowProjects] = useState2(!0), [showOutfalls, setShowOutfalls] = useState2(!0), [cursorCoords, setCursorCoords] = useState2(null), [previewProject, setPreviewProject] = useState2(null), [copiedText, setCopiedText] = useState2(null), [focusProjectId, setFocusProjectId] = useState2(""), [focusOnly, setFocusOnly] = useState2(!1), [searchCoordText, setSearchCoordText] = useState2(""), gotoMarkerRef = useRef2(null);
+  let mapContainerRef = useRef2(null), mapRef = useRef2(null), markersLayerRef = useRef2(null), linesLayerRef = useRef2(null), activeTileLayerRef = useRef2(null), [currentLayer, setCurrentLayer] = useState2("streets"), [isFullscreen, setIsFullscreen] = useState2(!1), [filterProvince, setFilterProvince] = useState2("all"), [filterStatus, setFilterStatus] = useState2("all"), [filterQuality, setFilterQuality] = useState2("all"), [showConnections, setShowConnections] = useState2(!0), [showProjects, setShowProjects] = useState2(!0), [showOutfalls, setShowOutfalls] = useState2(!0), [cursorCoords, setCursorCoords] = useState2(null), [previewProject, setPreviewProject] = useState2(null), [copiedText, setCopiedText] = useState2(null), [focusProjectId, setFocusProjectId] = useState2(""), [focusOnly, setFocusOnly] = useState2(!1), [searchCoordText, setSearchCoordText] = useState2(""), gotoMarkerRef = useRef2(null), dwr3dRef = useRef2(null), dwr3dItemsRef = useRef2([]);
   let getGoogleLayer = (type) => {
     if (type === "satellite") {
       return L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}", {
@@ -2576,6 +2577,17 @@ var WaterMap = ({
     let initialLayer = getGoogleLayer("streets");
     initialLayer.addTo(map), activeTileLayerRef.current = initialLayer;
     let markersGroup = L.layerGroup().addTo(map), linesGroup = L.layerGroup().addTo(map);
+    if (window.DwrLaos3DMap && mapContainerRef.current.parentElement) {
+      dwr3dRef.current = new window.DwrLaos3DMap({
+        container: mapContainerRef.current.parentElement,
+        systemType: "wastewater",
+        onReset2D: () => resetMapView(),
+        getItems: () => dwr3dItemsRef.current || [],
+        onSelectItem: (it) => {
+          if (it && it.rawProject) setPreviewProject(it.rawProject);
+        }
+      });
+    }
     return markersLayerRef.current = markersGroup, linesLayerRef.current = linesGroup, map.on("mousemove", (e) => {
       setCursorCoords({
         lat: Number(e.latlng.lat.toFixed(5)),
@@ -2584,6 +2596,11 @@ var WaterMap = ({
     }), map.on("click", (e) => {
       pickingMode && onPickCoordinate && onPickCoordinate(e.latlng.lat, e.latlng.lng, pickingMode);
     }), () => {
+      if (dwr3dRef.current && dwr3dRef.current.controlsEl) {
+        dwr3dRef.current.controlsEl.remove();
+        dwr3dRef.current.overlayEl.remove();
+        dwr3dRef.current = null;
+      }
       map.remove(), mapRef.current = null;
     };
   }, []);
@@ -2697,8 +2714,46 @@ var WaterMap = ({
         iconAnchor: [size / 2, size / 2]
       });
     };
+    let items3d = [], maxVol = Math.max(100, ...filtered.map((x) => Number(x.dischargeVolume) || 0));
     if (filtered.forEach((p) => {
       let isSelected = p.id === (previewProject?.id || selectedProjectId), expired = isPermitExpired(p.permitExpiryDate), projLat = p.projectLocation.latitude, projLng = p.projectLocation.longitude, disLat = p.dischargeLocation.latitude, disLng = p.dischargeLocation.longitude;
+      let volRatio = Math.max(0.36, Math.min(0.95, Math.log10((Number(p.dischargeVolume) || 100) + 10) / Math.log10(maxVol + 10)));
+      let qStatus = p.waterQuality?.status || "compliant";
+      let disColor = (qStatus === "exceeded" || expired) ? "red" : qStatus === "warning" ? "orange" : "blue";
+      if (showProjects && ((projLat && projLng) || p.projectLocation?.province)) {
+        items3d.push({
+          id: `ww-proj-${p.id}`,
+          lat: projLat,
+          lng: projLng,
+          province: p.projectLocation?.province || "",
+          colorKey: expired ? "red" : "orange",
+          shape: "cylinder",
+          heightRatio: Math.max(0.35, volRatio * 0.9),
+          title: `🏭 ${p.projectName}`,
+          subtitle: `📍 ${p.projectLocation?.province || "-"} · ແຫຼ່ງຮອງຮັບ: ${p.receivingWaterBodyName || "-"}`,
+          badgeText: `🏭 ທີ່ຕັ້ງໂຄງການ · ${getStatusLaoText(p.status)}`,
+          metricLabel: "ປະລິມານປ່ອຍນໍ້າເປື້ອນ",
+          metricValue: `${Number(p.dischargeVolume || 0).toLocaleString()} ${p.dischargeVolumeUnit || ""}`,
+          rawProject: p
+        });
+      }
+      if (showOutfalls && ((disLat && disLng) || p.projectLocation?.province)) {
+        items3d.push({
+          id: `ww-dis-${p.id}`,
+          lat: disLat || projLat,
+          lng: disLng || projLng,
+          province: p.projectLocation?.province || "",
+          colorKey: disColor,
+          shape: "cylinder",
+          heightRatio: qStatus === "exceeded" ? Math.max(0.75, volRatio) : volRatio,
+          title: `💧 ຈຸດປ່ອຍ: ${p.projectName}`,
+          subtitle: `📍 ${p.projectLocation?.province || "-"} · BOD: ${p.waterQuality?.bod ?? "-"} | COD: ${p.waterQuality?.cod ?? "-"} | pH: ${p.waterQuality?.ph ?? "-"}`,
+          badgeText: getQualityLaoText(qStatus),
+          metricLabel: "ປະລິມານປ່ອຍນໍ້າເປື້ອນ",
+          metricValue: `${Number(p.dischargeVolume || 0).toLocaleString()} ${p.dischargeVolumeUnit || ""}`,
+          rawProject: p
+        });
+      }
       if (projLat && projLng && showProjects) {
         let projectMarker = L.marker([projLat, projLng], {
           icon: createProjectIcon(isSelected, expired),
@@ -2732,7 +2787,7 @@ var WaterMap = ({
         );
         linesLayerRef.current?.addLayer(polyline);
       }
-    }), selectedProjectId) {
+    }), dwr3dItemsRef.current = items3d, dwr3dRef.current && dwr3dRef.current.refreshData(!1), selectedProjectId) {
       let sel = projects.find((p) => p.id === selectedProjectId);
       sel && (setPreviewProject(sel), mapRef.current.setView([sel.projectLocation.latitude, sel.projectLocation.longitude], 12, { animate: !0 }));
     }
@@ -3074,7 +3129,7 @@ var WaterMap = ({
           /* @__PURE__ */ jsx2("div", { ref: mapContainerRef, className: "w-full h-full" }),
 
           /* Floating Project Preview Drawer */
-          previewProject && /* @__PURE__ */ jsxs2("div", { className: "absolute top-4 right-4 z-[1000] w-80 sm:w-96 bg-white/95 backdrop-blur-2xl rounded-3xl p-5 shadow-2xl border border-slate-200/90 text-slate-800 animate-in fade-in slide-in-from-right-4 duration-200", children: [
+          previewProject && /* @__PURE__ */ jsxs2("div", { className: "absolute top-14 right-4 z-[1020] w-80 sm:w-96 bg-white/95 backdrop-blur-2xl rounded-3xl p-5 shadow-2xl border border-slate-200/90 text-slate-800 animate-in fade-in slide-in-from-right-4 duration-200", children: [
       /* @__PURE__ */ jsxs2("div", { className: "flex items-start justify-between gap-2 pb-3 border-b border-slate-100", children: [
         /* @__PURE__ */ jsxs2("div", { children: [
           /* @__PURE__ */ jsxs2("div", { className: "flex items-center gap-2", children: [
@@ -3227,7 +3282,7 @@ var WaterMap = ({
 
           /* Bottom Left Legends & Cursor Overlay in Light Theme */
           /* @__PURE__ */ jsxs2("div", {
-            className: "absolute bottom-3 left-3 z-[1000] flex flex-wrap items-center gap-2 pointer-events-none",
+            className: "dwr-2d-legend-overlay absolute bottom-3 left-3 z-[500] flex flex-wrap items-center gap-2 pointer-events-none",
             children: [
               /* Map Legend Badge */
               /* @__PURE__ */ jsxs2("div", {

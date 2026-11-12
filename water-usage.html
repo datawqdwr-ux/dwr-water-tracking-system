@@ -19,6 +19,7 @@
   <!-- Tailwind CSS v4 (ແປງ class ໃນ browser) -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/dwr-3d-map.js"></script>
   <script>
   /* 🔒 Export Guard: ສະເພາະ Super Admin ແລະ Staff ເທົ່ານັ້ນທີ່ດາວໂຫຼດ/ສົ່ງຂໍ້ມູນອອກໄດ້ */
   (function () {
@@ -3415,6 +3416,8 @@ var WaterMap = ({
   const [copiedText, setCopiedText] = useState2(null);
   const [searchCoordText, setSearchCoordText] = useState2("");
   const gotoMarkerRef = useRef2(null);
+  const dwr3dRef = useRef2(null);
+  const dwr3dItemsRef = useRef2([]);
 
   const totalIntakeCount = useMemo2(() => {
     let count = 0;
@@ -3486,7 +3489,23 @@ var WaterMap = ({
           </div>`).openOn(map);
       }
     });
+    if (window.DwrLaos3DMap && mapContainerRef.current.parentElement) {
+      dwr3dRef.current = new window.DwrLaos3DMap({
+        container: mapContainerRef.current.parentElement,
+        systemType: "water-usage",
+        onReset2D: () => resetMapView(),
+        getItems: () => dwr3dItemsRef.current || [],
+        onSelectItem: (it) => {
+          if (it && it.rawProject) setPreviewProject(it.rawProject);
+        }
+      });
+    }
     return () => {
+      if (dwr3dRef.current && dwr3dRef.current.controlsEl) {
+        dwr3dRef.current.controlsEl.remove();
+        dwr3dRef.current.overlayEl.remove();
+        dwr3dRef.current = null;
+      }
       map.remove();
       mapRef.current = null;
     };
@@ -3656,6 +3675,8 @@ var WaterMap = ({
         iconAnchor: [size / 2, size / 2]
       });
     };
+    const items3d = [];
+    const maxVol = Math.max(100, ...filtered.map((x) => Number(x.waterVolume) || 0));
     filtered.forEach((p) => {
       const isSelected = p.id === (previewProject?.id || selectedProjectId);
       const expired = isPermitExpired(p.permitExpiryDate);
@@ -3663,6 +3684,24 @@ var WaterMap = ({
       const projLng = p.projectLocation.longitude;
       const intLat = p.intakeLocation.latitude;
       const intLng = p.intakeLocation.longitude;
+      const volRatio = Math.max(0.35, Math.min(0.95, Math.log10((Number(p.waterVolume) || 100) + 10) / Math.log10(maxVol + 10)));
+      if (showProjects && (validLL(projLat, projLng) || p.projectLocation?.province)) {
+        items3d.push({
+          id: `proj-${p.id}`,
+          lat: projLat,
+          lng: projLng,
+          province: p.projectLocation?.province || "",
+          colorKey: (expired || p.status === "suspended") ? "red" : "orange",
+          shape: "cylinder",
+          heightRatio: volRatio,
+          title: `🏢 ${p.projectName}`,
+          subtitle: `📍 ${p.projectLocation?.province || "-"} · ແຫຼ່ງນໍ້າ: ${p.waterSourceName || "-"}`,
+          badgeText: expired ? "⚠️ ໝົດອາຍຸອະນຸຍາດ" : getStatusLaoText(p.status),
+          metricLabel: "ປະລິມານການນໍາໃຊ້ນໍ້າ",
+          metricValue: `${Number(p.waterVolume || 0).toLocaleString()} ${p.waterVolumeUnit || ""}`,
+          rawProject: p
+        });
+      }
       if (projLat && projLng && validLL(projLat, projLng) && showProjects) {
         const projectMarker = L.marker([projLat, projLng], {
           icon: createProjectIcon(isSelected, expired),
@@ -3684,6 +3723,23 @@ var WaterMap = ({
         allIntakePoints.forEach((ipt, ptIdx) => {
           const ptLat = ipt.latitude;
           const ptLng = ipt.longitude;
+          if (validLL(ptLat, ptLng) || p.projectLocation?.province) {
+            items3d.push({
+              id: `intake-${p.id}-${ptIdx}`,
+              lat: ptLat,
+              lng: ptLng,
+              province: p.projectLocation?.province || "",
+              colorKey: "blue",
+              shape: "cylinder",
+              heightRatio: Math.max(0.32, volRatio * 0.88),
+              title: `💧 ${ipt.name || "ບ່ອນດູດນໍ້າ " + (ptIdx + 1)}`,
+              subtitle: `🏢 ${p.projectName} · 📍 ${p.projectLocation?.province || "-"}`,
+              badgeText: "💧 ຈຸດບ່ອນດູດນໍ້າ (Water Intake)",
+              metricLabel: "ປະລິມານນໍ້າ",
+              metricValue: `${Number(p.waterVolume || 0).toLocaleString()} ${p.waterVolumeUnit || ""}`,
+              rawProject: p
+            });
+          }
           if (ptLat && ptLng && validLL(ptLat, ptLng)) {
             const intakeMarker = L.marker([ptLat, ptLng], {
               icon: createIntakeIcon(isSelected),
@@ -3714,6 +3770,8 @@ var WaterMap = ({
         });
       }
     });
+    dwr3dItemsRef.current = items3d;
+    if (dwr3dRef.current) dwr3dRef.current.refreshData(false);
     if (selectedProjectId) {
       const sel = projects.find((p) => p.id === selectedProjectId);
       if (sel) {
@@ -4061,7 +4119,7 @@ var WaterMap = ({
 
           /* Floating Project Preview Drawer */
           previewProject && /* @__PURE__ */ jsxs2("div", {
-            className: "absolute top-4 right-4 z-[1000] w-80 sm:w-96 bg-white/95 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl border border-slate-200/90 text-slate-800 animate-in fade-in slide-in-from-right-4 duration-200",
+            className: "absolute top-14 right-4 z-[1020] w-80 sm:w-96 bg-white/95 backdrop-blur-2xl rounded-2xl p-4 shadow-2xl border border-slate-200/90 text-slate-800 animate-in fade-in slide-in-from-right-4 duration-200",
             children: [
               /* @__PURE__ */ jsxs2("div", { className: "flex items-start justify-between gap-2 pb-2.5 border-b border-slate-100", children: [
                 /* @__PURE__ */ jsxs2("div", { children: [
@@ -4182,7 +4240,7 @@ var WaterMap = ({
 
           /* Bottom Left Legends & Cursor Overlay in Light Theme */
           /* @__PURE__ */ jsxs2("div", {
-            className: "absolute bottom-3 left-3 z-[1000] flex flex-wrap items-center gap-2 pointer-events-none",
+            className: "dwr-2d-legend-overlay absolute bottom-3 left-3 z-[500] flex flex-wrap items-center gap-2 pointer-events-none",
             children: [
               /* Map Legend Badge */
               /* @__PURE__ */ jsxs2("div", {

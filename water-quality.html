@@ -73,6 +73,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/dwr-3d-map.js"></script>
 
   <!-- PDF Engine Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -535,7 +536,9 @@
           <button type="button" onclick="mapGotoCoord()" class="border border-rose-300 rounded-lg px-3.5 py-1.5 bg-rose-50 font-bold text-rose-700 hover:bg-rose-100 transition">ໄປ</button>
         </div>
       </div>
-      <div id="map" class="rounded-xl border border-slate-200 w-full shadow-inner"></div>
+      <div id="wqMapViewport" class="relative w-full rounded-xl overflow-hidden">
+        <div id="map" class="rounded-xl border border-slate-200 w-full shadow-inner"></div>
+      </div>
 
       <!-- 📍 ຄຳອະທິບາຍສັນຍາລັກສະຖານະການແຈ້ງເຕືອນໄພໃນແຜນທີ່ (Map Alert & Standard Legend) -->
       <div id="mapAlertLegendBar" class="mt-2.5 bg-slate-50/90 border border-slate-200/90 rounded-xl p-2.5 md:px-3.5 md:py-2 flex flex-wrap items-center justify-between gap-2.5 text-xs">
@@ -4688,7 +4691,23 @@
         "⛰️ ພູມປະເທດ (TopoMap)": terrainMap
       };
 
-      L.control.layers(baseMaps).addTo(map);
+      L.control.layers(baseMaps, null, { position: 'topleft' }).addTo(map);
+
+      if (window.DwrLaos3DMap && document.getElementById('wqMapViewport')) {
+        window.dwrWq3DMap = new window.DwrLaos3DMap({
+          container: document.getElementById('wqMapViewport'),
+          systemType: 'water-quality',
+          onReset2D: () => { if (typeof mapResetView === 'function') mapResetView(); },
+          getItems: () => window._dwr3DWaterQualityItems || [],
+          onSelectItem: (it) => {
+            if (it && it.fbKey !== undefined && it.stIdx !== undefined && typeof openStationNationalStandardComparison === 'function') {
+              openStationNationalStandardComparison(it.fbKey, it.stIdx);
+            } else if (it && it.fbKey && typeof openDatasetDetailModal === 'function') {
+              openDatasetDetailModal(it.fbKey);
+            }
+          }
+        });
+      }
 
       // 🧭 ພິກັດຕາມເມົ້າ (ທົດສະນິຍົມ + ອົງສາ)
       const coordCtl = L.control({ position: 'bottomleft' });
@@ -20235,6 +20254,7 @@
       }
 
       // 1. ປະມວນຜົນ Markers ໃນແຜນທີ່ສຳລັບທຸກລາຍການ
+      window._dwr3DWaterQualityItems = [];
       filteredData.forEach((item) => {
         const company = item.companyName || item.name || 'ບໍ່ລະບຸບໍລິສັດ';
         const stations = item.stations || [item];
@@ -20436,9 +20456,43 @@
             if (st.lat >= 13 && st.lat <= 23 && st.lng >= 100 && st.lng <= 108) {
               validLaosBounds.push([st.lat, st.lng]);
             }
+
+            // ເພີ່ມຂໍ້ມູນເຂົ້າແຜນທີ່ 3D
+            const recCat3d = getRecordDataCategory(item);
+            let colorKey3d = recCat3d === 'GOV' ? 'blue' : 'orange';
+            let badge3d = '✅ ປົກກະຕິ (ຜ່ານມາດຕະຖານ 81/ລບ)';
+            let hRatio3d = Math.max(0.38, Math.min(0.88, ((diag.qi && diag.qi.score) ? diag.qi.score : 72) / 100));
+            if (canViewMapAlerts && diag.isAlert) {
+              if (diag.causeType === 'BOTH' || diag.causeType === 'NATIONAL_STANDARD') {
+                colorKey3d = 'red';
+                badge3d = `🚨 ເກີນມາດຕະຖານ 81/ລບ (${diag.violations ? diag.violations.length : 1} ຕົວຊີ້ວັດ)`;
+                hRatio3d = Math.min(1.0, 0.76 + (diag.violations ? diag.violations.length : 1) * 0.06);
+              } else {
+                colorKey3d = 'orange';
+                badge3d = '🌊 ເຝົ້າລະວັງ (QWI ເສື່ອມໂຊມ)';
+                hRatio3d = 0.68;
+              }
+            }
+            window._dwr3DWaterQualityItems.push({
+              id: `${item.fbKey}:${stIdx}`,
+              fbKey: item.fbKey,
+              stIdx,
+              lat: Number(st.lat),
+              lng: Number(st.lng),
+              province: st.province || '',
+              colorKey: colorKey3d,
+              shape: 'cylinder',
+              heightRatio: hRatio3d,
+              title: `[${escAttr(st.code || '-')}] ${escAttr(st.name || '-')}`,
+              subtitle: `🏢 ${escAttr(company)}${st.province && st.province !== '-' ? ` · 📍 ${escAttr(st.province)}` : ''}`,
+              badgeText: badge3d,
+              metricLabel: 'ດັດຊະນີ WQI',
+              metricValue: (diag.qi && diag.qi.score !== undefined) ? `${diag.qi.score} (${diag.qi.label || ''})` : 'ປົກກະຕິ'
+            });
           } catch (e) { console.warn('Marker error', st, e); }
         });
       });
+      if (window.dwrWq3DMap) window.dwrWq3DMap.refreshData(false);
 
       // 2. ສະແດງແຖວຕາຕະລາງສະເພາະໜ້າປັດຈຸບັນ (ບໍ່ໃຫ້ແຖວຍາວ) + ແຍກຫົວຂໍ້ຕາມ 2 ປະເພດຂໍ້ມູນຢ່າງຊັດເຈນ
       const filteredCatTotals = {
