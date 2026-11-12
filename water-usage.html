@@ -3432,39 +3432,100 @@ var WaterMap = ({
     return count;
   }, [projects]);
 
+  const fsViewRef = useRef2(null);
+  const toggleFullscreen = () => {
+    if (mapRef.current) fsViewRef.current = { c: mapRef.current.getCenter(), z: mapRef.current.getZoom() };
+    const wrapEl = mapContainerRef.current?.parentElement;
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      try {
+        if (next && wrapEl && !document.fullscreenElement && wrapEl.requestFullscreen) {
+          wrapEl.requestFullscreen().catch(() => {});
+        } else if (!next && document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (_e) {}
+      return next;
+    });
+  };
+  useEffect2(() => {
+    const onNativeFs = () => {
+      if (!document.fullscreenElement && document.body.classList.contains("map-fs")) {
+        // Keep CSS fullscreen unless exited via Esc/native fullscreen exit
+        setIsFullscreen(false);
+      }
+      setTimeout(() => {
+        mapRef.current?.invalidateSize();
+        if (dwr3dRef.current && dwr3dRef.current.mode === "3D") dwr3dRef.current.render();
+      }, 120);
+    };
+    document.addEventListener("fullscreenchange", onNativeFs);
+    return () => document.removeEventListener("fullscreenchange", onNativeFs);
+  }, []);
   useEffect2(() => {
     if (!mapContainerRef.current) return;
     if (mapRef.current) return;
+    const streetLayer = L.tileLayer(
+      "https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+      { attribution: "&copy; Google Maps", maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
+    );
+    const satelliteLayer = L.tileLayer(
+      "https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
+      { attribution: "&copy; Google Maps Satellite", maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
+    );
+    const terrainLayer = L.tileLayer(
+      "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      { attribution: "Map data: &copy; OpenStreetMap", maxZoom: 17 }
+    );
     const map = L.map(mapContainerRef.current, {
       center: [18.2, 103],
       zoom: 7,
       minZoom: 4,
       maxBounds: [[-60, 60], [60, 160]],
       maxBoundsViscosity: 0.8,
-      zoomControl: false
+      zoomControl: true,
+      layers: [streetLayer]
     });
     mapRef.current = map;
-    const getTileLayer = (type) => {
-      if (type === "satellite") {
-        return L.tileLayer(
-          "https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
-          { attribution: "&copy; Google Maps Satellite", maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
-        );
-      } else if (type === "terrain") {
-        return L.tileLayer(
-          "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-          { attribution: "OpenTopoMap Terrain", maxZoom: 17 }
-        );
-      } else {
-        return L.tileLayer(
-          "https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
-          { attribution: "&copy; Google Maps", maxZoom: 20, subdomains: ["mt0", "mt1", "mt2", "mt3"] }
-        );
-      }
+    activeTileLayerRef.current = streetLayer;
+
+    const baseMaps = {
+      "🗺️ ແຜນທີ່ຖະໜົນ (Street)": streetLayer,
+      "🛰️ ດາວເທຽມ (Satellite)": satelliteLayer,
+      "⛰️ ພູມປະເທດ (TopoMap)": terrainLayer
     };
-    const initialLayer = getTileLayer("streets");
-    initialLayer.addTo(map);
-    activeTileLayerRef.current = initialLayer;
+    L.control.layers(baseMaps, null, { position: "topleft" }).addTo(map);
+    map.on("baselayerchange", (ev) => {
+      activeTileLayerRef.current = ev.layer;
+      if (ev.layer === satelliteLayer) setCurrentLayer("satellite");
+      else if (ev.layer === terrainLayer) setCurrentLayer("terrain");
+      else setCurrentLayer("streets");
+    });
+
+    const fullscreenControl = L.control({ position: "topleft" });
+    fullscreenControl.onAdd = function () {
+      const div = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+      div.innerHTML = `<a href="#" title="ຂະຫຍາຍເຕັມຈໍ" style="background-color: #fff; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; text-decoration: none; color: #333;">⛶</a>`;
+      div.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleFullscreen();
+      };
+      return div;
+    };
+    fullscreenControl.addTo(map);
+
+    let coordBarEl = null;
+    const coordCtl = L.control({ position: "bottomleft" });
+    coordCtl.onAdd = function () {
+      const d = L.DomUtil.create("div", "leaflet-control dwr-fs-coord-ctl");
+      d.style.cssText = "background:rgba(15,23,42,.85);color:#e2e8f0;font:600 11px monospace;padding:5px 9px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none";
+      d.innerHTML = "🧭 ເລື່ອນເມົ້າເທິງແຜນທີ່";
+      coordBarEl = d;
+      return d;
+    };
+    coordCtl.addTo(map);
+
     const markersGroup = L.layerGroup().addTo(map);
     const linesGroup = L.layerGroup().addTo(map);
     markersLayerRef.current = markersGroup;
@@ -3474,6 +3535,9 @@ var WaterMap = ({
         lat: Number(e.latlng.lat.toFixed(6)),
         lng: Number(e.latlng.lng.toFixed(6))
       });
+      if (coordBarEl) {
+        coordBarEl.innerHTML = `🧭 ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)} &nbsp;·&nbsp; ${toDMS(e.latlng.lat, e.latlng.lng)}`;
+      }
     });
     map.on("click", (e) => {
       if (pickingMode && onPickCoordinate) {
@@ -3536,18 +3600,11 @@ var WaterMap = ({
     newLayer.addTo(mapRef.current);
     activeTileLayerRef.current = newLayer;
   };
-  // ເຕັມຈໍແບບ CSS (ບໍ່ໃຊ້ Fullscreen ຂອງ Browser) → ກ່ອງ "ລາຍລະອຽດເຕັມ", ແກ້ໄຂ ແລະ ຂໍ້ຄວາມ ຍັງເປີດຂຶ້ນເທິງແຜນທີ່ໄດ້
-  const fsViewRef = useRef2(null);
-  const toggleFullscreen = () => {
-    if (mapRef.current) fsViewRef.current = { c: mapRef.current.getCenter(), z: mapRef.current.getZoom() };
-    setIsFullscreen((v) => !v);
-  };
   useEffect2(() => {
-    const wrap = mapContainerRef.current?.parentElement;
-    // ກ່ອງແມ່ທີ່ມີ transform / filter / z-index ເຮັດໃຫ້ position:fixed ບໍ່ເຕັມຈໍ → ປິດຊົ່ວຄາວ ຕອນເຕັມຈໍ
+    const mapCardEl = mapContainerRef.current?.closest("#mapCard") || document.getElementById("mapCard");
     const saved = [];
-    if (isFullscreen && wrap) {
-      let el = wrap.parentElement;
+    if (isFullscreen && mapCardEl) {
+      let el = mapCardEl.parentElement;
       while (el && el !== document.body) {
         const cs = getComputedStyle(el);
         if (cs.transform !== "none" || cs.filter !== "none" || cs.backdropFilter !== "none" || cs.perspective !== "none" || cs.contain !== "none" || cs.willChange !== "auto" || (cs.zIndex !== "auto" && cs.position !== "static")) {
@@ -3561,19 +3618,29 @@ var WaterMap = ({
     }
     document.body.classList.toggle("map-fs", isFullscreen);
     document.body.style.overflow = isFullscreen ? "hidden" : "";
-    const t = setTimeout(() => {
+    const resizeAll = () => {
       const m = mapRef.current;
-      if (!m) return;
-      m.invalidateSize();
-      const v = fsViewRef.current;
-      if (v) m.setView(v.c, v.z, { animate: false }); // ຮັກສາຈຸດ ແລະ ລະດັບຊູມເດີມ
-    }, 120);
+      if (m) {
+        m.invalidateSize();
+        const v = fsViewRef.current;
+        if (v) m.setView(v.c, v.z, { animate: false });
+      }
+      if (dwr3dRef.current && dwr3dRef.current.mode === "3D") {
+        dwr3dRef.current.render();
+      }
+    };
+    const t1 = setTimeout(resizeAll, 60);
+    const t2 = setTimeout(resizeAll, 220);
     const onKey = (e) => { if (e.key === "Escape" && isFullscreen && !document.querySelector(".fixed.inset-0.z-\\[1100\\], .fixed.inset-0.z-\\[1200\\], .fixed.inset-0.z-\\[1250\\], .fixed.inset-0.z-\\[1300\\]")) toggleFullscreen(); };
     document.addEventListener("keydown", onKey);
     return () => {
-      clearTimeout(t);
+      clearTimeout(t1);
+      clearTimeout(t2);
       document.removeEventListener("keydown", onKey);
-      saved.forEach(([el, st]) => el.setAttribute("style", st));
+      saved.forEach(([el, st]) => {
+        if (st) el.setAttribute("style", st);
+        else el.removeAttribute("style");
+      });
     };
   }, [isFullscreen]);
   useEffect2(() => {
@@ -3899,7 +3966,8 @@ var WaterMap = ({
   };
   return /* @__PURE__ */ jsxs2("div", {
     id: "mapCard",
-    className: `bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col min-w-0 space-y-3 ${isFullscreen ? "!fixed !inset-0 !z-[1050] !p-4 !m-0 !rounded-none !border-0 bg-white" : ""}`,
+    className: `bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col min-w-0 space-y-3 ${isFullscreen ? "fixed! inset-0! z-[1050]! p-0! m-0! rounded-none! border-0! bg-white" : ""}`,
+    style: isFullscreen ? { position: "fixed", inset: 0, width: "100vw", height: "100vh", zIndex: 1050, margin: 0, padding: 0, borderRadius: 0, border: 0, background: "#ffffff", display: "flex", flexDirection: "column", boxSizing: "border-box" } : void 0,
     children: [
       /* 📍 Card Header matching water-quality.html */
       /* @__PURE__ */ jsxs2("div", {
@@ -4112,7 +4180,8 @@ var WaterMap = ({
 
       /* 🗺️ Map Canvas matching water-quality.html */
       /* @__PURE__ */ jsxs2("div", {
-        className: "rounded-xl border border-slate-200 w-full shadow-inner relative h-[620px] overflow-hidden",
+        className: `dwr-map-canvas-wrap w-full shadow-inner relative overflow-hidden ${isFullscreen ? "flex-1 h-full min-h-0 rounded-none border-0" : "rounded-xl border border-slate-200 h-[620px]"}`,
+        style: isFullscreen ? { flex: "1 1 0%", width: "100vw", height: "100vh", minHeight: 0, borderRadius: 0, border: 0, margin: 0, padding: 0 } : void 0,
         children: [
           /* Leaflet map container */
           /* @__PURE__ */ jsx2("div", { ref: mapContainerRef, className: "w-full h-full" }),
@@ -12641,6 +12710,44 @@ window.sharedLogout = sharedLogout;
   div:has(> .leaflet-container) { isolation: isolate; }
   .ro-badge { position: fixed; right: 14px; bottom: 14px; z-index: 9000; background: #334155; color: #f8fafc; font: 600 12px 'Noto Sans Lao', sans-serif; padding: 7px 12px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,.25); pointer-events: none; }
   body.map-fs .ro-badge { display: none; }
+  body.map-fs #mapCard {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 1050 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+  }
+  body.map-fs #mapCard > :not(.dwr-map-canvas-wrap) {
+    display: none !important;
+  }
+  body.map-fs #mapCard > .dwr-map-canvas-wrap,
+  .dwr-map-canvas-wrap:fullscreen {
+    flex: 1 1 0% !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+  }
+  body.map-fs .dwr-2d-legend-overlay,
+  .dwr-map-canvas-wrap:fullscreen .dwr-2d-legend-overlay {
+    display: none !important;
+  }
+  body:not(.map-fs) .dwr-map-canvas-wrap:not(:fullscreen) .dwr-fs-coord-ctl {
+    display: none !important;
+  }
 </style>
 <script>
 (function () {
