@@ -313,14 +313,24 @@
           </nav>
         </div>
 
-        <!-- Group 2: ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ & ຖານຂໍ້ມູນ -->
+        <!-- Group 2: ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ & ການຈັດການຊຸດຂໍ້ມູນ -->
         <div>
-          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-indigo-300 mb-1.5">📝 ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ</p>
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-indigo-300 mb-1.5">📝 ຟອມບັນທຶກ & ຈັດການຂໍ້ມູນ</p>
           <nav class="space-y-1 mb-3">
             <button type="button" id="sbNavEntryForm" data-nav-view="entry" onclick="setAppView('entry')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer" title="ຫ້ອງສະເພາະສຳລັບປ້ອນຂໍ້ມູນຜົນວິເຄາະຄຸນນະພາບນ້ຳ ແລະ ນຳເຂົ້າຈາກ Excel">
               <span class="text-base">📝</span>
               <span class="flex-1 truncate">ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ</span>
               <span class="text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/25 text-indigo-200 border border-indigo-400/30 shrink-0">Entry</span>
+            </button>
+            <button type="button" id="sbNavEditExisting" data-nav-view="edit_existing" onclick="setAppView('edit_existing')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer" title="ຫ້ອງສະເພາະສຳລັບປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ">
+              <span class="text-base">🔧</span>
+              <span class="flex-1 truncate">ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
+              <span class="text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/25 text-amber-200 border border-amber-400/30 shrink-0">Edit</span>
+            </button>
+            <button type="button" id="sbNavCombineDatasets" data-nav-view="combine_datasets" onclick="setAppView('combine_datasets')" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 font-semibold transition-all cursor-pointer" title="ຫ້ອງສະເພາະສຳລັບເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ)">
+              <span class="text-base">🔗</span>
+              <span class="flex-1 truncate">ເລືອກຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
+              <span class="text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-teal-500/25 text-teal-200 border border-teal-400/30 shrink-0">Merge</span>
             </button>
           </nav>
 
@@ -776,6 +786,382 @@
       </div>
     </div>
 
+    <!-- ==================== 🔧 ຫ້ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Dedicated Update / Edit Existing System Data Room) ==================== -->
+    <div id="editExistingRoomSection" class="space-y-6 hidden">
+      <!-- Top Room Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white p-4 sm:p-5 rounded-3xl border border-amber-500/30 shadow-xl shadow-amber-950/15 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div class="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30 ring-1 ring-white/25 shrink-0">
+            🔧
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500/25 text-amber-200 border border-amber-400/30 uppercase tracking-wider whitespace-nowrap">Dedicated Update &amp; Edit Room</span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 whitespace-nowrap">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span> ເຊື່ອມຕໍ່ຖານຂໍ້ມູນສົດ (Live Sync)
+              </span>
+            </div>
+            <h2 class="text-base sm:text-xl font-black text-white mt-1 tracking-tight">ຫ້ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</h2>
+            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed max-w-2xl">ເລືອກຊຸດຂໍ້ມູນ ຫຼື ສະຖານີທີ່ມີຢູ່ໃນລະບົບ ເພື່ອດຶງມາແກ້ໄຂຂໍ້ມູນຫຼັກ, ປັບປຸງຄ່າວິເຄາະຄຸນນະພາບນໍ້າ, ອັບເດດຈາກໄຟລ໌ Excel/CSV ຫຼື ເປີດແກ້ໄຂແບບຕາຕະລາງ</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center xl:justify-end gap-2 shrink-0">
+          <button type="button" onclick="setAppView('entry')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/25 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>📝</span> <span>ໄປຫ້ອງຟອມບັນທຶກຜົນວິເຄາະ</span>
+          </button>
+          <button type="button" onclick="setAppView('combine_datasets')" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs shadow-md shadow-teal-500/20 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>🔗</span> <span>ໄປຫ້ອງເລືອກຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການ</span>
+          </button>
+          <button type="button" onclick="setAppView('records')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>🗄️</span> <span>ໄປຫ້ອງຖານຂໍ້ມູນຜົນການວັດແທກ</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="w-full max-w-5xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/90 overflow-hidden min-w-0 p-4 sm:p-6">
+        <!-- ==================== 🔧 ຊ່ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Update / Edit Existing System Data) ==================== -->
+        <div id="formExistingEditBox" class="bg-gradient-to-br from-amber-50/80 via-white to-indigo-50/40 p-4 rounded-2xl border-2 border-amber-300/90 shadow-sm space-y-3.5 transition-all">
+          <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-2 border-b border-amber-200/80">
+            <div class="flex items-start sm:items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-base font-black shadow-sm shadow-amber-500/25 shrink-0">
+                🔧
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-xs sm:text-sm font-black text-slate-900">ຊ່ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</h3>
+                  <span id="formEditModeBadge" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300">🆕 ໂໝດບັນທຶກຂໍ້ມູນໃໝ່</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">ເລືອກຊຸດຂໍ້ມູນ ຫຼື ສະຖານີທີ່ມີຢູ່ໃນລະບົບ ເພື່ອດຶງມາແກ້ໄຂຂໍ້ມູນຫຼັກ, ປັບປຸງຄ່າວິເຄາະຄຸນນະພາບນໍ້າ, ເພີ່ມ/ລົບສະຖານີ ແລ້ວບັນທຶກອັບເດດທັນທີ</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span id="formEditSysCountBadge" class="text-[10.5px] font-bold px-2.5 py-1 rounded-xl bg-white text-indigo-800 border border-indigo-200 shadow-2xs">📦 0 ຊຸດ · 📍 0 ສະຖານີ</span>
+            </div>
+          </div>
+
+          <!-- ແຖວທີ 1: ກັ່ນຕອງຕາມປະເພດຂໍ້ມູນ ແລະ ຄົ້ນຫາຊຸດຂໍ້ມູນທີ່ຕ້ອງການແກ້ໄຂ -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
+            <div class="lg:col-span-5 flex flex-wrap items-center gap-1.5">
+              <button type="button" id="formEditCatBtn_ALL" onclick="setFormEditFilterCategory('ALL')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer">
+                🗂️ ທັງໝົດ
+              </button>
+              <button type="button" id="formEditCatBtn_COMPANY" onclick="setFormEditFilterCategory('COMPANY')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer">
+                🏢 1. ບໍລິສັດ/ກິດຈະການ
+              </button>
+              <button type="button" id="formEditCatBtn_GOV" onclick="setFormEditFilterCategory('GOV')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer">
+                🏛️ 2. ອົງການລັດ
+              </button>
+            </div>
+            <div class="lg:col-span-7 relative">
+              <input type="text" id="formEditSearchInput" oninput="populateFormEditDatasetOptions()" autocomplete="off" placeholder="🔍 ຄົ້ນຫາຊື່ບໍລິສັດ/ອົງການລັດ, ລະຫັດສະຖານີ, ຊື່ສະຖານີ, ແຂວງ ຫຼື ວັນທີ ເພື່ອເລືອກແກ້ໄຂ..." class="w-full border border-amber-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white rounded-xl px-3 py-2 text-xs text-slate-800 font-medium outline-none transition">
+            </div>
+          </div>
+
+          <!-- ແຖວທີ 2: ຊ່ອງເລືອກຊຸດຂໍ້ມູນ ແລະ ສະຖານີທີ່ມີຢູ່ໃນລະບົບ + ປຸ່ມດຶງຂໍ້ມູນມາແກ້ໄຂ -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
+            <div class="lg:col-span-6">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">📂 1. ເລືອກຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Select Existing Dataset):</label>
+              <select id="formEditDatasetSelect" onchange="onFormEditDatasetSelectChange(this.value)" class="w-full border-2 border-amber-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none transition cursor-pointer shadow-2xs">
+                <option value="">-- ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການປັບປຸງ ຫຼື ແກ້ໄຂ --</option>
+              </select>
+            </div>
+            <div class="lg:col-span-6 flex flex-wrap sm:flex-nowrap items-end gap-1.5 pt-1 lg:pt-5">
+              <button type="button" onclick="loadExistingDatasetToForm('', true)" class="flex-1 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                <span>📥</span> <span>ດຶງຂໍ້ມູນມາແກ້ໄຂໃນຟອມ</span>
+              </button>
+              <button type="button" onclick="triggerFormEditExcelUpload()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="ດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຊຸດຂໍ້ມູນໃນລະບົບ">
+                <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
+              </button>
+              <button type="button" onclick="openSelectedDatasetFromEntryForm()" class="bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs px-2.5 py-2.5 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 cursor-pointer shrink-0" title="ເປີດເບິ່ງ ແລະ ແກ້ໄຂໃນໜ້າຕ່າງຕາຕະລາງ">
+                <span>👁️</span> <span>ຕາຕະລາງ</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ແຖວທີ 2.2: ຊ່ອງລາຍການເລືອກຊຸດຂໍ້ມູນ ແລະ ສະຖານີຍ່ອຍໂດຍກົງ (Interactive Dataset & Station Selector) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-1">
+            <!-- ຟາກຊ້າຍ: ລາຍການຊຸດຂໍ້ມູນທັງໝົດໃນລະບົບ (ກົດເລືອກໄດ້ທັນທີ) -->
+            <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-amber-200/90 p-3 space-y-2 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <label class="text-xs font-black text-amber-950 flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-md bg-amber-500 text-slate-950 text-[11px] font-black inline-flex items-center justify-center">🗂️</span>
+                  <span>ຊ່ອງເລືອກຊຸດຂໍ້ມູນໃນລະບົບ (ກົດເລືອກຊຸດຂໍ້ມູນລຸ່ມນີ້)</span>
+                </label>
+                <span id="editRoomDatasetListCount" class="text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">0 ຊຸດ</span>
+              </div>
+              <div id="editExistingDatasetQuickList" class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/70 space-y-1.5 text-xs">
+                <div class="text-slate-400 text-center py-4 text-[11px]">ກຳລັງໂຫຼດລາຍການຊຸດຂໍ້ມູນ...</div>
+              </div>
+            </div>
+
+            <!-- ຟາກຂວາ: ຊ່ອງເລືອກສະຖານີ / ຈຸດວັດແທກໃນຊຸດຂໍ້ມູນທີ່ເລືອກ -->
+            <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-indigo-200/90 p-3 space-y-2.5 shadow-2xs flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-1.5">
+                  <label class="text-xs font-black text-indigo-950 flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-md bg-indigo-600 text-white text-[11px] font-black inline-flex items-center justify-center">📍</span>
+                    <span>ຊ່ອງເລືອກສະຖານີ / ຈຸດວັດແທກ ເພື່ອແກ້ໄຂ</span>
+                  </label>
+                  <span id="editRoomSelectedDatasetBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 truncate max-w-[220px]">ຍັງບໍ່ໄດ້ເລືອກຊຸດຂໍ້ມູນ</span>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5">
+                  <select id="editRoomStationSelect" onchange="onEditRoomStationSelectChange(this.value)" class="flex-1 border border-indigo-300 focus:border-indigo-500 bg-indigo-50/40 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer">
+                    <option value="">-- 📍 ເລືອກສະຖານີໃນຊຸດຂໍ້ມູນນີ້ ເພື່ອດຶງໄປແກ້ໄຂ --</option>
+                  </select>
+                  <button type="button" onclick="editSelectedStationFromEditRoom()" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] shadow-xs transition cursor-pointer flex items-center justify-center gap-1 shrink-0">
+                    <span>✏️</span> <span>ແກ້ໄຂສະຖານີທີ່ເລືອກ</span>
+                  </button>
+                </div>
+                <div id="editExistingStationQuickList" class="max-h-44 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/70 space-y-1.5 text-xs">
+                  <div class="text-slate-400 text-center py-4 text-[11px]">👆 ກະລຸນາເລືອກຊຸດຂໍ້ມູນຢູ່ຟາກຊ້າຍ ຫຼື ຈາກຊ່ອງເລືອກຂ້າງເທິງ ເພື່ອສະແດງລາຍການສະຖານີ</div>
+                </div>
+              </div>
+              <div class="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
+                <span>💡 ກົດເລືອກສະຖານີໃດກໍໄດ້ ເພື່ອດຶງໄປແກ້ໄຂຄ່າວິເຄາະທັນທີ</span>
+                <span id="editRoomStationCountBadge" class="font-bold text-indigo-700">0 ສະຖານີ</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ແຖວທີ 2.5: ຊ່ອງດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບໂດຍກົງ -->
+          <div class="rounded-2xl border-2 border-dashed border-emerald-400/90 bg-gradient-to-r from-emerald-50/80 via-white to-teal-50/60 p-3 transition-all"
+               id="formEditExcelDropZone"
+               ondragover="event.preventDefault(); this.classList.add('border-emerald-600','bg-emerald-100/60')"
+               ondragleave="this.classList.remove('border-emerald-600','bg-emerald-100/60')"
+               ondrop="handleFormEditExcelDrop(event)">
+            <input type="file" id="formEditExcelFileInput" accept=".xlsx,.xls,.csv" multiple class="hidden" onchange="handleFormEditExcelFiles(this.files); this.value='';">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+              <div class="flex items-start sm:items-center gap-2.5 min-w-0 cursor-pointer" onclick="triggerFormEditExcelUpload()">
+                <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
+                  📊
+                </div>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="text-xs font-black text-emerald-950">ດຶງຂໍ້ມູນເປັນໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນໃນລະບົບ</span>
+                    <span class="text-[9.5px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">.XLSX / .XLS / .CSV</span>
+                  </div>
+                  <p class="text-[10.5px] text-slate-600 mt-0.5">ກົດເລືອກໄຟລ໌ ຫຼື ລາກໄຟລ໌ Excel ມາວາງໃສ່ບ່ອນນີ້ ເພື່ອອັບເດດຄ່າວິເຄາະ, ເພີ່ມຈຸດພິກັດ ຫຼື ປ່ຽນແທນຂໍ້ມູນໃນຊຸດທີ່ເລືອກ (ດຶງເຂົ້າຟອມກ່ອນ ຫຼື ບັນທຶກທັນທີກໍໄດ້)</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+                <button type="button" onclick="triggerFormEditExcelUpload()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] shadow-sm transition cursor-pointer flex items-center gap-1 active:scale-95">
+                  <span>📂</span> <span>ເລືອກໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
+                </button>
+                <button type="button" onclick="exportSelectedDatasetForEditExcel()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 font-bold text-[11px] shadow-2xs transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດຊຸດຂໍ້ມູນທີ່ເລືອກອອກເປັນໄຟລ໌ Excel ເພື່ອແກ້ໄຂແລ້ວດຶງກັບເຂົ້າມາ">
+                  <span>📤</span> <span>ດາວໂຫຼດຊຸດນີ້ເປັນ Excel</span>
+                </button>
+                <button type="button" onclick="downloadExcelTemplate()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-[11px] transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດແບບຟອມ Excel ມາດຕະຖານ">
+                  <span>📄</span> <span>ແບບຟອມ</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 🔗 ຫ້ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ) ==================== -->
+    <div id="combineDatasetsRoomSection" class="space-y-6 hidden">
+      <!-- Top Room Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-4 sm:p-5 rounded-3xl border border-teal-500/30 shadow-xl shadow-teal-950/15 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div class="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-600 flex items-center justify-center text-2xl shadow-lg shadow-teal-500/30 ring-1 ring-white/25 shrink-0">
+            🔗
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-teal-500/25 text-teal-200 border border-teal-400/30 uppercase tracking-wider whitespace-nowrap">Dedicated Non-Overlapping Merge Room</span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 whitespace-nowrap">
+                🛡️ ປ້ອງກັນຂໍ້ມູນທັບຊ້ອນອັດຕະໂນມັດ
+              </span>
+            </div>
+            <h2 class="text-base sm:text-xl font-black text-white mt-1 tracking-tight">ຫ້ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ)</h2>
+            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed max-w-2xl">ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງ (1 ຫຼື ຫຼາຍຊຸດ) ເພື່ອນຳເອົາຂໍ້ມູນເຂົ້າໄປໃນຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການ ໂດຍລະບົບຈະກວດກາ ແລະ ກັ່ນຕອງບໍ່ໃຫ້ສະຖານີ ຫຼື ຄ່າວິເຄາະທັບຊ້ອນກັນ</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center xl:justify-end gap-2 shrink-0">
+          <button type="button" onclick="setAppView('entry')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/25 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>📝</span> <span>ໄປຫ້ອງຟອມບັນທຶກຜົນວິເຄາະ</span>
+          </button>
+          <button type="button" onclick="setAppView('edit_existing')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>🔧</span> <span>ໄປຫ້ອງປັບປຸງ / ແກ້ໄຂຂໍ້ມູນ</span>
+          </button>
+          <button type="button" onclick="setAppView('records')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/25 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+            <span>🗄️</span> <span>ໄປຫ້ອງຖານຂໍ້ມູນຜົນການວັດແທກ</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="w-full max-w-5xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/90 overflow-hidden min-w-0 p-4 sm:p-6">
+        <!-- ==================== 🔗 ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ) ==================== -->
+        <div id="formDatasetCombineBox" class="bg-gradient-to-br from-teal-50/90 via-white to-indigo-50/50 p-4 rounded-2xl border-2 border-teal-400/90 shadow-sm space-y-3.5 transition-all">
+          <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-teal-200/80">
+            <div class="flex items-start sm:items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white flex items-center justify-center text-base font-black shadow-sm shadow-teal-600/25 shrink-0">
+                🔗
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-xs sm:text-sm font-black text-slate-900">ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ)</h3>
+                  <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">🛡️ ປ້ອງກັນຂໍ້ມູນທັບຊ້ອນອັດຕະໂນມັດ</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງ (1 ຫຼື ຫຼາຍຊຸດ) ເພື່ອນຳເອົາຂໍ້ມູນເຂົ້າໄປໃນຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການ ໂດຍລະບົບຈະກວດກາ ແລະ ກັ່ນຕອງບໍ່ໃຫ້ສະຖານີ ຫຼື ຄ່າວິເຄາະທັບຊ້ອນກັນ</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span id="formCombineSelectedBadge" class="text-[10.5px] font-bold px-2.5 py-1 rounded-xl bg-white text-teal-800 border border-teal-200 shadow-2xs">📤 ເລືອກແລ້ວ 0 ຊຸດ</span>
+              <button type="button" onclick="toggleFormCombineBoxBody()" id="formCombineCollapseBtn" class="px-2.5 py-1 rounded-xl bg-white hover:bg-teal-50 text-slate-700 border border-slate-300 text-[11px] font-bold transition cursor-pointer">
+                ▼ ຫຍໍ້/ຂະຫຍາຍ
+              </button>
+            </div>
+          </div>
+
+          <div id="formDatasetCombineBody" class="space-y-3.5">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
+              <!-- ຟາກຊ້າຍ (6 ຖັນ): 1️⃣ ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ຕ້ອງການເອົາເຂົ້າ (Source Datasets) -->
+              <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-teal-200/90 p-3 space-y-2.5 shadow-2xs flex flex-col justify-between">
+                <div class="space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-1.5">
+                    <label class="text-xs font-black text-teal-950 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-md bg-teal-600 text-white text-[11px] font-black inline-flex items-center justify-center">1</span>
+                      <span>ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການດຶງເອົາໄປລວມ (Source Dataset)</span>
+                    </label>
+                    <div class="flex items-center gap-1">
+                      <button type="button" onclick="selectAllFormCombineSources(true)" class="px-2 py-0.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-bold transition cursor-pointer">☑️ ເລືອກທັງໝົດ</button>
+                      <button type="button" onclick="selectAllFormCombineSources(false)" class="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] font-bold transition cursor-pointer">🧹 ລ້າງ</button>
+                    </div>
+                  </div>
+
+                  <!-- ຕົວກອງປະເພດ + ຄົ້ນຫາຊຸດຂໍ້ມູນຕົ້ນທາງ -->
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" id="formCombineCatBtn_ALL" onclick="setFormCombineFilterCategory('ALL')" class="px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer">🗂️ ທັງໝົດ</button>
+                    <button type="button" id="formCombineCatBtn_COMPANY" onclick="setFormCombineFilterCategory('COMPANY')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer">🏢 1. ບໍລິສັດ</button>
+                    <button type="button" id="formCombineCatBtn_GOV" onclick="setFormCombineFilterCategory('GOV')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer">🏛️ 2. ອົງການລັດ</button>
+                    <input type="text" id="formCombineSourceSearchInput" oninput="populateFormCombineDatasetUI()" autocomplete="off" placeholder="🔍 ຄົ້ນຫາຊື່ຊຸດຂໍ້ມູນ ຫຼື ສະຖານີ..." class="flex-1 min-w-[140px] border border-slate-300 focus:border-teal-500 rounded-lg px-2.5 py-1 text-[11px] bg-white outline-none">
+                  </div>
+
+                  <!-- Dropdown ເລືອກດ່ວນ 1 ຊຸດ -->
+                  <div>
+                    <select id="formCombineQuickSourceSelect" onchange="onFormCombineQuickSourceChange(this.value)" class="w-full border border-teal-300 focus:border-teal-600 bg-teal-50/40 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer">
+                      <option value="">-- ⚡ ເລືອກດ່ວນ 1 ຊຸດຂໍ້ມູນຈາກລາຍການ ຫຼື ຕິກເລືອກຫຼາຍຊຸດລຸ່ມນີ້ --</option>
+                    </select>
+                  </div>
+
+                  <!-- ລາຍການ Checkbox ເລືອກໄດ້ຫຼາຍຊຸດຂໍ້ມູນ -->
+                  <div id="formCombineSourceList" class="max-h-44 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/70 space-y-1.5 text-xs">
+                    <div class="text-slate-400 text-center py-3 text-[11px]">ກຳລັງໂຫຼດລາຍການຊຸດຂໍ້ມູນ...</div>
+                  </div>
+
+                  <!-- ຊ່ອງເລືອກສະຖານີຍ່ອຍຈາກຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ເລືອກ -->
+                  <div id="formCombineStationSubSelectorBox" class="bg-teal-50/50 border border-teal-200/90 rounded-xl p-2.5 space-y-1.5">
+                    <div class="flex flex-wrap items-center justify-between gap-1">
+                      <label class="text-[11px] font-black text-teal-950 flex items-center gap-1">
+                        <span>📍</span>
+                        <span>ຊ່ອງເລືອກຂໍ້ມູນສະຖານີຍ່ອຍຈາກຊຸດຕົ້ນທາງທີ່ເລືອກ:</span>
+                      </label>
+                      <div class="flex items-center gap-1">
+                        <button type="button" onclick="toggleAllCombineSourceStations(true)" class="px-2 py-0.5 rounded bg-white hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-bold transition cursor-pointer">☑️ ທຸກສະຖານີ</button>
+                        <button type="button" onclick="toggleAllCombineSourceStations(false)" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 text-[10px] font-bold transition cursor-pointer">🧹 ລ້າງ</button>
+                      </div>
+                    </div>
+                    <div id="formCombineStationSubList" class="max-h-36 overflow-y-auto border border-teal-200/70 rounded-lg p-1.5 bg-white space-y-1 text-[11px]">
+                      <div class="text-slate-400 text-center py-2.5 text-[10.5px]">👆 ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງຂ້າງເທິງກ່ອນ ເພື່ອເລືອກສະຖານີຍ່ອຍ</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
+                  <span>💡 ສາມາດຕິກເລືອກທັງຊຸດຂໍ້ມູນ ຫຼື ເລືອກສະເພາະບາງສະຖານີໄດ້</span>
+                  <span id="formCombineSourceStationCount" class="font-bold text-teal-800">ລວມ 0 ສະຖານີ</span>
+                </div>
+              </div>
+
+              <!-- ຟາກຂວາ (6 ຖັນ): 2️⃣ ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ & 3️⃣ ຕັ້ງຄ່າບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ -->
+              <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-indigo-200/90 p-3 space-y-3 shadow-2xs flex flex-col justify-between">
+                <div class="space-y-2.5">
+                  <div class="space-y-2">
+                    <label class="text-xs font-black text-indigo-950 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-md bg-indigo-600 text-white text-[11px] font-black inline-flex items-center justify-center">2</span>
+                      <span>ເລືອກຊຸດຂໍ້ມູນປາຍທາງ ທີ່ຕ້ອງການເອົາຂໍ້ມູນເຂົ້າໃສ່ (Target Dataset)</span>
+                    </label>
+                    <select id="formCombineTargetSelect" onchange="onFormCombineTargetChange(this.value)" class="w-full border-2 border-indigo-300 focus:border-indigo-600 bg-indigo-50/30 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 outline-none cursor-pointer">
+                      <option value="">-- 🎯 ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ --</option>
+                    </select>
+                    <!-- ລາຍການກົດເລືອກຊຸດຂໍ້ມູນປາຍທາງໂດຍກົງ -->
+                    <div id="formCombineTargetQuickList" class="max-h-36 overflow-y-auto border border-indigo-200/80 rounded-xl p-1.5 bg-indigo-50/30 space-y-1 text-xs">
+                      <div class="text-slate-400 text-center py-2 text-[10.5px]">ກຳລັງໂຫຼດຊຸດຂໍ້ມູນປາຍທາງ...</div>
+                    </div>
+                    <!-- ກ່ອງປ້ອນຊື່ຊຸດໃໝ່ (ສະແດງເມື່ອເລືອກ __NEW_DATASET__) -->
+                    <div id="formCombineNewDatasetBox" class="hidden mt-2 p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-2">
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="sm:col-span-2">
+                          <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🆕 ຊື່ຊຸດຂໍ້ມູນລວມໃໝ່:</label>
+                          <input type="text" id="formCombineNewTitleInput" oninput="updateFormCombinePreview()" placeholder="ລະບຸຊື່ບໍລິສັດ / ໂຄງການ / ຫົວຂໍ້ຊຸດຂໍ້ມູນໃໝ່..." class="w-full border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white outline-none">
+                        </div>
+                        <div>
+                          <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🗂️ ປະເພດຂໍ້ມູນ:</label>
+                          <select id="formCombineNewCategorySelect" onchange="updateFormCombinePreview()" class="w-full border border-indigo-300 rounded-lg px-2 py-1.5 text-xs font-bold bg-white outline-none">
+                            <option value="COMPANY">🏢 1. ບໍລິສັດ/ກິດຈະການ</option>
+                            <option value="GOV">🏛️ 2. ອົງການລັດ</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3️⃣ ກົດລະບຽບປ້ອງກັນການທັບຊ້ອນ (Anti-Overlap Rules) -->
+                  <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-2.5 space-y-2">
+                    <label class="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-md bg-emerald-600 text-white text-[11px] font-black inline-flex items-center justify-center">3</span>
+                      <span>ຮູບແບບການປ້ອງກັນຂໍ້ມູນທັບຊ້ອນ (Non-Overlapping Protection)</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🛡️ ເມື່ອພົບສະຖານີທີ່ມີຢູ່ແລ້ວໃນຊຸດປາຍທາງ:</label>
+                        <select id="formCombineOverlapMode" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
+                          <option value="skip_and_fill" selected>🛡️ ບໍ່ທັບຄ່າເດີມ (ເພີ່ມສະຖານີໃໝ່ + ຕື່ມສະເພາະຊ່ອງທີ່ຫວ່າງ)</option>
+                          <option value="strict_skip">🚫 ຂ້າມສະຖານີທີ່ຊ້ຳກັນ 100% (ເອົາເຂົ້າສະເພາະສະຖານີໃໝ່)</option>
+                          <option value="merge_update">🔄 ອັບເດດຄ່າໃໝ່ໃສ່ສະຖານີເດີມ (ໂດຍບໍ່ສ້າງແຖວຊ້ຳ)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🔍 ເງື່ອນໄຂການກວດສອບຂໍ້ມູນຊ້ຳກັນ:</label>
+                        <select id="formCombineMatchRule" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
+                          <option value="code_or_name_and_date" selected>📅 ລະຫັດ/ຊື່ສະຖານີ + ວັນທີເກັບຕົວຢ່າງ ກົງກັນ</option>
+                          <option value="code_or_name_only">📍 ລະຫັດ ຫຼື ຊື່ສະຖານີ ກົງກັນ (ຫ້າມຊ້ຳລະຫັດສະຖານີ)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <label class="flex items-center gap-2 pt-1 text-[11px] font-semibold text-slate-700 cursor-pointer select-none">
+                      <input type="checkbox" id="formCombineRemoveSourceChk" onchange="updateFormCombinePreview()" class="accent-rose-600 rounded cursor-pointer">
+                      <span>🗑️ ລົບຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ເລືອກອອກ ຫຼັງຈາກຍ້າຍລວມເຂົ້າຊຸດປາຍທາງສຳເລັດ (ຍ້າຍລວມເປັນຊຸດດຽວ)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- ແຖບສະຫຼຸບຜົນການກວດກາຂໍ້ມູນທັບຊ້ອນແບບສົດ (Live Anti-Overlap Preview) -->
+                <div id="formCombinePreviewBanner" class="rounded-xl bg-slate-900 text-white p-2.5 text-[11px] flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-slate-300">👆 ກະລຸນາເລືອກ <b>ຊຸດຂໍ້ມູນຕົ້ນທາງ (1)</b> ແລະ <b>ຊຸດຂໍ້ມູນປາຍທາງ (2)</b> ເພື່ອຄຳນວນຈຳນວນສະຖານີທີ່ບໍ່ຊ້ຳກັນ</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ແຖວປຸ່ມກົດດຳເນີນການ -->
+            <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+              <button type="button" onclick="openFormCombinePreviewModal()" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-teal-50 text-teal-900 border border-teal-300 font-bold text-xs shadow-2xs transition cursor-pointer flex items-center gap-1.5">
+                <span>👁️</span> <span>ກວດສອບລາຍການສະຖານີກ່ອນເອົາເຂົ້າ (Preview)</span>
+              </button>
+              <button type="button" onclick="executeFormDatasetCombine('load_to_form')" class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
+                <span>📥</span> <span>ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (ບໍ່ທັບຊ້ອນ)</span>
+              </button>
+              <button type="button" onclick="executeFormDatasetCombine('save_now')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs shadow-lg shadow-teal-600/25 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
+                <span>💾</span> <span>ເອົາເຂົ້າຊຸດຂໍ້ມູນທີ່ຕ້ອງການທັນທີ (ບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== 📝 ຫ້ອງຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ (Dedicated Water Quality Analysis Recording Form Room) ==================== -->
     <div id="entryFormSection" class="space-y-6 hidden">
       <!-- Top Room Banner -->
@@ -792,17 +1178,17 @@
               </span>
             </div>
             <h2 class="text-base sm:text-xl font-black text-white mt-1 tracking-tight">ຫ້ອງຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ</h2>
-            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed max-w-2xl">ປ້ອນຂໍ້ມູນຜົນການວິເຄາະຄຸນນະພາບນ້ຳໃໝ່, ປັບປຸງ/ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ, ນຳເຂົ້າຈາກໄຟລ໌ Excel/CSV ແລະ ບັນທຶກລົງຖານຂໍ້ມູນແຍກຕາມ 2 ປະເພດຂໍ້ມູນ</p>
+            <p class="text-xs text-slate-300 mt-0.5 leading-relaxed max-w-2xl">ປ້ອນຂໍ້ມູນຜົນການວິເຄາະຄຸນນະພາບນ້ຳໃໝ່, ນຳເຂົ້າຈາກໄຟລ໌ Excel/CSV ແລະ ບັນທຶກລົງຖານຂໍ້ມູນແຍກຕາມ 2 ປະເພດຂໍ້ມູນ</p>
           </div>
         </div>
         <div class="flex flex-col xl:items-end gap-2 shrink-0">
-          <!-- ແຖວທີ 1: ປຸ່ມຈັດການ/ແກ້ໄຂ ແລະ ລວມຊຸດຂໍ້ມູນ -->
+          <!-- ແຖວທີ 1: ປຸ່ມເປີດຫ້ອງປັບປຸງ/ແກ້ໄຂ ແລະ ຫ້ອງເລືອກຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການ -->
           <div class="flex flex-wrap items-center xl:justify-end gap-2">
-            <button type="button" onclick="focusFormExistingEditBox()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20 whitespace-nowrap">
-              <span>🔧</span> <span>ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
+            <button type="button" onclick="setAppView('edit_existing')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-amber-500/20 whitespace-nowrap">
+              <span>🔧</span> <span>ໄປຫ້ອງປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</span>
             </button>
-            <button type="button" onclick="focusFormDatasetCombineBox()" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/20 whitespace-nowrap">
-              <span>🔗</span> <span>ເລືອກຊຸດຂໍ້ມູນເຂົ້າໃນຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
+            <button type="button" onclick="setAppView('combine_datasets')" class="px-3.5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-teal-500/20 whitespace-nowrap">
+              <span>🔗</span> <span>ໄປຫ້ອງເລືອກຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)</span>
             </button>
           </div>
           <!-- ແຖວທີ 2: ປຸ່ມເລືອກປະເພດຂໍ້ມູນ 1, 2 ແລະ ໄປຫ້ອງຖານຂໍ້ມູນ -->
@@ -832,9 +1218,9 @@
             <div>
               <div class="flex items-center gap-2">
                 <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ</h2>
-                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">Entry & Update</span>
+                <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">Entry &amp; Update</span>
               </div>
-              <p class="text-[11px] text-slate-300 mt-0.5">ປ້ອນຂໍ້ມູນຜົນກວດວັດໃໝ່, ປັບປຸງ/ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ ຫຼື ນຳເຂົ້າຈາກ Excel</p>
+              <p class="text-[11px] text-slate-300 mt-0.5">ປ້ອນຂໍ້ມູນຜົນກວດວັດໃໝ່ ຫຼື ນຳເຂົ້າຈາກໄຟລ໌ Excel/CSV</p>
             </div>
           </div>
           <span id="formHeaderModeBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 shrink-0">
@@ -843,281 +1229,44 @@
         </div>
         
         <div class="p-4 sm:p-6 space-y-5">
-          <!-- ==================== 🔧 ຊ່ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Update / Edit Existing System Data) ==================== -->
-          <div id="formExistingEditBox" class="bg-gradient-to-br from-amber-50/80 via-white to-indigo-50/40 p-4 rounded-2xl border-2 border-amber-300/90 shadow-sm space-y-3.5 transition-all">
-            <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-2 border-b border-amber-200/80">
-              <div class="flex items-start sm:items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-base font-black shadow-sm shadow-amber-500/25 shrink-0">
-                  🔧
-                </div>
-                <div>
-                  <div class="flex flex-wrap items-center gap-2">
-                    <h3 class="text-xs sm:text-sm font-black text-slate-900">ຊ່ອງປັບປຸງ ຫຼື ແກ້ໄຂ ຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</h3>
-                    <span id="formEditModeBadge" class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300">🆕 ໂໝດບັນທຶກຂໍ້ມູນໃໝ່</span>
-                  </div>
-                  <p class="text-[11px] text-slate-600 mt-0.5">ເລືອກຊຸດຂໍ້ມູນ ຫຼື ສະຖານີທີ່ມີຢູ່ໃນລະບົບ ເພື່ອດຶງມາແກ້ໄຂຂໍ້ມູນຫຼັກ, ປັບປຸງຄ່າວິເຄາະຄຸນນະພາບນໍ້າ, ເພີ່ມ/ລົບສະຖານີ ແລ້ວບັນທຶກອັບເດດທັນທີ</p>
+          <!-- ແຜງຄວບຄຸມເມື່ອກຳລັງແກ້ໄຂຊຸດຂໍ້ມູນໃນຟອມ (Active Editing Panel) -->
+          <div id="formEditActivePanel" class="hidden rounded-2xl border-2 border-indigo-500 bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white p-3.5 space-y-3 shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-800/80 pb-2.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-sm flex items-center justify-center shrink-0">✏️</span>
+                <div class="min-w-0">
+                  <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">ກຳລັງປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</div>
+                  <div id="formEditActiveTitle" class="text-xs sm:text-sm font-black text-white truncate">-</div>
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <span id="formEditSysCountBadge" class="text-[10.5px] font-bold px-2.5 py-1 rounded-xl bg-white text-indigo-800 border border-indigo-200 shadow-2xs">📦 0 ຊຸດ · 📍 0 ສະຖານີ</span>
+              <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+                <span id="formEditActiveMeta" class="text-[10.5px] font-bold px-2.5 py-1 rounded-lg bg-indigo-900/90 text-indigo-200 border border-indigo-700">0 ສະຖານີ</span>
+                <button type="button" onclick="setAppView('edit_existing')" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] transition cursor-pointer flex items-center gap-1">
+                  <span>🔧</span> <span>ປ່ຽນຊຸດຂໍ້ມູນ</span>
+                </button>
+                <button type="button" onclick="triggerFormEditExcelUpload()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
+                  <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າຊຸດນີ້</span>
+                </button>
+                <button type="button" onclick="cancelFormDatasetEdit()" class="px-2.5 py-1 rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
+                  <span>🔄</span> <span>ຍົກເລີກແກ້ໄຂ / ປ້ອນຊຸດໃໝ່</span>
+                </button>
               </div>
             </div>
 
-            <!-- ແຖວທີ 1: ກັ່ນຕອງຕາມປະເພດຂໍ້ມູນ ແລະ ຄົ້ນຫາຊຸດຂໍ້ມູນທີ່ຕ້ອງການແກ້ໄຂ -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
-              <div class="lg:col-span-5 flex flex-wrap items-center gap-1.5">
-                <button type="button" id="formEditCatBtn_ALL" onclick="setFormEditFilterCategory('ALL')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer">
-                  🗂️ ທັງໝົດ
-                </button>
-                <button type="button" id="formEditCatBtn_COMPANY" onclick="setFormEditFilterCategory('COMPANY')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer">
-                  🏢 1. ບໍລິສັດ/ກິດຈະການ
-                </button>
-                <button type="button" id="formEditCatBtn_GOV" onclick="setFormEditFilterCategory('GOV')" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer">
-                  🏛️ 2. ອົງການລັດ
-                </button>
-              </div>
-              <div class="lg:col-span-7 relative">
-                <input type="text" id="formEditSearchInput" oninput="populateFormEditDatasetOptions()" autocomplete="off" placeholder="🔍 ຄົ້ນຫາຊື່ບໍລິສັດ/ອົງການລັດ, ລະຫັດສະຖານີ, ຊື່ສະຖານີ, ແຂວງ ຫຼື ວັນທີ ເພື່ອເລືອກແກ້ໄຂ..." class="w-full border border-amber-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white rounded-xl px-3 py-2 text-xs text-slate-800 font-medium outline-none transition">
-              </div>
-            </div>
-
-            <!-- ແຖວທີ 2: ເລືອກຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ + ປຸ່ມດຶງຂໍ້ມູນມາແກ້ໄຂ -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
-              <div class="lg:col-span-6">
-                <label class="block text-[10.5px] font-bold text-slate-600 mb-1">📂 ເລືອກຊຸດຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ (Existing Dataset in System):</label>
-                <select id="formEditDatasetSelect" onchange="onFormEditDatasetSelectChange(this.value)" class="w-full border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none transition cursor-pointer">
-                  <option value="">-- ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການປັບປຸງ ຫຼື ແກ້ໄຂ --</option>
+            <!-- ເລືອກສະຖານີຍ່ອຍເພື່ອດຶງຄ່າຂຶ້ນມາແກ້ໄຂໃນຟອມທັນທີ -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center bg-white/10 p-2.5 rounded-xl border border-white/15">
+              <div class="md:col-span-8">
+                <label class="block text-[10.5px] font-bold text-amber-300 mb-1">📍 ເລືອກສະຖານີໃນຊຸດນີ້ ເພື່ອດຶງຄ່າວິເຄາະຂຶ້ນມາແກ້ໄຂໃນຟອມລຸ່ມນີ້ທັນທີ:</label>
+                <select id="formEditStationSelect" onchange="if(this.value !== '') loadTempStationForEdit(Number(this.value))" class="w-full rounded-xl border border-indigo-400/50 bg-slate-900 text-white px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer">
+                  <option value="">-- ເລືອກສະຖານີເພື່ອແກ້ໄຂຄ່າວິເຄາະ ຫຼື ພິກັດ --</option>
                 </select>
               </div>
-              <div class="lg:col-span-6 flex flex-wrap sm:flex-nowrap items-end gap-1.5 pt-1 lg:pt-5">
-                <button type="button" onclick="loadExistingDatasetToForm()" class="flex-1 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                  <span>📥</span> <span>ດຶງຂໍ້ມູນມາແກ້ໄຂໃນຟອມ</span>
+              <div class="md:col-span-4 flex flex-col sm:flex-row md:flex-col gap-1.5 pt-1 md:pt-0">
+                <button type="button" onclick="startNewStationInEditMode()" class="w-full px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center justify-center gap-1 shadow-xs">
+                  <span>➕</span> <span>ເພີ່ມສະຖານີໃໝ່ເຂົ້າຊຸດນີ້</span>
                 </button>
-                <button type="button" onclick="triggerFormEditExcelUpload()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs px-3 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="ດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຊຸດຂໍ້ມູນໃນລະບົບ">
-                  <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
-                </button>
-                <button type="button" onclick="openSelectedDatasetFromEntryForm()" class="bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold text-xs px-2.5 py-2.5 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 cursor-pointer shrink-0" title="ເປີດເບິ່ງ ແລະ ແກ້ໄຂໃນໜ້າຕ່າງຕາຕະລາງ">
-                  <span>👁️</span> <span>ຕາຕະລາງ</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- ແຖວທີ 2.5: ຊ່ອງດຶງຂໍ້ມູນຈາກໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບໂດຍກົງ -->
-            <div class="rounded-2xl border-2 border-dashed border-emerald-400/90 bg-gradient-to-r from-emerald-50/80 via-white to-teal-50/60 p-3 transition-all"
-                 id="formEditExcelDropZone"
-                 ondragover="event.preventDefault(); this.classList.add('border-emerald-600','bg-emerald-100/60')"
-                 ondragleave="this.classList.remove('border-emerald-600','bg-emerald-100/60')"
-                 ondrop="handleFormEditExcelDrop(event)">
-              <input type="file" id="formEditExcelFileInput" accept=".xlsx,.xls,.csv" multiple class="hidden" onchange="handleFormEditExcelFiles(this.files); this.value='';">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
-                <div class="flex items-start sm:items-center gap-2.5 min-w-0 cursor-pointer" onclick="triggerFormEditExcelUpload()">
-                  <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
-                    📊
-                  </div>
-                  <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-1.5">
-                      <span class="text-xs font-black text-emerald-950">ດຶງຂໍ້ມູນເປັນໄຟລ໌ Excel / CSV ເຂົ້າມາປັບປຸງ ຫຼື ແກ້ໄຂຂໍ້ມູນໃນລະບົບ</span>
-                      <span class="text-[9.5px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">.XLSX / .XLS / .CSV</span>
-                    </div>
-                    <p class="text-[10.5px] text-slate-600 mt-0.5">ກົດເລືອກໄຟລ໌ ຫຼື ລາກໄຟລ໌ Excel ມາວາງໃສ່ບ່ອນນີ້ ເພື່ອອັບເດດຄ່າວິເຄາະ, ເພີ່ມຈຸດພິກັດ ຫຼື ປ່ຽນແທນຂໍ້ມູນໃນຊຸດທີ່ເລືອກ (ດຶງເຂົ້າຟອມກ່ອນ ຫຼື ບັນທຶກທັນທີກໍໄດ້)</p>
-                  </div>
-                </div>
-                <div class="flex flex-wrap items-center gap-1.5 shrink-0">
-                  <button type="button" onclick="triggerFormEditExcelUpload()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] shadow-sm transition cursor-pointer flex items-center gap-1 active:scale-95">
-                    <span>📂</span> <span>ເລືອກໄຟລ໌ Excel ເຂົ້າແກ້ໄຂ</span>
-                  </button>
-                  <button type="button" onclick="exportSelectedDatasetForEditExcel()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 font-bold text-[11px] shadow-2xs transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດຊຸດຂໍ້ມູນທີ່ເລືອກອອກເປັນໄຟລ໌ Excel ເພື່ອແກ້ໄຂແລ້ວດຶງກັບເຂົ້າມາ">
-                    <span>📤</span> <span>ດາວໂຫຼດຊຸດນີ້ເປັນ Excel</span>
-                  </button>
-                  <button type="button" onclick="downloadExcelTemplate()" class="px-2.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-[11px] transition cursor-pointer flex items-center gap-1" title="ດາວໂຫຼດແບບຟອມ Excel ມາດຕະຖານ">
-                    <span>📄</span> <span>ແບບຟອມ</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- ແຖວທີ 3: ແຜງຄວບຄຸມເມື່ອກຳລັງແກ້ໄຂຊຸດຂໍ້ມູນໃນຟອມ (Active Editing Panel) -->
-            <div id="formEditActivePanel" class="hidden rounded-2xl border-2 border-indigo-500 bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white p-3.5 space-y-3 shadow-lg">
-              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-800/80 pb-2.5">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-sm flex items-center justify-center shrink-0">✏️</span>
-                  <div class="min-w-0">
-                    <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider">ກຳລັງປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ</div>
-                    <div id="formEditActiveTitle" class="text-xs sm:text-sm font-black text-white truncate">-</div>
-                  </div>
-                </div>
-                <div class="flex flex-wrap items-center gap-1.5 shrink-0">
-                  <span id="formEditActiveMeta" class="text-[10.5px] font-bold px-2.5 py-1 rounded-lg bg-indigo-900/90 text-indigo-200 border border-indigo-700">0 ສະຖານີ</span>
-                  <button type="button" onclick="triggerFormEditExcelUpload()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
-                    <span>📊</span> <span>ດຶງໄຟລ໌ Excel ເຂົ້າຊຸດນີ້</span>
-                  </button>
-                  <button type="button" onclick="cancelFormDatasetEdit()" class="px-2.5 py-1 rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center gap-1">
-                    <span>🔄</span> <span>ຍົກເລີກແກ້ໄຂ / ປ້ອນຊຸດໃໝ່</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- ເລືອກສະຖານີຍ່ອຍເພື່ອດຶງຄ່າຂຶ້ນມາແກ້ໄຂໃນຟອມທັນທີ -->
-              <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center bg-white/10 p-2.5 rounded-xl border border-white/15">
-                <div class="md:col-span-8">
-                  <label class="block text-[10.5px] font-bold text-amber-300 mb-1">📍 ເລືອກສະຖານີໃນຊຸດນີ້ ເພື່ອດຶງຄ່າວິເຄາະຂຶ້ນມາແກ້ໄຂໃນຟອມລຸ່ມນີ້ທັນທີ:</label>
-                  <select id="formEditStationSelect" onchange="if(this.value !== '') loadTempStationForEdit(Number(this.value))" class="w-full rounded-xl border border-indigo-400/50 bg-slate-900 text-white px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer">
-                    <option value="">-- ເລືອກສະຖານີເພື່ອແກ້ໄຂຄ່າວິເຄາະ ຫຼື ພິກັດ --</option>
-                  </select>
-                </div>
-                <div class="md:col-span-4 flex flex-col sm:flex-row md:flex-col gap-1.5 pt-1 md:pt-0">
-                  <button type="button" onclick="startNewStationInEditMode()" class="w-full px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition cursor-pointer flex items-center justify-center gap-1 shadow-xs">
-                    <span>➕</span> <span>ເພີ່ມສະຖານີໃໝ່ເຂົ້າຊຸດນີ້</span>
-                  </button>
-                  <button type="button" onclick="saveAllBatch()" class="w-full px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] transition cursor-pointer flex items-center justify-center gap-1 shadow-xs">
-                    <span>💾</span> <span>ບັນທຶກການປັບປຸງລົງລະບົບ</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ==================== 🔗 ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ) ==================== -->
-          <div id="formDatasetCombineBox" class="bg-gradient-to-br from-teal-50/90 via-white to-indigo-50/50 p-4 rounded-2xl border-2 border-teal-400/90 shadow-sm space-y-3.5 transition-all">
-            <div class="flex flex-wrap items-start sm:items-center justify-between gap-2 pb-2.5 border-b border-teal-200/80">
-              <div class="flex items-start sm:items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white flex items-center justify-center text-base font-black shadow-sm shadow-teal-600/25 shrink-0">
-                  🔗
-                </div>
-                <div>
-                  <div class="flex flex-wrap items-center gap-2">
-                    <h3 class="text-xs sm:text-sm font-black text-slate-900">ຊ່ອງຟັງຊັນເລືອກຊຸດຂໍ້ມູນ ເພື່ອເອົາເຂົ້າໃນຊຸດຂໍ້ມູນທີ່ຕ້ອງການ (ໂດຍບໍ່ໃຫ້ຂໍ້ມູນມີການທັບຊ້ອນ)</h3>
-                    <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">🛡️ ປ້ອງກັນຂໍ້ມູນທັບຊ້ອນອັດຕະໂນມັດ</span>
-                  </div>
-                  <p class="text-[11px] text-slate-600 mt-0.5">ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງ (1 ຫຼື ຫຼາຍຊຸດ) ເພື່ອນຳເອົາຂໍ້ມູນເຂົ້າໄປໃນຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການ ໂດຍລະບົບຈະກວດກາ ແລະ ກັ່ນຕອງບໍ່ໃຫ້ສະຖານີ ຫຼື ຄ່າວິເຄາະທັບຊ້ອນກັນ</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <span id="formCombineSelectedBadge" class="text-[10.5px] font-bold px-2.5 py-1 rounded-xl bg-white text-teal-800 border border-teal-200 shadow-2xs">📤 ເລືອກແລ້ວ 0 ຊຸດ</span>
-                <button type="button" onclick="toggleFormCombineBoxBody()" id="formCombineCollapseBtn" class="px-2.5 py-1 rounded-xl bg-white hover:bg-teal-50 text-slate-700 border border-slate-300 text-[11px] font-bold transition cursor-pointer">
-                  ▼ ຫຍໍ້/ຂະຫຍາຍ
-                </button>
-              </div>
-            </div>
-
-            <div id="formDatasetCombineBody" class="space-y-3.5">
-              <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
-                <!-- ຟາກຊ້າຍ (6 ຖັນ): 1️⃣ ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ຕ້ອງການເອົາເຂົ້າ (Source Datasets) -->
-                <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-teal-200/90 p-3 space-y-2.5 shadow-2xs flex flex-col justify-between">
-                  <div class="space-y-2">
-                    <div class="flex flex-wrap items-center justify-between gap-1.5">
-                      <label class="text-xs font-black text-teal-950 flex items-center gap-1.5">
-                        <span class="w-5 h-5 rounded-md bg-teal-600 text-white text-[11px] font-black inline-flex items-center justify-center">1</span>
-                        <span>ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການດຶງເอาໄປລວມ (Source Dataset)</span>
-                      </label>
-                      <div class="flex items-center gap-1">
-                        <button type="button" onclick="selectAllFormCombineSources(true)" class="px-2 py-0.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-bold transition cursor-pointer">☑️ ເລືອກທັງໝົດ</button>
-                        <button type="button" onclick="selectAllFormCombineSources(false)" class="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-[10px] font-bold transition cursor-pointer">🧹 ລ້າງ</button>
-                      </div>
-                    </div>
-
-                    <!-- ຕົວກອງປະເພດ + ຄົ້ນຫາຊຸດຂໍ້ມູນຕົ້ນທາງ -->
-                    <div class="flex flex-wrap items-center gap-1.5">
-                      <button type="button" id="formCombineCatBtn_ALL" onclick="setFormCombineFilterCategory('ALL')" class="px-2 py-1 rounded-lg text-[10.5px] font-extrabold bg-slate-800 text-white border border-slate-800 transition cursor-pointer">🗂️ ທັງໝົດ</button>
-                      <button type="button" id="formCombineCatBtn_COMPANY" onclick="setFormCombineFilterCategory('COMPANY')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200 transition cursor-pointer">🏢 1. ບໍລິສັດ</button>
-                      <button type="button" id="formCombineCatBtn_GOV" onclick="setFormCombineFilterCategory('GOV')" class="px-2 py-1 rounded-lg text-[10.5px] font-bold bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition cursor-pointer">🏛️ 2. ອົງການລັດ</button>
-                      <input type="text" id="formCombineSourceSearchInput" oninput="populateFormCombineDatasetUI()" autocomplete="off" placeholder="🔍 ຄົ້ນຫາຊື່ຊຸດຂໍ້ມູນ ຫຼື ສະຖານີ..." class="flex-1 min-w-[140px] border border-slate-300 focus:border-teal-500 rounded-lg px-2.5 py-1 text-[11px] bg-white outline-none">
-                    </div>
-
-                    <!-- Dropdown ເລືອກດ່ວນ 1 ຊຸດ -->
-                    <div>
-                      <select id="formCombineQuickSourceSelect" onchange="onFormCombineQuickSourceChange(this.value)" class="w-full border border-teal-300 focus:border-teal-600 bg-teal-50/40 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer">
-                        <option value="">-- ⚡ ເລືອກດ່ວນ 1 ຊຸດຂໍ້ມູນຈາກລາຍການ ຫຼື ຕິກເລືອກຫຼາຍຊຸດລຸ່ມນີ້ --</option>
-                      </select>
-                    </div>
-
-                    <!-- ລາຍການ Checkbox ເລືອກໄດ້ຫຼາຍຊຸດຂໍ້ມູນ -->
-                    <div id="formCombineSourceList" class="max-h-44 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/70 space-y-1.5 text-xs">
-                      <div class="text-slate-400 text-center py-3 text-[11px]">ກຳລັງໂຫຼດລາຍການຊຸດຂໍ້ມູນ...</div>
-                    </div>
-                  </div>
-                  <div class="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
-                    <span>💡 ສາມາດຕິກເລືອກ 1 ຊຸດ ຫຼື ຫຼາຍຊຸດພ້ອມກັນໄດ້</span>
-                    <span id="formCombineSourceStationCount" class="font-bold text-teal-800">ລວມ 0 ສະຖານີ</span>
-                  </div>
-                </div>
-
-                <!-- ຟາກຂວາ (6 ຖັນ): 2️⃣ ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ & 3️⃣ ຕັ້ງຄ່າບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ -->
-                <div class="lg:col-span-6 bg-white/95 rounded-2xl border border-indigo-200/90 p-3 space-y-3 shadow-2xs flex flex-col justify-between">
-                  <div class="space-y-2.5">
-                    <div>
-                      <label class="text-xs font-black text-indigo-950 flex items-center gap-1.5 mb-1">
-                        <span class="w-5 h-5 rounded-md bg-indigo-600 text-white text-[11px] font-black inline-flex items-center justify-center">2</span>
-                        <span>ເລືອກຊຸດຂໍ້ມູນປາຍທາງ ທີ່ຕ້ອງການເອົາຂໍ້ມູນເຂົ້າໃສ່ (Target Dataset)</span>
-                      </label>
-                      <select id="formCombineTargetSelect" onchange="onFormCombineTargetChange(this.value)" class="w-full border-2 border-indigo-300 focus:border-indigo-600 bg-indigo-50/30 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 outline-none cursor-pointer">
-                        <option value="">-- 🎯 ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ --</option>
-                      </select>
-                      <!-- ກ່ອງປ້ອນຊື່ຊຸດໃໝ່ (ສະແດງເມື່ອເລືອກ __NEW_DATASET__) -->
-                      <div id="formCombineNewDatasetBox" class="hidden mt-2 p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-2">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                          <div class="sm:col-span-2">
-                            <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🆕 ຊື່ຊຸດຂໍ້ມູນລວມໃໝ່:</label>
-                            <input type="text" id="formCombineNewTitleInput" oninput="updateFormCombinePreview()" placeholder="ລະບຸຊື່ບໍລິສັດ / ໂຄງການ / ຫົວຂໍ້ຊຸດຂໍ້ມູນໃໝ່..." class="w-full border border-indigo-300 rounded-lg px-2.5 py-1.5 text-xs font-bold bg-white outline-none">
-                          </div>
-                          <div>
-                            <label class="block text-[10.5px] font-bold text-indigo-900 mb-0.5">🗂️ ປະເພດຂໍ້ມູນ:</label>
-                            <select id="formCombineNewCategorySelect" onchange="updateFormCombinePreview()" class="w-full border border-indigo-300 rounded-lg px-2 py-1.5 text-xs font-bold bg-white outline-none">
-                              <option value="COMPANY">🏢 1. ບໍລິສັດ/ກິດຈະການ</option>
-                              <option value="GOV">🏛️ 2. ອົງການລັດ</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 3️⃣ ກົດລະບຽບປ້ອງກັນການທັບຊ້ອນ (Anti-Overlap Rules) -->
-                    <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-2.5 space-y-2">
-                      <label class="text-xs font-black text-emerald-950 flex items-center gap-1.5">
-                        <span class="w-5 h-5 rounded-md bg-emerald-600 text-white text-[11px] font-black inline-flex items-center justify-center">3</span>
-                        <span>ຮູບແບບການປ້ອງກັນຂໍ້ມູນທັບຊ້ອນ (Non-Overlapping Protection)</span>
-                      </label>
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🛡️ ເມື່ອພົບສະຖານີທີ່ມີຢູ່ແລ້ວໃນຊຸດປາຍທາງ:</label>
-                          <select id="formCombineOverlapMode" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
-                            <option value="skip_and_fill" selected>🛡️ ບໍ່ທັບຄ່າເດີມ (ເພີ່ມສະຖານີໃໝ່ + ຕື່ມສະເພາະຊ່ອງທີ່ຫວ່າງ)</option>
-                            <option value="strict_skip">🚫 ຂ້າມສະຖານີທີ່ຊ້ຳກັນ 100% (ເອົາເຂົ້າສະເພາະສະຖານີໃໝ່)</option>
-                            <option value="merge_update">🔄 ອັບເດດຄ່າໃໝ່ໃສ່ສະຖານີເດີມ (ໂດຍບໍ່ສ້າງແຖວຊ້ຳ)</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-600 mb-0.5">🔍 ເງື່ອນໄຂການກວດສອບຂໍ້ມູນຊ້ຳກັນ:</label>
-                          <select id="formCombineMatchRule" onchange="updateFormCombinePreview()" class="w-full border border-emerald-300 rounded-lg px-2 py-1.5 text-[11px] font-bold bg-white text-slate-800 outline-none cursor-pointer">
-                            <option value="code_or_name_and_date" selected>📅 ລະຫັດ/ຊື່ສະຖານີ + ວັນທີເກັບຕົວຢ່າງ ກົງກັນ</option>
-                            <option value="code_or_name_only">📍 ລະຫັດ ຫຼື ຊື່ສະຖານີ ກົງກັນ (ຫ້າມຊ້ຳລະຫັດສະຖານີ)</option>
-                          </select>
-                        </div>
-                      </div>
-                      <label class="flex items-center gap-2 pt-1 text-[11px] font-semibold text-slate-700 cursor-pointer select-none">
-                        <input type="checkbox" id="formCombineRemoveSourceChk" onchange="updateFormCombinePreview()" class="accent-rose-600 rounded cursor-pointer">
-                        <span>🗑️ ລົບຊຸດຂໍ້ມູນຕົ້ນທາງທີ່ເລືອກອອກ ຫຼັງຈາກຍ້າຍລວມເຂົ້າຊຸດປາຍທາງສຳເລັດ (ຍ້າຍລວມເປັນຊຸດດຽວ)</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <!-- ແຖບສະຫຼຸບຜົນການກວດກາຂໍ້ມູນທັບຊ້ອນແບບສົດ (Live Anti-Overlap Preview) -->
-                  <div id="formCombinePreviewBanner" class="rounded-xl bg-slate-900 text-white p-2.5 text-[11px] flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-slate-300">👆 ກະລຸນາເລືອກ <b>ຊຸດຂໍ້ມູນຕົ້ນທາງ (1)</b> ແລະ <b>ຊຸດຂໍ້ມູນປາຍທາງ (2)</b> ເພື່ອຄຳນວນຈຳນວນສະຖານີທີ່ບໍ່ຊ້ຳກັນ</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ແຖວປຸ່ມກົດດຳເນີນການ -->
-              <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
-                <button type="button" onclick="openFormCombinePreviewModal()" class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-teal-50 text-teal-900 border border-teal-300 font-bold text-xs shadow-2xs transition cursor-pointer flex items-center gap-1.5">
-                  <span>👁️</span> <span>ກວດສອບລາຍການສະຖານີກ່ອນເອົາເຂົ້າ (Preview)</span>
-                </button>
-                <button type="button" onclick="executeFormDatasetCombine('load_to_form')" class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
-                  <span>📥</span> <span>ດຶງເຂົ້າຟອມແກ້ໄຂກ່ອນບັນທຶກ (ບໍ່ທັບຊ້ອນ)</span>
-                </button>
-                <button type="button" onclick="executeFormDatasetCombine('save_now')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs shadow-lg shadow-teal-600/25 transition cursor-pointer flex items-center gap-1.5 active:scale-95">
-                  <span>💾</span> <span>ເອົາເຂົ້າຊຸດຂໍ້ມູນທີ່ຕ້ອງການທັນທີ (ບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນ)</span>
+                <button type="button" onclick="saveAllBatch()" class="w-full px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] transition cursor-pointer flex items-center justify-center gap-1 shadow-xs">
+                  <span>💾</span> <span>ບັນທຶກການປັບປຸງລົງລະບົບ</span>
                 </button>
               </div>
             </div>
@@ -3525,6 +3674,8 @@
       const trendCard = document.getElementById('monthlyTrendCard');
       const twelveCard = document.getElementById('twelveMonthCard');
       const entrySec = document.getElementById('entryFormSection');
+      const editExistingSec = document.getElementById('editExistingRoomSection');
+      const combineDatasetsSec = document.getElementById('combineDatasetsRoomSection');
       const dataSec = document.getElementById('dataSection');
       const stdCard = document.getElementById('standards81Card');
 
@@ -3535,6 +3686,8 @@
       if (trendCard) trendCard.classList.toggle('hidden', currentAppView !== 'trend');
       if (twelveCard) twelveCard.classList.toggle('hidden', currentAppView !== 'stats12');
       if (entrySec) entrySec.classList.toggle('hidden', currentAppView !== 'entry');
+      if (editExistingSec) editExistingSec.classList.toggle('hidden', currentAppView !== 'edit_existing');
+      if (combineDatasetsSec) combineDatasetsSec.classList.toggle('hidden', currentAppView !== 'combine_datasets');
       if (dataSec) dataSec.classList.toggle('hidden', currentAppView !== 'records');
       if (stdCard) stdCard.classList.toggle('hidden', currentAppView !== 'standards81');
 
@@ -3546,6 +3699,8 @@
         trend: { title: '📊 ແນວໂນ້ມລາຍເດືອນ (Monthly Trend Analytics)', sub: 'ວິເຄາະທ່າອ່ຽງຄຸນນະພາບນ້ຳຕາມເດືອນ, ປຽບທຽບຫຼາຍໂຕຊີ້ວັດພ້ອມກັນ ພ້ອມອັດຕາຜ່ານມາດຕະຖານ' },
         stats12: { title: '📅 ສະຖິຕິການປ່ຽນແປງຄຸນນະພາບນໍ້າໃນຮອບ 12 ເດືອນ', sub: 'ຕິດຕາມທ່າອ່ຽງຄຸນນະພາບນ້ຳ, ຄ່າສະເລ່ຍລາຍເດືອນ, ຈຳນວນຕົວຢ່າງທີ່ກວດ ແລະ ອັດຕາການເກີນເກນ' },
         entry: { title: '📝 ຟອມບັນທຶກຜົນວິເຄາະຄຸນນະພາບນ້ຳ', sub: 'ຫ້ອງສະເພາະສຳລັບປ້ອນຂໍ້ມູນຜົນວິເຄາະຄຸນນະພາບນ້ຳໃໝ່, ນຳເຂົ້າຈາກໄຟລ໌ Excel ແລະ ບັນທຶກລົງຖານຂໍ້ມູນ (ແຍກ 2 ປະເພດຂໍ້ມູນ)' },
+        edit_existing: { title: '🔧 ປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ', sub: 'ຫ້ອງສະເພາະສຳລັບເລືອກຊຸດຂໍ້ມູນ ແລະ ສະຖານີທີ່ມີຢູ່ໃນລະບົບ ເພື່ອດຶງມາແກ້ໄຂ, ອັບເດດຈາກ Excel ຫຼື ແກ້ໄຂແບບຕາຕະລາງ' },
+        combine_datasets: { title: '🔗 ເລືອກຊຸດຂໍ້ມູນເຂົ້າຊຸດທີ່ຕ້ອງການ (ບໍ່ທັບຊ້ອນ)', sub: 'ຫ້ອງສະເພາະສຳລັບເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງ ແລະ ສະຖານີ ເພື່ອໂຮມເຂົ້າຊຸດຂໍ້ມູນປາຍທາງໂດຍບໍ່ໃຫ້ຂໍ້ມູນທັບຊ້ອນກັນ' },
         records: { title: '🗄️ ຖານຂໍ້ມູນຜົນການວັດແທກຄຸນນະພາບນໍ້າ', sub: 'ຄັງເກັບກຳ, ຄົ້ນຫາ ແລະ ຕິດຕາມຜົນການວິເຄາະຄຸນນະພາບນ້ຳແບບລວມສູນ (ແຍກ 2 ປະເພດຂໍ້ມູນ)' },
         standards81: { title: '⚖️ ການຈັດປະເພດຄຸນນະພາບນໍ້າ ຕາມມາດຕະຖານສິ່ງແວດລ້ອມແຫ່ງຊາດ (ສະບັບເລກທີ 81/ລບ, 21 ກຸມພາ 2017)', sub: 'ການຈັດແບ່ງປະເພດຄຸນນະພາບນ້ຳໜ້າດິນ 5 ປະເພດ, ຕາຕະລາງເກນມາດຕະຖານ, ປັບແຕ່ງເກນ ແລະ ກວດສອບການປະຕິບັດຕາມມາດຕະຖານ' }
       };
@@ -3571,9 +3726,13 @@
       if (currentAppView === 'stats12') {
         setTimeout(() => { if (typeof render12MonthTrendSection === 'function') render12MonthTrendSection(); }, 150);
       }
-      if (currentAppView === 'entry') {
+      if (currentAppView === 'entry' || currentAppView === 'edit_existing' || currentAppView === 'combine_datasets') {
         setTimeout(() => {
+          if (currentAppView === 'combine_datasets' && typeof toggleFormCombineBoxBody === 'function') {
+            toggleFormCombineBoxBody(false);
+          }
           if (typeof populateFormEditDatasetOptions === 'function') populateFormEditDatasetOptions();
+          if (typeof populateFormCombineDatasetUI === 'function') populateFormCombineDatasetUI();
           if (typeof syncFormEditModeUI === 'function') syncFormEditModeUI();
         }, 30);
       }
@@ -14402,6 +14561,9 @@
       const sel = document.getElementById('categoryTableFilter');
       if (sel && sel.value !== norm) sel.value = norm;
 
+      if (typeof setFormEditFilterCategory === 'function') setFormEditFilterCategory(norm);
+      if (typeof setFormCombineFilterCategory === 'function') setFormCombineFilterCategory(norm);
+
       updateDataCategorySummaryUI();
       render();
     }
@@ -16708,8 +16870,8 @@
 
     /* --- 🔧 ລະບົບປັບປຸງ / ແກ້ໄຂຂໍ້ມູນທີ່ມີຢູ່ໃນລະບົບ ຜ່ານຫ້ອງຟອມບັນທຶກ (Form Existing Data Update/Edit) --- */
     function focusFormExistingEditBox() {
-      if (typeof setAppView === 'function' && currentAppView !== 'entry') {
-        setAppView('entry');
+      if (typeof setAppView === 'function' && currentAppView !== 'edit_existing') {
+        setAppView('edit_existing');
       }
       populateFormEditDatasetOptions();
       const box = document.getElementById('formExistingEditBox');
@@ -16751,6 +16913,8 @@
     function populateFormEditDatasetOptions() {
       const sel = document.getElementById('formEditDatasetSelect');
       const sysBadge = document.getElementById('formEditSysCountBadge');
+      const dsQuickList = document.getElementById('editExistingDatasetQuickList');
+      const dsCountBadge = document.getElementById('editRoomDatasetListCount');
       const searchQ = (document.getElementById('formEditSearchInput')?.value || '').trim().toLowerCase();
 
       const totalDatasets = waterData.length;
@@ -16760,7 +16924,7 @@
       }
       if (!sel) return;
 
-      const prevVal = editingFormDatasetKey || sel.value || '';
+      const prevVal = sel.value || editingFormDatasetKey || (waterData[0]?.fbKey || '');
       const filtered = waterData.filter(item => {
         const cat = getRecordDataCategory(item);
         if (formEditFilterCategory !== 'ALL' && cat !== formEditFilterCategory) return false;
@@ -16775,6 +16939,10 @@
         return idxStr.includes(searchQ);
       });
 
+      if (dsCountBadge) {
+        dsCountBadge.innerText = `${filtered.length} ຊຸດ`;
+      }
+
       const opts = [`<option value="">-- ເລືອກຊຸດຂໍ້ມູນທີ່ຕ້ອງການປັບປຸງ ຫຼື ແກ້ໄຂ (ພົບ ${filtered.length} ຊຸດ) --</option>`];
       filtered.forEach((item, i) => {
         const cat = getRecordDataCategory(item);
@@ -16787,8 +16955,133 @@
       });
 
       sel.innerHTML = opts.join('');
+
+      // ອັບເດດລາຍການຊຸດຂໍ້ມູນແບບກົດເລືອກໂດຍກົງໃນຫ້ອງປັບປຸງ/ແກ້ໄຂ
+      if (dsQuickList) {
+        if (filtered.length === 0) {
+          dsQuickList.innerHTML = `<div class="text-slate-400 text-center py-4 text-[11px]">ບໍ່ພົບຊຸດຂໍ້ມູນທີ່ກົງກັບການຄົ້ນຫາ</div>`;
+        } else {
+          const activeKey = sel.value || prevVal || '';
+          dsQuickList.innerHTML = filtered.map((item, i) => {
+            const cat = getRecordDataCategory(item);
+            const isGov = cat === 'GOV';
+            const catBadge = isGov
+              ? `<span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-200 text-[9.5px] font-bold shrink-0">🏛️ ອົງການລັດ</span>`
+              : `<span class="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 text-[9.5px] font-bold shrink-0">🏢 ບໍລິສັດ</span>`;
+            const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+            const sts = stationsOf(item);
+            const dRange = sampleDateRange(sts) || item.date || '';
+            const isSelected = item.fbKey === activeKey;
+            return `
+              <div onclick="selectDatasetInEditRoom('${escAttr(item.fbKey)}')" class="flex items-center justify-between gap-2 p-2 rounded-xl border ${isSelected ? 'bg-amber-50 border-amber-500 ring-1 ring-amber-400/50' : 'bg-white border-slate-200/90 hover:border-amber-300'} cursor-pointer transition select-none">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-[10.5px] font-mono ${isSelected ? 'text-amber-700 font-black' : 'text-slate-400'} shrink-0">${i + 1}.</span>
+                  ${catBadge}
+                  <span class="font-bold text-slate-800 truncate text-xs" title="${escAttr(title)}">${escAttr(title)}</span>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  ${dRange ? `<span class="text-[9.5px] text-slate-500 hidden sm:inline">${escAttr(dRange)}</span>` : ''}
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-100/80 text-amber-900 border border-amber-200">${sts.length} ສະຖານີ</span>
+                  <button type="button" onclick="event.stopPropagation(); loadExistingDatasetToForm('${escAttr(item.fbKey)}', true)" class="px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10px] transition cursor-pointer" title="ດຶງຊຸດຂໍ້ມູນນີ້ໄປແກ້ໄຂໃນຟອມທັນທີ">📥 ແກ້ໄຂ</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      renderEditRoomStationsForSelectedDataset(sel.value || prevVal || '');
+
       if (typeof populateFormCombineDatasetUI === 'function') {
         populateFormCombineDatasetUI();
+      }
+    }
+
+    function selectDatasetInEditRoom(fbKey) {
+      const sel = document.getElementById('formEditDatasetSelect');
+      if (sel && fbKey) {
+        sel.value = fbKey;
+      }
+      onFormEditDatasetSelectChange(fbKey);
+      populateFormEditDatasetOptions();
+    }
+
+    function renderEditRoomStationsForSelectedDataset(fbKey) {
+      const stSel = document.getElementById('editRoomStationSelect');
+      const stQuickList = document.getElementById('editExistingStationQuickList');
+      const dsBadge = document.getElementById('editRoomSelectedDatasetBadge');
+      const stCountBadge = document.getElementById('editRoomStationCountBadge');
+      if (!stSel || !stQuickList) return;
+
+      const item = fbKey ? waterData.find(d => d.fbKey === fbKey) : null;
+      if (!item) {
+        if (dsBadge) dsBadge.innerText = 'ຍັງບໍ່ໄດ້ເລືອກຊຸດຂໍ້ມູນ';
+        if (stCountBadge) stCountBadge.innerText = '0 ສະຖານີ';
+        stSel.innerHTML = `<option value="">-- 📍 ເລືອກສະຖານີໃນຊຸດຂໍ້ມູນນີ້ ເພື່ອດຶງໄປແກ້ໄຂ --</option>`;
+        stQuickList.innerHTML = `<div class="text-slate-400 text-center py-4 text-[11px]">👆 ກະລຸນາເລືອກຊຸດຂໍ້ມູນຢູ່ຟາກຊ້າຍ ຫຼື ຈາກຊ່ອງເລືອກຂ້າງເທິງ ເພື່ອສະແດງລາຍການສະຖານີ</div>`;
+        return;
+      }
+
+      const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+      const sts = stationsOf(item);
+      if (dsBadge) dsBadge.innerText = `📂 ${title}`;
+      if (stCountBadge) stCountBadge.innerText = `ລວມ ${sts.length} ສະຖານີ`;
+
+      const opts = [`<option value="">-- 📍 ເລືອກສະຖານີຈາກທັງໝົດ ${sts.length} ສະຖານີ --</option>`];
+      sts.forEach((st, idx) => {
+        const dTxt = st.sampleDate ? ` · 📅 ${fmtSampleDate(st.sampleDate)}` : '';
+        const qTxt = (st.qwi !== undefined && st.qwi !== '' && st.qwi !== '-') ? ` · 🌊 QWI: ${st.qwi}` : '';
+        opts.push(`<option value="${idx}">#${idx + 1} [${escAttr(st.code || '-')}] ${escAttr(st.name || '-')}${st.province ? ' (' + escAttr(st.province) + ')' : ''}${dTxt}${qTxt}</option>`);
+      });
+      stSel.innerHTML = opts.join('');
+
+      if (sts.length === 0) {
+        stQuickList.innerHTML = `<div class="text-slate-400 text-center py-4 text-[11px]">ຊຸດຂໍ້ມູນນີ້ຍັງບໍ່ມີສະຖານີ</div>`;
+      } else {
+        stQuickList.innerHTML = sts.map((st, idx) => {
+          const dTxt = st.sampleDate ? fmtSampleDate(st.sampleDate) : '';
+          return `
+            <div onclick="editStationDirectlyFromEditRoom('${escAttr(item.fbKey)}', ${idx})" class="flex items-center justify-between gap-2 p-2 rounded-xl border bg-white border-slate-200/90 hover:border-indigo-400 hover:bg-indigo-50/40 cursor-pointer transition select-none">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-[10.5px] font-mono text-slate-400 shrink-0">#${idx + 1}</span>
+                <span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono text-[10px] font-bold shrink-0">${escAttr(st.code || '-')}</span>
+                <span class="font-bold text-slate-800 truncate text-xs">${escAttr(st.name || '-')}</span>
+                ${st.province ? `<span class="text-[10px] text-slate-500 truncate hidden sm:inline">(${escAttr(st.province)})</span>` : ''}
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${dTxt ? `<span class="text-[9.5px] font-mono text-slate-500 hidden md:inline">📅 ${escAttr(dTxt)}</span>` : ''}
+                <button type="button" onclick="event.stopPropagation(); editStationDirectlyFromEditRoom('${escAttr(item.fbKey)}', ${idx})" class="px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] transition cursor-pointer">✏️ ແກ້ໄຂຈຸດນີ້</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function onEditRoomStationSelectChange(val) {
+      if (val === '' || val === null || val === undefined) return;
+      const sel = document.getElementById('formEditDatasetSelect');
+      const fbKey = sel?.value || editingFormDatasetKey || '';
+      if (!fbKey) return;
+      editStationDirectlyFromEditRoom(fbKey, Number(val));
+    }
+
+    function editSelectedStationFromEditRoom() {
+      const sel = document.getElementById('formEditDatasetSelect');
+      const fbKey = sel?.value || editingFormDatasetKey || '';
+      if (!fbKey) {
+        return Swal.fire({ icon: 'warning', title: 'ກະລຸນາເລືອກຊຸດຂໍ້ມູນກ່ອນ!', text: 'ເລືອກຊຸດຂໍ້ມູນຈາກຊ່ອງເລືອກຂໍ້ມູນ ກ່ອນເລືອກສະຖານີ' });
+      }
+      const stSel = document.getElementById('editRoomStationSelect');
+      const stIdx = stSel && stSel.value !== '' ? Number(stSel.value) : 0;
+      editStationDirectlyFromEditRoom(fbKey, stIdx);
+    }
+
+    function editStationDirectlyFromEditRoom(fbKey, stationIdx = 0) {
+      if (!fbKey) return;
+      loadExistingDatasetToForm(fbKey, true);
+      if (stationIdx >= 0 && stationIdx < tempStations.length) {
+        loadTempStationForEdit(stationIdx, true);
       }
     }
 
@@ -16876,13 +17169,14 @@
     }
 
     function onFormEditDatasetSelectChange(fbKey) {
+      renderEditRoomStationsForSelectedDataset(fbKey);
       if (!fbKey) return;
       if (tempStations.length === 0 || editingFormDatasetKey) {
-        loadExistingDatasetToForm(fbKey);
+        loadExistingDatasetToForm(fbKey, false);
       }
     }
 
-    function loadExistingDatasetToForm(explicitKey = '') {
+    function loadExistingDatasetToForm(explicitKey = '', switchToEntryRoom = false) {
       if (currentUserRole === 'VIEWER') {
         return Swal.fire({ icon: 'error', title: 'ສິດບໍ່ພຽງພໍ!', text: 'ບັນຊີຜູ້ເບິ່ງທົ່ວໄປບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້' });
       }
@@ -16936,6 +17230,10 @@
         loadTempStationForEdit(0, false);
       } else {
         renderFormCustomInputs();
+      }
+
+      if (switchToEntryRoom && typeof setAppView === 'function' && currentAppView !== 'entry') {
+        setAppView('entry');
       }
 
       Swal.fire({
@@ -17477,8 +17775,8 @@
     let formCombineBoxCollapsed = false;
 
     function focusFormDatasetCombineBox() {
-      if (typeof setAppView === 'function' && currentAppView !== 'entry') {
-        setAppView('entry');
+      if (typeof setAppView === 'function' && currentAppView !== 'combine_datasets') {
+        setAppView('combine_datasets');
       }
       if (formCombineBoxCollapsed) {
         toggleFormCombineBoxBody(false);
@@ -17524,10 +17822,14 @@
       populateFormCombineDatasetUI();
     }
 
+    let formCombineExcludedStationKeys = new Set();
+
     function populateFormCombineDatasetUI() {
       const listEl = document.getElementById('formCombineSourceList');
       const quickSel = document.getElementById('formCombineQuickSourceSelect');
       const targetSel = document.getElementById('formCombineTargetSelect');
+      const targetQuickList = document.getElementById('formCombineTargetQuickList');
+      const stSubList = document.getElementById('formCombineStationSubList');
       if (!listEl || !targetSel) return;
 
       // ລຶບ key ທີ່ບໍ່ມີຢູ່ໃນ waterData ແລ້ວ
@@ -17597,7 +17899,39 @@
         }).join('');
       }
 
-      // 3. ອັບເດດ Target Dataset Select
+      // 2.5 ອັບເດດຊ່ອງເລືອກສະຖານີຍ່ອຍຈາກຊຸດຕົ້ນທາງທີ່ເລືອກ
+      if (stSubList) {
+        const selectedSourceRecords = waterData.filter(d => formCombineSelectedSourceKeys.has(d.fbKey));
+        if (selectedSourceRecords.length === 0) {
+          stSubList.innerHTML = `<div class="text-slate-400 text-center py-2.5 text-[10.5px]">👆 ເລືອກຊຸດຂໍ້ມູນຕົ້ນທາງຂ້າງເທິງກ່ອນ ເພື່ອເລືອກສະຖານີຍ່ອຍ</div>`;
+        } else {
+          const stRows = [];
+          selectedSourceRecords.forEach(rec => {
+            const recTitle = rec.companyName || rec.name || '';
+            stationsOf(rec).forEach((st, sIdx) => {
+              const stKey = `${rec.fbKey}::${sIdx}`;
+              const isChecked = !formCombineExcludedStationKeys.has(stKey);
+              const dTxt = st.sampleDate ? fmtSampleDate(st.sampleDate) : '';
+              stRows.push(`
+                <label class="flex items-center justify-between gap-2 px-2 py-1 rounded-lg border ${isChecked ? 'bg-teal-50/70 border-teal-300' : 'bg-slate-50 border-slate-200 opacity-60'} cursor-pointer select-none">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <input type="checkbox" class="accent-teal-600 w-3.5 h-3.5 rounded cursor-pointer shrink-0" ${isChecked ? 'checked' : ''} onchange="onCombineSourceStationToggle('${escAttr(stKey)}', this.checked)">
+                    <span class="px-1.5 py-0.2 rounded bg-white border border-teal-200 font-mono text-[9.5px] font-bold text-teal-800 shrink-0">${escAttr(st.code || '#' + (sIdx + 1))}</span>
+                    <span class="font-semibold text-slate-800 truncate">${escAttr(st.name || '-')}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0 text-[9.5px] text-slate-500">
+                    ${dTxt ? `<span class="font-mono">${escAttr(dTxt)}</span>` : ''}
+                    <span class="truncate max-w-[110px] hidden sm:inline" title="${escAttr(recTitle)}">📂 ${escAttr(recTitle)}</span>
+                  </div>
+                </label>
+              `);
+            });
+          });
+          stSubList.innerHTML = stRows.join('') || `<div class="text-slate-400 text-center py-2 text-[10.5px]">ບໍ່ມີສະຖານີໃນຊຸດທີ່ເລືອກ</div>`;
+        }
+      }
+
+      // 3. ອັບເດດ Target Dataset Select ແລະ ລາຍການກົດເລືອກຊຸດຂໍ້ມູນປາຍທາງ
       const prevTarget = targetSel.value || editingFormDatasetKey || '';
       const targetOpts = [
         `<option value="">-- 🎯 ເລືອກຊຸດຂໍ້ມູນປາຍທາງທີ່ຕ້ອງການເອົາເຂົ້າໃສ່ --</option>`,
@@ -17617,12 +17951,72 @@
       });
 
       targetSel.innerHTML = targetOpts.join('');
+
+      if (targetQuickList) {
+        const curTargetVal = targetSel.value || '';
+        const quickTargetRows = [
+          `<div onclick="selectCombineTargetDataset('__NEW_DATASET__')" class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${curTargetVal === '__NEW_DATASET__' ? 'bg-indigo-100 border-indigo-500 font-black text-indigo-950' : 'bg-white border-slate-200 hover:border-indigo-300 text-slate-700 font-bold'} cursor-pointer transition select-none">
+            <span>🆕 ສ້າງເປັນຊຸດຂໍ້ມູນລວມໃໝ່ (ບໍ່ທັບຊ້ອນ)</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">ສ້າງຊຸດໃໝ່</span>
+          </div>`,
+          ...waterData.map((item, idx) => {
+            const cat = getRecordDataCategory(item);
+            const icon = cat === 'GOV' ? '🏛️' : '🏢';
+            const title = item.companyName || item.name || 'ບໍ່ລະບຸຊື່';
+            const sts = stationsOf(item);
+            const isSel = curTargetVal === item.fbKey;
+            return `
+              <div onclick="selectCombineTargetDataset('${escAttr(item.fbKey)}')" class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${isSel ? 'bg-indigo-100 border-indigo-500 ring-1 ring-indigo-400/40' : 'bg-white border-slate-200 hover:border-indigo-300'} cursor-pointer transition select-none">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="text-[10px] font-mono text-slate-400 shrink-0">${idx + 1}.</span>
+                  <span>${icon}</span>
+                  <span class="font-bold text-slate-800 truncate">${escAttr(title)}</span>
+                </div>
+                <span class="px-1.5 py-0.5 rounded-full text-[9.5px] font-mono font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 shrink-0">${sts.length} ສະຖານີ</span>
+              </div>
+            `;
+          })
+        ];
+        targetQuickList.innerHTML = quickTargetRows.join('');
+      }
+
       onFormCombineTargetChange(targetSel.value, true);
       updateFormCombinePreview();
     }
 
+    function selectCombineTargetDataset(targetVal) {
+      const targetSel = document.getElementById('formCombineTargetSelect');
+      if (targetSel) {
+        targetSel.value = targetVal;
+      }
+      onFormCombineTargetChange(targetVal, false);
+      populateFormCombineDatasetUI();
+    }
+
+    function onCombineSourceStationToggle(stKey, isChecked) {
+      if (!stKey) return;
+      if (isChecked) formCombineExcludedStationKeys.delete(stKey);
+      else formCombineExcludedStationKeys.add(stKey);
+      populateFormCombineDatasetUI();
+    }
+
+    function toggleAllCombineSourceStations(selectAll) {
+      const selectedSourceRecords = waterData.filter(d => formCombineSelectedSourceKeys.has(d.fbKey));
+      if (selectAll) {
+        formCombineExcludedStationKeys.clear();
+      } else {
+        selectedSourceRecords.forEach(rec => {
+          stationsOf(rec).forEach((_, sIdx) => {
+            formCombineExcludedStationKeys.add(`${rec.fbKey}::${sIdx}`);
+          });
+        });
+      }
+      populateFormCombineDatasetUI();
+    }
+
     function onFormCombineQuickSourceChange(fbKey) {
       formCombineSelectedSourceKeys.clear();
+      formCombineExcludedStationKeys.clear();
       if (fbKey) {
         formCombineSelectedSourceKeys.add(fbKey);
       }
@@ -17638,6 +18032,7 @@
 
     function selectAllFormCombineSources(selectAll) {
       const searchQ = (document.getElementById('formCombineSourceSearchInput')?.value || '').trim().toLowerCase();
+      formCombineExcludedStationKeys.clear();
       if (!selectAll) {
         formCombineSelectedSourceKeys.clear();
       } else {
@@ -17838,12 +18233,14 @@
       const rawSourceRecords = waterData.filter(d => formCombineSelectedSourceKeys.has(d.fbKey));
       const effectiveSourceRecords = rawSourceRecords.filter(d => d.fbKey !== targetKey);
 
-      // ດຶງສະຖານີຈາກຊຸດຕົ້ນທາງທັງໝົດ
+      // ດຶງສະຖານີຈາກຊຸດຕົ້ນທາງທັງໝົດ (ສະເພາະສະຖານີທີ່ຕິກເລືອກ)
       const incomingStations = [];
       effectiveSourceRecords.forEach(rec => {
         const recTitle = rec.companyName || rec.name || '';
         const parsed = parseCompanyTitle(recTitle);
-        stationsOf(rec).forEach(st => {
+        stationsOf(rec).forEach((st, sIdx) => {
+          const stKey = `${rec.fbKey}::${sIdx}`;
+          if (formCombineExcludedStationKeys.has(stKey)) return;
           incomingStations.push({
             ...st,
             section: st.section || parsed.section || '',
@@ -18094,13 +18491,21 @@
             ປ້ອງກັນການທັບຊ້ອນ (ຂ້າມແຖວຊ້ຳ): <b>${sim.skipped} ສະຖານີ</b><br>
             ລວມທັງໝົດໃນຟອມ: <b class="text-indigo-700">${tempStations.length} ສະຖານີ</b>
           </div>`,
-          confirmButtonText: '✏️ ກວດສອບໃນຟອມ',
+          confirmButtonText: '✏️ ກວດສອບໃນຟອມບັນທຶກ',
           confirmButtonColor: '#d97706',
           showDenyButton: true,
           denyButtonText: '💾 ບັນທຶກລົງລະບົບເລີຍ',
           denyButtonColor: '#059669'
         }).then(r => {
-          if (r.isDenied) saveAllBatch();
+          if (r.isDenied) {
+            saveAllBatch();
+          } else {
+            if (typeof setAppView === 'function') setAppView('entry');
+            setTimeout(() => {
+              const listBox = document.getElementById('tempListContainer');
+              if (listBox) listBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 120);
+          }
         });
         return;
       }
